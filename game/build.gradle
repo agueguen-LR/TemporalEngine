@@ -1,0 +1,11 @@
+
+plugins{
+	id "application"
+}
+
+version = "0.0.0"
+mainClassName = "games.temporalstudio.timecapsule.Launcher"
+
+dependencies{
+	compile project(":engine")
+}
