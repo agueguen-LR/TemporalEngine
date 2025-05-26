@@ -3,17 +3,20 @@ import org.gradle.internal.os.OperatingSystem
 project.ext.lwjglVersion = "3.3.6"
 project.ext.jomlVersion = "1.10.7"
 
-switch (OperatingSystem.current()) {
+switch(OperatingSystem.current()){
 	case OperatingSystem.LINUX:
 		project.ext.lwjglNatives = "natives-linux"
+
 		def osArch = System.getProperty("os.arch")
-		if (osArch.startsWith("arm") || osArch.startsWith("aarch64")) {
-			project.ext.lwjglNatives += osArch.contains("64") || osArch.startsWith("armv8") ? "-arm64" : "-arm32"
-		} else if  (osArch.startsWith("ppc")) {
+		if(osArch.startsWith("arm") || osArch.startsWith("aarch64"))
+			project.ext.lwjglNatives +=
+				osArch.contains("64") || osArch.startsWith("armv8")
+				? "-arm64" : "-arm32"
+		else if(osArch.startsWith("ppc"))
 			project.ext.lwjglNatives += "-ppc64le"
-		} else if  (osArch.startsWith("riscv")) {
+		else if(osArch.startsWith("riscv"))
 			project.ext.lwjglNatives += "-riscv64"
-		}
+
 		break
 	case OperatingSystem.WINDOWS:
 		project.ext.lwjglNatives = "natives-windows"
@@ -21,7 +24,13 @@ switch (OperatingSystem.current()) {
 }
 
 subprojects{
+	apply plugin: "java"
+
 	group = "games.temporalstudio"
+
+	java{
+		sourceCompatibility = JavaVersion.VERSION_21
+	}
 
 	repositories{
 		mavenCentral()
@@ -32,6 +41,10 @@ project(":engine"){
 	apply plugin: "java-library"
 
 	version = "0.0.0"
+
+	base{
+		archivesName = "temporalengine"
+	}
 
 	dependencies{
 		implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
@@ -55,13 +68,25 @@ project(":engine"){
 project(":game"){
 	apply plugin: "application"
 
+	def appName = "timecapsule"
 	version = "0.0.0"
+
+	base{
+		archivesName = appName
+	}
 
 	dependencies{
 		implementation project(':engine')
 	}
 
 	application{
+		applicationName = appName
 		mainClass = "games.temporalstudio.timecapsule.Launcher"
+	}
+
+	distributions{
+		main{
+			distributionBaseName = appName
+		}
 	}
 }

@@ -1,2 +1,3 @@
 rootProject.name = 'TimeCapsule'
-include "engine", "game"
+
+include("engine", "game")
