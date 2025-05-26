@@ -1,21 +1,21 @@
 package games.temporalstudio.timecapsule;
 
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.temporalengine.Scene;
 
 public class TimeCapsule extends Game{
-	private static TimeCapsule instance;
+
+	private static final String IDENTIFIER = "timecapsule";
+
 	private Scene scene;
 
-	private TimeCapsule(String title) {
-		super(title);
-		TimeCapsule.instance = this;
+	public TimeCapsule(){
+		super();
+
+		setTitle(getI18n().getSentence("game.title", getVersion()));
 	}
 
-	public static TimeCapsule get(){
-		if (TimeCapsule.instance == null) {
-			TimeCapsule.instance = new TimeCapsule("Time Capsule");
-		}
-		return TimeCapsule.instance;
-	}
-
+	// GETTERS
+	@Override
+	public String getIdentifier(){ return IDENTIFIER; }
 }

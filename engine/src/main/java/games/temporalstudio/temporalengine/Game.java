@@ -2,7 +2,9 @@ package games.temporalstudio.temporalengine;
 
 import java.io.Console;
 
-public abstract class Game extends App{
+import games.temporalstudio.temporalengine.component.LifeCycleContext;
+
+public abstract class Game extends App implements LifeCycleContext{
 
 	private static final String DEFAULT_WINDOW_TITLE = "Temporal Engine Game";
 
@@ -15,6 +17,11 @@ public abstract class Game extends App{
 	}
 	public Game(){
 		this(DEFAULT_WINDOW_TITLE);
+	}
+
+	// SETTERS
+	public void setTitle(String title){
+		this.window.setTitle(title);
 	}
 
 	// FUNCTIONS

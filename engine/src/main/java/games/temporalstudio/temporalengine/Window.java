@@ -5,6 +5,7 @@ import games.temporalstudio.temporalengine.listeners.MouseListener;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryUtil;
 
 import java.util.function.Consumer;
 
@@ -29,10 +30,11 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 class Window {
 	private static float timeStarted = System.nanoTime() * 1E-9f;
 
-	private long window;
 	private int width;
 	private int height;
 	private String title;
+
+	private long window = MemoryUtil.NULL;
 
 	private Consumer<Float> loop;
 
@@ -41,6 +43,14 @@ class Window {
 		this.height = 1080;
 		this.title = title;
 		this.loop = loop;
+	}
+
+	// GETTERS
+	public void setTitle(String title){
+		if(window != MemoryUtil.NULL)
+			throw new RuntimeException();
+
+		this.title = title;
 	}
 
 	public void run(){

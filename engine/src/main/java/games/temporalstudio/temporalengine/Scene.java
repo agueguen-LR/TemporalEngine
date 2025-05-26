@@ -1,12 +1,16 @@
-package games.temporalstudio.timecapsule;
+package games.temporalstudio.temporalengine;
 
 import java.util.HashMap;
 import java.util.Set;
 
-public class Scene implements LifeCycle{
+import games.temporalstudio.temporalengine.component.GameObject;
+import games.temporalstudio.temporalengine.component.LifeCycle;
+import games.temporalstudio.temporalengine.component.LifeCycleContext;
+
+public class Scene implements LifeCycle, LifeCycleContext{
+
 	private String name;
 
-	private TimeCapsule timeCapsule = TimeCapsule.get();
 	private Scene parent;
 	private HashMap<String, Scene> children;
 
@@ -46,22 +50,11 @@ public class Scene implements LifeCycle{
 	}
 
 	@Override
-	public void init() {
-
-	}
-
+	public void init(LifeCycleContext context){}
 	@Override
-	public void start() {
-
-	}
-
+	public void start(LifeCycleContext context){}
 	@Override
-	public void update(float delta) {
-
-	}
-
+	public void update(LifeCycleContext context, float delta){}
 	@Override
-	public void destroy() {
-
-	}
+	public void destroy(LifeCycleContext context){}
 }
