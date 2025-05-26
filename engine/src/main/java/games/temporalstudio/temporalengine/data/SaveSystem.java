@@ -19,12 +19,12 @@ import org.jetbrains.annotations.NotNull;
 
 public final class SaveSystem {
     public static final String DATA_PATH = "./data/";
-    public static final String MASTER_FILE = "saves.toml";
+    public static final String MASTER_FILE = "master.toml";
 
     /**
-     *
-     * @param filename
-     * @param data
+     * Saves the data to the file as a TOML.
+     * @param filename file to write to (with extension)
+     * @param data data to save to file
      */
     public static void save(@NotNull String filename, @NotNull Data data) {
         Path path = Paths.get(DATA_PATH);
@@ -43,9 +43,11 @@ public final class SaveSystem {
     }
 
     /**
-     *
-     * @param filename
-     * @return
+     * Loads a TOML file to create a new object
+     * @param filename file to be read (with extension)
+     * @param destinationSupplier constructor for the class T (empty constructor needed)
+     * @return new object of type T
+     * @param <T> type returned
      */
     public static <T extends Data> T load(@NotNull String filename, @NotNull Supplier<T> destinationSupplier) {
         Path path = Paths.get(SaveSystem.DATA_PATH);
