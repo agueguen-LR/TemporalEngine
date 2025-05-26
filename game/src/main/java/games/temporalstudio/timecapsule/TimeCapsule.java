@@ -1,7 +1,7 @@
 package games.temporalstudio.timecapsule;
 
-import games.temporalstudio.temporalengine.App;
+import games.temporalstudio.temporalengine.Game;
 
-public class TimeCapsule extends App{
+public class TimeCapsule extends Game{
 	
 }
