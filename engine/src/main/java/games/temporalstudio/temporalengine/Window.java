@@ -1,5 +1,7 @@
 package games.temporalstudio.temporalengine;
 
+import games.temporalstudio.temporalengine.listeners.KeyListener;
+import games.temporalstudio.temporalengine.listeners.MouseListener;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -96,10 +98,10 @@ class Window {
 		}
 
 		// Set callbacks
-//		glfwSetCursorPosCallback(window, MouseListener::mousePosCallback);
-//		glfwSetMouseButtonCallback(window, MouseListener::mouseButtonCallback);
-//		glfwSetScrollCallback(window, MouseListener::mouseScrollCallback);
-//		glfwSetKeyCallback(window, KeyListener::keyCallback);
+		glfwSetCursorPosCallback(window, MouseListener::mousePosCallback);
+		glfwSetMouseButtonCallback(window, MouseListener::mouseButtonCallback);
+		glfwSetScrollCallback(window, MouseListener::mouseScrollCallback);
+		glfwSetKeyCallback(window, KeyListener::keyCallback);
 
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(window);
