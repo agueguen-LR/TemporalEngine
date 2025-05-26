@@ -14,7 +14,6 @@ public class TimeCapsule extends Game{
 		setMainMenu(new Scene("MainMenu"));
 		setFirstLeftScene(this.createPastScenes());
 		setFirstRightScene(this.createFutureScenes());
-		System.out.println(this.createPastScenes().getChild("PastChild4"));
 	}
 
 	// GETTERS
