@@ -31,6 +31,14 @@ public class Shader {
     public Shader(String name){
         this.name = name;
         this.id = glCreateProgram();
+
+		for(ShaderType type : ShaderType.values()){
+			if(type.getGlID() != 0){
+				int shId = glCreateShader(type.getGlID());
+				shadersId.put(type, shId);
+				glAttachShader(id, shId);
+			}
+		}
     }
 
     // GETTERS
@@ -62,10 +70,6 @@ public class Shader {
 
 				type = ShaderType.getByName(rawType);
 				shadersSource.put(type, new String());
-
-				int shId = glCreateShader(type.getGlID());
-				shadersId.put(type, shId);
-				glAttachShader(id, shId);
 			}else
 				shadersSource.put(type,
 					shadersSource.get(type).concat(l).concat("\n")
