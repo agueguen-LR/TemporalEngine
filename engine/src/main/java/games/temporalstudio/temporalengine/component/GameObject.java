@@ -21,6 +21,7 @@ public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 		return components.stream()
 			.anyMatch(c -> componentClass.isAssignableFrom(c.getClass()));
 	}
+
 	public <T extends Component> Collection<T> getComponents(
 		Class<T> componentClass
 	){
@@ -29,6 +30,7 @@ public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 			.map(c -> componentClass.cast(c))
 			.toList();
 	}
+
 	public <T extends Component> T getComponent(Class<T> componentClass){
 		return getComponents(componentClass).stream()
 			.findFirst().orElseThrow();
@@ -55,18 +57,26 @@ public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 	// FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){
-		components.forEach(c -> c.init(this));
+		if (components != null){
+			components.forEach(c -> c.init(this));
+		}
 	}
 	@Override
 	public void start(LifeCycleContext context){
+		if (components != null){
 		components.forEach(c -> c.start(this));
+		}
 	}
 	@Override
 	public void update(LifeCycleContext context, float delta){
-		components.forEach(c -> c.update(this, delta));
+		if (components != null) {
+			components.forEach(c -> c.update(this, delta));
+		}
 	}
 	@Override
 	public void destroy(LifeCycleContext context){
-		components.forEach(c -> c.destroy(this));
+		if (components != null) {
+			components.forEach(c -> c.destroy(this));
+		}
 	}
 }
