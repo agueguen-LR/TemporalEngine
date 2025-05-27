@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
+import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.listeners.MouseListener;
@@ -56,11 +57,19 @@ public class Window implements WindowLifeCycle{
 	// LIFECYCLE FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){
+		if(!(context instanceof Game game)) return;
+
+		game.getLogger().info("GLFW version: %s.".formatted(
+			glfwGetVersionString()
+		));
+
 		if(!glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
 
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
 		id = glfwCreateWindow(width, height, title,
 			MemoryUtil.NULL, MemoryUtil.NULL
@@ -72,6 +81,8 @@ public class Window implements WindowLifeCycle{
 	}
 	@Override
 	public void start(LifeCycleContext context){
+		if(!(context instanceof Game game)) return;
+
 		// TODO: Move to related classes.
 		glfwSetCursorPosCallback(id, MouseListener::mousePosCallback);
 		glfwSetMouseButtonCallback(id, MouseListener::mouseButtonCallback);
@@ -85,6 +96,10 @@ public class Window implements WindowLifeCycle{
 		// creates the GLCapabilities instance and makes the OpenGL
 		// bindings available for use.
 		GL.createCapabilities();
+	
+		game.getLogger().info("OpenGL version: %s.".formatted(
+			glGetString(GL_VERSION)
+		));
 
 		glfwShowWindow(id);
 	}

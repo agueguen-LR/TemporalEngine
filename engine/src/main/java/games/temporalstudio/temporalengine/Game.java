@@ -2,6 +2,8 @@ package games.temporalstudio.temporalengine;
 
 import java.io.Console;
 
+import org.lwjgl.Version;
+
 import games.temporalstudio.temporalengine.rendering.Renderer;
 import games.temporalstudio.temporalengine.window.Window;
 
@@ -28,12 +30,14 @@ public abstract class Game extends App implements LifeCycleContext{
 	// FUNCTIONS
 	@Override
 	public void run(String[] args){
+		getLogger().info("LWJGL version: %s.".formatted(Version.getVersion()));
+
 		window.init(this);
 		window.start(this);
 
-		// renderer.init(this);
+		renderer.init(this);
 
-		// renderer.start(this);
+		renderer.start(this);
 
 		window.run(this);
 	}
