@@ -62,7 +62,7 @@ public abstract class Game extends App implements LifeCycleContext{
 				if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
 					paused = false;
 					transitioning = true;
-					System.out.println("Transitioning to game");
+					this.getLogger().info("Transitioning to game");
 				}
 			}
 			else {
@@ -75,7 +75,7 @@ public abstract class Game extends App implements LifeCycleContext{
 				if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
 					paused = true;
 					transitioning = true;
-					System.out.println("Transitioning to main menu");
+					this.getLogger().info("Transitioning to main menu");
 				}
 			}
 		}
@@ -88,7 +88,7 @@ public abstract class Game extends App implements LifeCycleContext{
 		Scene newScene = this.leftScene.getChild(name);
 		Scene parentScene = this.leftScene.getParent();
 		if (newScene == null && !parentScene.getName().equals(name)) {
-			System.out.println("Left scene not found: " + name);
+			this.getLogger().warning("Left scene not found: " + name);
 			return;
 		}
 		if (newScene != null) {
@@ -107,7 +107,7 @@ public abstract class Game extends App implements LifeCycleContext{
 		Scene newScene = this.rightScene.getChild(name);
 		Scene parentScene = this.rightScene.getParent();
 		if (newScene == null && !parentScene.getName().equals(name)) {
-			System.out.println("Right scene not found: " + name);
+			this.getLogger().warning("Right scene not found: " + name);
 			return;
 		}
 		if (newScene != null) {

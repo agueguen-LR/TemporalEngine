@@ -50,11 +50,20 @@ public class Scene implements LifeCycle, LifeCycleContext{
 	}
 
 	@Override
-	public void init(LifeCycleContext context){}
+	public void init(LifeCycleContext context){
+		if(!(context instanceof Game game)) return;
+		game.getLogger().info("Initializing scene: " + name);
+	}
+
 	@Override
-	public void start(LifeCycleContext context){}
+	public void start(LifeCycleContext context){
+		if(!(context instanceof Game game)) return;
+		game.getLogger().info("Starting scene: " + name);
+	}
+
 	@Override
 	public void update(LifeCycleContext context, float delta){}
+
 	@Override
 	public void destroy(LifeCycleContext context){}
 }
