@@ -3,6 +3,7 @@ package games.temporalstudio.temporalengine;
 import static org.lwjgl.glfw.GLFW.*;
 
 import java.io.Console;
+import java.util.logging.Logger;
 
 import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.rendering.Renderer;
@@ -11,6 +12,7 @@ import games.temporalstudio.temporalengine.window.Window;
 import org.lwjgl.Version;
 
 public abstract class Game extends App implements LifeCycleContext{
+	public static Logger LOGGER;
 
 	private Window window;
 	private Renderer renderer;
@@ -27,6 +29,7 @@ public abstract class Game extends App implements LifeCycleContext{
 	public Game(String title){
 		this.window = new Window(this::update, title);
 		this.renderer = new Renderer();
+		LOGGER = this.getLogger();
 	}
 	public Game(){
 		this(null);
