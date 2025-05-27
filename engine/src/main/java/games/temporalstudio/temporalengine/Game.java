@@ -6,6 +6,7 @@ import java.io.Console;
 import java.util.logging.Logger;
 
 import games.temporalstudio.temporalengine.listeners.KeyListener;
+import games.temporalstudio.temporalengine.physics.PhysicsEngine;
 import games.temporalstudio.temporalengine.rendering.Renderer;
 import games.temporalstudio.temporalengine.window.Window;
 
@@ -16,7 +17,7 @@ public abstract class Game extends App implements LifeCycleContext{
 
 	private Window window;
 	private Renderer renderer;
-	// private PhysicsEngine physicsEngine;
+	private PhysicsEngine physicsEngine;
 
 	private Scene mainMenu;
 	private Scene leftScene;
@@ -28,6 +29,7 @@ public abstract class Game extends App implements LifeCycleContext{
 
 	public Game(String title){
 		this.window = new Window(this::update, title);
+		this.physicsEngine = new PhysicsEngine();
 		this.renderer = new Renderer();
 		LOGGER = this.getLogger();
 	}
@@ -41,6 +43,15 @@ public abstract class Game extends App implements LifeCycleContext{
 		this.window.setTitle(title);
 	}
 
+	// GETTERS
+	public Scene getLeftScene() {
+		return leftScene;
+	}
+
+	public Scene getRightScene() {
+		return rightScene;
+	}
+
 	// FUNCTIONS
 	@Override
 	public void run(String[] args){
@@ -48,6 +59,9 @@ public abstract class Game extends App implements LifeCycleContext{
 
 		window.init(this);
 		window.start(this);
+
+		physicsEngine.init(this);
+		physicsEngine.start(this);
 
 		renderer.init(this);
 
@@ -90,6 +104,7 @@ public abstract class Game extends App implements LifeCycleContext{
 			}
 		}
 
+		physicsEngine.compute(this, deltaTime);
 		renderer.render(this);
 	}
 
