@@ -26,16 +26,13 @@ import org.jetbrains.annotations.NotNull;
 // https://javadoc.io/doc/com.electronwill.night-config/core/latest/index.html
 // https://github.com/TheElectronWill/night-config?tab=readme-ov-file
 
-/**
- * TODO
- */
 public final class SaveSystem {
-    /**
-     * Name of the file containing all info about the different game saves.
-     */
-    public static final String MASTER_FILE = String.valueOf("master".hashCode());
+//    /**
+//     * Name of the file containing all info about the different game saves.
+//     */
+//    public static final String MASTER_FILE = String.valueOf("master".hashCode());
 
-    private static String DATA_PATH = "./data/";
+    private static final String DATA_PATH = "./data/";
 
     private static String resolvePath(String path) {
         Path filename = Paths.get(path).getFileName();
@@ -81,23 +78,23 @@ public final class SaveSystem {
         }
     }
 
-    /**
-     * Saves all data to a same file using data path as key for the object saved.
-     * @param path path to the file needed to be written
-     * @param data data array to write to the file (can be different types of)
-     */
-    public static void saveAllToOneFile(@NotNull String path, @NotNull DataObject[] data) {
-        try (FileWriter writer = new FileWriter(resolvePath(path));
-             FileConfig endConfig = FileConfig.of(resolvePath(path))) {
-            TomlWriter tWriter = new TomlWriter();
-            for (DataObject dataObject : data) {
-                Config config = Config.inMemory();
-                ObjectSerializer.standard().serializeFields(dataObject, config);
-                endConfig.set(dataObject.getDataPath().replace("/","."), config);
-            }
-            tWriter.write(endConfig, writer);
-        } catch (NoFormatFoundException | IOException e) { throw new RuntimeException(e); }
-    }
+//    /**
+//     * Saves all data to a same file using data path as key for the object saved.
+//     * @param path path to the file needed to be written
+//     * @param data data array to write to the file (can be different types of)
+//     */
+//    public static void saveAllToOneFile(@NotNull String path, @NotNull DataObject[] data) {
+//        try (FileWriter writer = new FileWriter(resolvePath(path));
+//             FileConfig endConfig = FileConfig.of(resolvePath(path))) {
+//            TomlWriter tWriter = new TomlWriter();
+//            for (DataObject dataObject : data) {
+//                Config config = Config.inMemory();
+//                ObjectSerializer.standard().serializeFields(dataObject, config);
+//                endConfig.set(dataObject.getDataPath().replace("/","."), config);
+//            }
+//            tWriter.write(endConfig, writer);
+//        } catch (NoFormatFoundException | IOException e) { throw new RuntimeException(e); }
+//    }
 
     /**
      * Loads a TOML file to create a new object of the type provided
@@ -113,6 +110,7 @@ public final class SaveSystem {
 
         try (FileConfig config = FileConfig.of(savePath)) {
             config.load();
+            // TODO - WARNING : there is nothing to check if the type contained in the TOML actually is the same type as the supplier
             return ObjectDeserializer.standard().deserializeFields(config, destinationSupplier);
         } catch (RuntimeException e) { throw new RuntimeException("Wrong file format (must be toml : provided" + savePath.getFileName() + ") ; " +  e); }
     }
@@ -133,7 +131,7 @@ public final class SaveSystem {
 
         for (File file : Objects.requireNonNull(savesPath.toFile().listFiles())) {
             Path path = file.toPath();
-            if (path.toString().endsWith(".toml")) { continue; }
+            if (!path.toString().endsWith(".toml")) { continue; }
             try (FileConfig config = FileConfig.of(path)) {
                 config.load();
                 data.add(ObjectDeserializer.standard().deserializeFields(config, destinationSupplier));
