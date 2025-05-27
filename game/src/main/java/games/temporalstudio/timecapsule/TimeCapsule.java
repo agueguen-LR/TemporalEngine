@@ -6,9 +6,12 @@ import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
+import games.temporalstudio.temporalengine.component.Player;
 import games.temporalstudio.temporalengine.component.Trigger;
 import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
+import games.temporalstudio.temporalengine.physics.*;
+import org.joml.Vector2f;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -68,6 +71,25 @@ public class TimeCapsule extends Game{
 
 	public Scene createFutureScenes() {
 		Scene future = new Scene("Future");
+
+		GameObject futureGameObject1 = new GameObject("FutureGameObject1");
+		Transform transform = new Transform(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
+
+		GameObject futureGameObject2 = new GameObject("FutureGameObject2");
+		Transform transform2 = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+		PhysicsBody physicsBody = new PhysicsBody(1.0f, 1.0f);
+		Player player = new Player();
+
+		futureGameObject1.addComponent(transform);
+
+		future.addGameObject(futureGameObject1);
+		future.addGameObject(futureGameObject2);
+		futureGameObject2.addComponent(transform2);
+		futureGameObject2.addComponent(physicsBody);
+		futureGameObject2.addComponent(player);
+
+
+
 		future.addChild(new Scene("FutureChild1"));
 		future.addChild(new Scene("FutureChild2"));
 		future.addChild(new Scene("FutureChild3"));
