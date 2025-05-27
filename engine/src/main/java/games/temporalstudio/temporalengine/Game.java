@@ -2,8 +2,6 @@ package games.temporalstudio.temporalengine;
 
 import java.io.Console;
 
-import org.lwjgl.opengl.GL;
-
 import games.temporalstudio.temporalengine.rendering.Renderer;
 import games.temporalstudio.temporalengine.window.Window;
 
@@ -11,7 +9,7 @@ public abstract class Game extends App implements LifeCycleContext{
 
 	private Window window;
 	private Renderer renderer;
-	private PhysicsEngine physicsEngine;
+	// private PhysicsEngine physicsEngine;
 
 	public Game(String title){
 		this.window = new Window(this::update, title);
