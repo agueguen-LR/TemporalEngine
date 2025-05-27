@@ -1,7 +1,17 @@
 package games.temporalstudio.timecapsule;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.Scene;
+import games.temporalstudio.temporalengine.component.GameObject;
+import games.temporalstudio.temporalengine.component.Trigger;
+import games.temporalstudio.temporalengine.component.Triggerable;
+import games.temporalstudio.temporalengine.listeners.KeyListener;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class TimeCapsule extends Game{
 
@@ -21,14 +31,39 @@ public class TimeCapsule extends Game{
 	public String getIdentifier(){ return IDENTIFIER; }
 
 	public Scene createPastScenes(){
-		Scene past = new Scene("Past");
-		past.addChild(new Scene("PastChild1"));
-		past.addChild(new Scene("PastChild2"));
-		past.addChild(new Scene("PastChild3"));
+		Scene pastScene = new Scene("Past");
+
+		GameObject pastGameObject1 = new GameObject("PastGameObject");
+		// Define a function that returns a Boolean on whether the trigger condition is met
+		Supplier<Boolean> PressedE = () -> KeyListener.isKeyPressed(GLFW_KEY_E);
+		Trigger trigger = new Trigger(1.0f, PressedE);
+		pastGameObject1.addComponent(trigger);
+		pastScene.addGameObject(pastGameObject1);
+
+
+		GameObject pastGameObject2 = new GameObject("PastGameObject2");
+		// Define action to be triggered with gameObject passed as context
+		Consumer<LifeCycleContext> triggerAction = (context) -> {
+			if (context instanceof GameObject object) {
+				Game.LOGGER.info("Trigger action executed for " + object.getName());
+			} else {
+				Game.LOGGER.warning("Trigger action executed with non-GameObject context.");
+			}
+		};
+		Triggerable triggerable = new Triggerable(triggerAction);
+
+		pastGameObject2.addComponent(triggerable);
+		pastScene.addGameObject(pastGameObject2);
+
+		trigger.addTriggerable(triggerable);
+
+		pastScene.addChild(new Scene("PastChild1"));
+		pastScene.addChild(new Scene("PastChild2"));
+		pastScene.addChild(new Scene("PastChild3"));
 		Scene pastChild4 = new Scene("PastChild4");
-		past.addChild(pastChild4);
+		pastScene.addChild(pastChild4);
 		pastChild4.addChild(new Scene("PastChild4Child1"));
-		return past;
+		return pastScene;
 	}
 
 	public Scene createFutureScenes() {

@@ -1,6 +1,7 @@
 package games.temporalstudio.temporalengine;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import games.temporalstudio.temporalengine.component.GameObject;
@@ -18,6 +19,7 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 	public Scene(String name) {
 		this.name = name;
 		this.children = new HashMap<>();
+		this.gameObjects = new HashSet<>();
 	}
 
 	public String getName() {
@@ -52,17 +54,32 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 	public void init(LifeCycleContext context){
 		if(!(context instanceof Game game)) return;
 		game.getLogger().info("Initializing scene: " + name);
+		if (gameObjects != null) {
+			gameObjects.forEach(o -> o.init(this));
+		}
+
 	}
 
 	@Override
 	public void start(LifeCycleContext context){
 		if(!(context instanceof Game game)) return;
 		game.getLogger().info("Starting scene: " + name);
+		if (gameObjects != null) {
+			gameObjects.forEach(o -> o.start(this));
+		}
 	}
 
 	@Override
-	public void update(LifeCycleContext context, float delta){}
+	public void update(LifeCycleContext context, float delta){
+		if (gameObjects != null) {
+			gameObjects.forEach(o -> o.update(this, delta));
+		}
+	}
 
 	@Override
-	public void destroy(LifeCycleContext context){}
+	public void destroy(LifeCycleContext context){
+		if (gameObjects != null) {
+			gameObjects.forEach(o -> o.destroy(this));
+		}
+	}
 }
