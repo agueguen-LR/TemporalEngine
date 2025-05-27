@@ -77,6 +77,8 @@ project(":game"){
 
 	dependencies{
 		implementation project(':engine')
+		implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+		implementation "org.lwjgl:lwjgl-glfw"
 	}
 
 	application{
