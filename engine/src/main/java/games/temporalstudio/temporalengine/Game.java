@@ -1,19 +1,20 @@
 package games.temporalstudio.temporalengine;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import java.io.Console;
 
-import games.temporalstudio.temporalengine.component.LifeCycleContext;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
+import games.temporalstudio.temporalengine.rendering.Renderer;
+import games.temporalstudio.temporalengine.window.Window;
 
-import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.Version;
 
 public abstract class Game extends App implements LifeCycleContext{
 
-	private static final String DEFAULT_WINDOW_TITLE = "Temporal Engine Game";
-
 	private Window window;
 	private Renderer renderer;
-	private PhysicsEngine physicsEngine;
+	// private PhysicsEngine physicsEngine;
 
 	private Scene mainMenu;
 	private Scene leftScene;
@@ -25,10 +26,12 @@ public abstract class Game extends App implements LifeCycleContext{
 
 	public Game(String title){
 		this.window = new Window(this::update, title);
+		this.renderer = new Renderer();
 	}
 	public Game(){
-		this(DEFAULT_WINDOW_TITLE);
+		this(null);
 	}
+
 
 	// SETTERS
 	public void setTitle(String title){
@@ -38,34 +41,38 @@ public abstract class Game extends App implements LifeCycleContext{
 	// FUNCTIONS
 	@Override
 	public void run(String[] args){
-		window.run();
+		getLogger().info("LWJGL version: %s.".formatted(Version.getVersion()));
+
+		window.init(this);
+		window.start(this);
+
+		renderer.init(this);
+
+		renderer.start(this);
+
+		window.run(this);
 	}
 	@Override
-	public void run(Console console, String[] args) {
+	public void run(Console console, String[] args){
 		throw new RuntimeException();
 	}
 
 	public void update(float deltaTime){
-//		System.out.println(1/deltaTime + "FPS");
-
 		if (deltaTime >= 0){
-			if (transitioning) {
+			if(transitioning){
 				transitionTime -= deltaTime;
 				if (transitionTime <= 0) {
 					transitioning = false;
 					transitionTime = 0.5f; // Reset transition time
 				}
-				return;
-			}
-			if (paused) {
+			}else if(paused){
 				mainMenu.update(this, deltaTime);
 				if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
 					paused = false;
 					transitioning = true;
 					this.getLogger().info("Transitioning to game");
 				}
-			}
-			else {
+			}else{
 				if (leftScene != null) {
 					leftScene.update(this, deltaTime);
 				}
@@ -79,6 +86,8 @@ public abstract class Game extends App implements LifeCycleContext{
 				}
 			}
 		}
+
+		renderer.render(this);
 	}
 
 	public void changeLeftScene(String name){

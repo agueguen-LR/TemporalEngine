@@ -1,4 +1,5 @@
 package games.temporalstudio.temporalengine;
 
-public class PhysicsEngine {
+public interface LifeCycleContext{
+	
 }

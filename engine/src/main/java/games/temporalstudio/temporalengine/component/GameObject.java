@@ -1,63 +1,72 @@
 package games.temporalstudio.temporalengine.component;
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-public class GameObject implements LifeCycle, LifeCycleContext{
+import games.temporalstudio.temporalengine.LifeCycleContext;
+
+public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 
 	private String name;
-	private HashMap<Class<? extends Component>, Component> components;
+	private Set<Component> components = new HashSet<>();
 
 	public GameObject(String name){
 		this.name = name;
-		this.components = new HashMap<>();
 	}
 
 	// GETTERS
 	public String getName(){ return name; }
 	public boolean hasComponent(Class<? extends Component> componentClass){
-		return components.containsKey(componentClass);
+		return components.stream()
+			.anyMatch(c -> componentClass.isAssignableFrom(c.getClass()));
 	}
-	public Component getComponent(Class<? extends Component> componentClass){
-		return components.get(componentClass);
+	public <T extends Component> Collection<T> getComponents(
+		Class<T> componentClass
+	){
+		return components.stream()
+			.filter(c -> componentClass.isAssignableFrom(c.getClass()))
+			.map(c -> componentClass.cast(c))
+			.toList();
+	}
+	public <T extends Component> T getComponent(Class<T> componentClass){
+		return getComponents(componentClass).stream()
+			.findFirst().orElseThrow();
 	}
 
 	// SETTERS
-	public void addComponent(Component component){
+	public boolean addComponent(Component component){
 		if(component == null)
 			throw new IllegalArgumentException();
-		else if(hasComponent(component.getClass()))
-			throw new IllegalArgumentException(
-				"Component of same type already present;"
-			);
 
-		components.put(component.getClass(), component);
+		return components.add(component);
 	}
-	public Component removeComponent(Component component){
-		if(component == null)
-			throw new IllegalArgumentException();
-		else if(!hasComponent(component.getClass()))
-			throw new IllegalArgumentException(
-				"No such Component of same type;"
-			);
-
-		return components.remove(component.getClass());
+	public <T extends Component> Collection<T> removeAllComponents(
+		Class<T> componentClass
+	){
+		Collection<T> comps = getComponents(componentClass);
+		components.removeAll(comps);
+		return comps;
+	}
+	public boolean removeComponent(Component component){
+		return components.remove(component);
 	}
 
 	// FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){
-		components.forEach((k, c) -> c.init(this));
+		components.forEach(c -> c.init(this));
 	}
 	@Override
 	public void start(LifeCycleContext context){
-		components.forEach((k, c) -> c.start(this));
+		components.forEach(c -> c.start(this));
 	}
 	@Override
 	public void update(LifeCycleContext context, float delta){
-		components.forEach((k, c) -> c.update(this, delta));
+		components.forEach(c -> c.update(this, delta));
 	}
 	@Override
 	public void destroy(LifeCycleContext context){
-		components.forEach((k, c) -> c.destroy(this));
+		components.forEach(c -> c.destroy(this));
 	}
 }

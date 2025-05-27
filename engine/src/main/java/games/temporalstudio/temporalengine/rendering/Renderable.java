@@ -1,0 +1,7 @@
+package games.temporalstudio.temporalengine.rendering;
+
+import games.temporalstudio.temporalengine.component.Component;
+
+public abstract class Renderable extends Component{
+	
+}
