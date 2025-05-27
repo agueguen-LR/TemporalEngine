@@ -2,11 +2,12 @@ package games.temporalstudio.temporalengine;
 
 import java.io.Console;
 
-import games.temporalstudio.temporalengine.component.LifeCycleContext;
+import org.lwjgl.opengl.GL;
+
+import games.temporalstudio.temporalengine.rendering.Renderer;
+import games.temporalstudio.temporalengine.window.Window;
 
 public abstract class Game extends App implements LifeCycleContext{
-
-	private static final String DEFAULT_WINDOW_TITLE = "Temporal Engine Game";
 
 	private Window window;
 	private Renderer renderer;
@@ -14,10 +15,12 @@ public abstract class Game extends App implements LifeCycleContext{
 
 	public Game(String title){
 		this.window = new Window(this::update, title);
+		this.renderer = new Renderer();
 	}
 	public Game(){
-		this(DEFAULT_WINDOW_TITLE);
+		this(null);
 	}
+
 
 	// SETTERS
 	public void setTitle(String title){
@@ -27,7 +30,14 @@ public abstract class Game extends App implements LifeCycleContext{
 	// FUNCTIONS
 	@Override
 	public void run(String[] args){
-		window.run();
+		window.init(this);
+		window.start(this);
+
+		// renderer.init(this);
+
+		// renderer.start(this);
+
+		window.run(this);
 	}
 	@Override
 	public void run(Console console, String[] args) {
@@ -35,6 +45,6 @@ public abstract class Game extends App implements LifeCycleContext{
 	}
 
 	public void update(float deltaTime){
-		System.out.println(1/deltaTime + "FPS");
+		renderer.render(this);
 	}
 }

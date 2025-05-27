@@ -2,7 +2,9 @@ package games.temporalstudio.temporalengine.component;
 
 import java.util.HashMap;
 
-public class GameObject implements LifeCycle, LifeCycleContext{
+import games.temporalstudio.temporalengine.LifeCycleContext;
+
+public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 
 	private String name;
 	private HashMap<Class<? extends Component>, Component> components;

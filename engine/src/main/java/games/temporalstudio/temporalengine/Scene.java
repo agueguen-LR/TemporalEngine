@@ -4,10 +4,9 @@ import java.util.HashMap;
 import java.util.Set;
 
 import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.component.LifeCycle;
-import games.temporalstudio.temporalengine.component.LifeCycleContext;
+import games.temporalstudio.temporalengine.component.UpdateLifeCycle;
 
-public class Scene implements LifeCycle, LifeCycleContext{
+public class Scene implements UpdateLifeCycle, LifeCycleContext{
 
 	private String name;
 
