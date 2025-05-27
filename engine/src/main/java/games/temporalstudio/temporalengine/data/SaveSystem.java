@@ -26,6 +26,9 @@ import org.jetbrains.annotations.NotNull;
 // https://javadoc.io/doc/com.electronwill.night-config/core/latest/index.html
 // https://github.com/TheElectronWill/night-config?tab=readme-ov-file
 
+/**
+ * @author Adnan FAIZE
+ */
 public final class SaveSystem {
 //    /**
 //     * Name of the file containing all info about the different game saves.
