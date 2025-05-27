@@ -4,7 +4,7 @@ import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.LifeCycleContext;
 
-public final class ColorRender extends Render implements Colored{
+public final class ColorRender implements Render, Colored{
 
 	private Vector4f color;
 	

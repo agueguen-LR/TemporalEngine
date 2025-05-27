@@ -1,5 +1,5 @@
 package games.temporalstudio.temporalengine.component;
 
-public abstract class Component implements UpdateLifeCycle{
+public interface Component extends UpdateLifeCycle{
 
 }

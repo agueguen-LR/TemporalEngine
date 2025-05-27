@@ -2,7 +2,7 @@ package games.temporalstudio.temporalengine.rendering;
 
 import games.temporalstudio.temporalengine.LifeCycleContext;
 
-public class ColorRender extends Renderable{
+public class ColorRender implements Renderable{
 	
 	@Override
 	public void init(LifeCycleContext context) {}
