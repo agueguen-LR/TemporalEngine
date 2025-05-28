@@ -5,6 +5,7 @@ import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.Component;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.shapes.Shape;
+import org.joml.Vector2f;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,11 +14,10 @@ import java.util.function.BiConsumer;
 
 public class Collider2D implements Component {
 	private Shape shape;
-	private BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnCollide;
-	private BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnSeparate;
-	private BiConsumer<LifeCycleContext, LifeCycleContext> gameOnCollide;
-	private BiConsumer<LifeCycleContext, LifeCycleContext> gameOnSeparate;
-	private Map<LifeCycleContext, Boolean> colliding;
+	private BiConsumer<LifeCycleContext, LifeCycleContext> onCollide;
+	private BiConsumer<LifeCycleContext, LifeCycleContext> onIntersects;
+	private BiConsumer<LifeCycleContext, LifeCycleContext> onSeparates;
+	private Map<LifeCycleContext, Boolean> intersecting;
 	private boolean enabled;
 
 	public Collider2D(Transform transform) {
@@ -25,11 +25,10 @@ public class Collider2D implements Component {
 			Game.LOGGER.severe("Collider2D cannot be created with null Transform.");
 			return;
 		}
-		this.colliding = new HashMap<>();
-		this.physicsOnCollide = (object, other) -> {};
-		this.physicsOnSeparate = (object, other) -> {};
-		this.gameOnCollide = (object, other) -> {};
-		this.gameOnSeparate = (object, other) -> {};
+		this.intersecting = new HashMap<>();
+		this.onCollide = (object, other) -> {};
+		this.onIntersects = (object, other) -> {};
+		this.onSeparates = (object, other) -> {};
 		this.enabled = true;
 	}
 
@@ -37,28 +36,28 @@ public class Collider2D implements Component {
 		this.shape = shape;
 	}
 
-	public void setPhysicsOnCollide(BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnCollide) {
-		this.physicsOnCollide = physicsOnCollide;
+	public void setOnCollides(BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnCollide) {
+		this.onCollide = physicsOnCollide;
 	}
 
-	public void setPhysicsOnSeparate(BiConsumer<LifeCycleContext, LifeCycleContext>physicsOnSeparate) {
-		this.physicsOnSeparate = physicsOnSeparate;
+	public void setOnIntersects(BiConsumer<LifeCycleContext, LifeCycleContext>gameOnCollide) {
+		this.onIntersects = gameOnCollide;
 	}
 
-	public void setGameOnCollide(BiConsumer<LifeCycleContext, LifeCycleContext>gameOnCollide) {
-		this.gameOnCollide = gameOnCollide;
+	public void setOnSeparates(BiConsumer<LifeCycleContext, LifeCycleContext> onSeparates) {
+		this.onSeparates = onSeparates;
 	}
 
-	public void setGameOnSeparate(BiConsumer<LifeCycleContext, LifeCycleContext>gameOnSeparate) {
-		this.gameOnSeparate = gameOnSeparate;
+	public BiConsumer<LifeCycleContext, LifeCycleContext> getOnIntersects() {
+		return onIntersects;
 	}
 
-	BiConsumer<LifeCycleContext, LifeCycleContext>getPhysicsOnCollide() {
-		return physicsOnCollide;
+	public BiConsumer<LifeCycleContext, LifeCycleContext> getOnSeparates() {
+		return onSeparates;
 	}
 
-	BiConsumer<LifeCycleContext, LifeCycleContext>getPhysicsOnSeparate() {
-		return physicsOnSeparate;
+	BiConsumer<LifeCycleContext, LifeCycleContext> getOnCollide() {
+		return onCollide;
 	}
 
 	public void setOffset(float x, float y) {
@@ -90,11 +89,11 @@ public class Collider2D implements Component {
 	}
 
 	/**
-	 * Checks if this collision box collides with another collision box.
+	 * Checks if this collision box intersects with another collision box.
 	 * @param other The other Collision2D object to check for collision against.
 	 * @return true if the two collision boxes overlap, false otherwise.
 	 */
-	public boolean collidesWith(Collider2D other) {
+	public boolean intersectsWith(Collider2D other) {
 		if (other == null) {
 			Game.LOGGER.severe("Collision2D collidesWith called with null argument.");
 			return false;
@@ -102,12 +101,30 @@ public class Collider2D implements Component {
 		return this.shape.intersects(other.shape);
 	}
 
-	public void setColliding(LifeCycleContext context, boolean isColliding) {
+	/**
+	 * Checks if this collision box intersects with another collision box after casting it by a translation vector.
+	 * @param other The other Collision2D object to check for collision against.
+	 * @param castTranslation The translation vector to cast this collider by before checking for collision.
+	 * @return true if the two collision boxes overlap after casting, false otherwise.
+	 */
+	public boolean collidesWith(Collider2D other, Vector2f castTranslation) {
+		if (other == null) {
+			Game.LOGGER.severe("Collider2D collidesWith called with null argument.");
+			return false;
+		}
+		if (this.shape == null || other.shape == null) {
+			Game.LOGGER.severe("Collider2D collidesWith called with null shape.");
+			return false;
+		}
+		return this.shape.cast(castTranslation).intersects(other.shape);
+	}
+
+	public void setIntersecting(LifeCycleContext context, boolean isIntersecting) {
 		if (context == null) {
-			Game.LOGGER.severe("Collider2D setColliding called with null context.");
+			Game.LOGGER.severe("Collider2D setIntersecting called with null context.");
 			return;
 		}
-		colliding.put(context, isColliding);
+		intersecting.put(context, isIntersecting);
 	}
 
 	@Override
@@ -124,11 +141,11 @@ public class Collider2D implements Component {
 			Game.LOGGER.severe("Collider2D requires a Transform component.");
 			return;
 		}
-		colliding.forEach((otherContext, isColliding) -> {
+		intersecting.forEach((otherContext, isColliding) -> {
 			if (isColliding) {
-				gameOnCollide.accept(context, otherContext);
+				onIntersects.accept(context, otherContext);
 			} else {
-				gameOnSeparate.accept(context, otherContext);
+				onSeparates.accept(context, otherContext);
 			}
 		});
 	}
