@@ -11,7 +11,12 @@ import games.temporalstudio.temporalengine.component.Trigger;
 import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.physics.*;
+import games.temporalstudio.temporalengine.rendering.component.ColorRender;
+import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.View;
+
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -25,41 +30,69 @@ public class TimeCapsule extends Game{
 		super();
 
 		setTitle(getI18n().getSentence("game.title", getVersion()));
-		setMainMenu(new Scene("MainMenu"));
-		setFirstLeftScene(this.createPastScenes());
-		setFirstRightScene(this.createFutureScenes());
+
+		setMainMenu(createMainMenu());
+		setFirstLeftScene(createPastScenes());
+		setFirstRightScene(createFutureScenes());
 	}
 
 	// GETTERS
 	@Override
 	public String getIdentifier(){ return IDENTIFIER; }
 
-	public Scene createPastScenes(){
+	// FUNCTIONS
+	private Scene createMainMenu(){
+		Scene mainMenu = new Scene("MainMenu");
+
+		GameObject camera = new GameObject("camera");
+		camera.addComponent(new Transform(
+			new Vector2f(6.4f, 3.6f), new Vector2f(0, 0)
+		));
+		camera.addComponent(new View());
+		mainMenu.addGameObject(camera);
+
+		return mainMenu;
+	}
+	private Scene createPastScenes(){
 		Scene pastScene = new Scene("Past");
+
+		// Game objects
+		GameObject pastCamera = new GameObject("PastCamera");
 
 		GameObject pastGameObject1 = new GameObject("PastGameObject");
 		// Define a function that returns a Boolean on whether the trigger condition is met
 		Supplier<Boolean> PressedE = () -> KeyListener.isKeyPressed(GLFW_KEY_E);
 		Trigger trigger = new Trigger(1.0f, PressedE);
-		pastGameObject1.addComponent(trigger);
-		pastScene.addGameObject(pastGameObject1);
-
 
 		GameObject pastGameObject2 = new GameObject("PastGameObject2");
 		// Define action to be triggered with gameObject passed as context
 		Consumer<LifeCycleContext> triggerAction = (context) -> {
-			if (context instanceof GameObject object) {
-				Game.LOGGER.info("Trigger action executed for " + object.getName());
-			} else {
-				Game.LOGGER.warning("Trigger action executed with non-GameObject context.");
-			}
+			if (context instanceof GameObject object)
+				Game.LOGGER.info(
+					"Trigger action executed for " + object.getName()
+				);
+			else
+				Game.LOGGER.warning(
+					"Trigger action executed with non-GameObject context."
+				);
 		};
 		Triggerable triggerable = new Triggerable(triggerAction);
 
-		pastGameObject2.addComponent(triggerable);
-		pastScene.addGameObject(pastGameObject2);
+		// Components
+		pastCamera.addComponent(new Transform(
+			new Vector2f(6.4f, 3.6f), new Vector2f(0, 0)
+		));
+		pastCamera.addComponent(new View());
 
+		pastGameObject1.addComponent(trigger);
 		trigger.addTriggerable(triggerable);
+
+		pastGameObject2.addComponent(triggerable);
+
+		// Scenes
+		pastScene.addGameObject(pastCamera);
+		pastScene.addGameObject(pastGameObject1);
+		pastScene.addGameObject(pastGameObject2);
 
 		pastScene.addChild(new Scene("PastChild1"));
 		pastScene.addChild(new Scene("PastChild2"));
@@ -69,14 +102,20 @@ public class TimeCapsule extends Game{
 		pastChild4.addChild(new Scene("PastChild4Child1"));
 		return pastScene;
 	}
-
-	public Scene createFutureScenes() {
+	private Scene createFutureScenes(){
 		Scene future = new Scene("Future");
+
+		GameObject camera = new GameObject("camera");
+		camera.addComponent(new Transform(
+			new Vector2f(6.4f, 3.6f), new Vector2f(0, 0)
+		));
+		camera.addComponent(new View());
 
 		GameObject button = createButton();
 		GameObject player = createPlayer();
 		GameObject door = createDoor(button);
 
+		future.addGameObject(camera);
 		future.addGameObject(player);
 		future.addGameObject(button);
 		future.addGameObject(door);
@@ -86,7 +125,9 @@ public class TimeCapsule extends Game{
 
 	private GameObject createButton() {
 		GameObject button = new GameObject("button");
-		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+
+		Render render = new ColorRender(new Vector4f(0, 1, 0, 1));
+		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1f, .5f));
 
 		AtomicBoolean triggerActivated = new AtomicBoolean(false);
 		Trigger trigger = new Trigger(1.0f , triggerActivated::get);
@@ -96,6 +137,7 @@ public class TimeCapsule extends Game{
 		collider2D.setGameOnSeparate((context, other) -> triggerActivated.set(false));
 
 		button.addComponent(transform);
+		button.addComponent(render);
 		button.addComponent(collider2D);
 		button.addComponent(trigger);
 
@@ -105,7 +147,9 @@ public class TimeCapsule extends Game{
 
 	private GameObject createPlayer() {
 		GameObject player = new GameObject("player");
-		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(3.0f, 3.0f));
+
+		Render render = new ColorRender(new Vector4f(0, 0, 1, 1));
+		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(5.0f, 2.0f));
 		PhysicsBody physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
 		Collider2D collider2D = new Collider2D(transform);
 
@@ -124,6 +168,7 @@ public class TimeCapsule extends Game{
 		});
 
 		player.addComponent(transform);
+		player.addComponent(render);
 		player.addComponent(physicsBody);
 		player.addComponent(input);
 		player.addComponent(collider2D);
@@ -135,7 +180,9 @@ public class TimeCapsule extends Game{
 
 	private GameObject createDoor(GameObject button) {
 		GameObject door = new GameObject("door");
-		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 3.0f));
+
+		Render render = new ColorRender(new Vector4f(1, 0, 0, 1));
+		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 2.0f));
 
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setPhysicsOnCollide((context, other) -> {
@@ -167,6 +214,7 @@ public class TimeCapsule extends Game{
 		trigger.addTriggerable(ref.triggerable);
 
 		door.addComponent(transform);
+		door.addComponent(render);
 		door.addComponent(collider2D);
 		door.addComponent(ref.triggerable);
 
