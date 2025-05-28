@@ -1,0 +1,73 @@
+package Entity;
+
+import games.temporalstudio.temporalengine.component.GameObject;
+import games.temporalstudio.temporalengine.physics.PhysicsBody;
+import games.temporalstudio.temporalengine.physics.Transform;
+import org.joml.Vector2f;
+
+public abstract class Entity extends GameObject {
+
+    protected Transform transform;
+    protected PhysicsBody physicsBody;
+    private static final float MALUSSLOWDOWN=0.5f;
+    private static final float LIMITEGAUGE=0.4f;
+
+
+    public Entity(String name, Vector2f scale){
+        super(name);
+        transform=new Transform(scale, new Vector2f());
+    }
+
+    public Entity(String name, Vector2f scale, Vector2f position) {
+        super(name);
+        transform = new Transform(scale, position);
+        this.addComponent(transform);
+        physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
+        this.addComponent(physicsBody);
+    }
+
+    public Entity(String name, Vector2f scale, Vector2f position,float mass, float maxVelocity, float minVelocity, float drag) {
+        super(name);
+        transform = new Transform(scale, position);
+        this.addComponent(transform);
+        physicsBody = new PhysicsBody(mass, maxVelocity, minVelocity, drag);
+        this.addComponent(physicsBody);
+    }
+
+    public Transform getTransform() {return transform;}
+    public PhysicsBody getPhysicsBody() {return physicsBody;}
+    public void setTransform(Transform transform) {this.transform = transform;}
+    public void setPhysicsBody(PhysicsBody physicsBody) {this.physicsBody = physicsBody;}
+
+    public void moveUp (float gauge) {
+        if (gauge <= LIMITEGAUGE) {
+            physicsBody.applyForce(new Vector2f(0.0f, 100.0f * MALUSSLOWDOWN));
+        } else this.moveUp();
+    }
+    public void moveUp(){physicsBody.applyForce(new Vector2f(0.0f, 100.0f));}
+
+    public void moveDown(float gauge){
+            if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(0.0f, 100.0f*MALUSSLOWDOWN));}
+            else this.moveDown();
+    }
+    public void moveDown(){physicsBody.applyForce(new Vector2f(0.0f, -100.0f));}
+
+    public void moveLeft (float gauge){
+    if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(-100.0f*MALUSSLOWDOWN, 0.0f));}
+        else this.moveLeft();
+    }
+    public void moveLeft(){physicsBody.applyForce(new Vector2f(-100.0f, 0.0f));}
+
+    public void moveRight (float gauge){
+        if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(100.0f*MALUSSLOWDOWN, 0.0f));}
+        else this.moveRight();
+    }
+    public void moveRight (){physicsBody.applyForce(new Vector2f(100.0f, 0.0f));}
+
+    public void jump (){
+        physicsBody.applyForce(new Vector2f(0.0f, 100.0f));
+    }
+
+
+}
+

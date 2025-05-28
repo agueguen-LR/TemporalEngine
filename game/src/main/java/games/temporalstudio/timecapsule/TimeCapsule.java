@@ -2,6 +2,8 @@ package games.temporalstudio.timecapsule;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import Entity.Enemy;
+import Entity.Player;
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.Scene;
@@ -72,7 +74,7 @@ public class TimeCapsule extends Game{
 	public Scene createFutureScenes() {
 		Scene future = new Scene("Future");
 
-		GameObject futureGameObject1 = new GameObject("FutureGameObject1");
+		/*GameObject futureGameObject1 = new GameObject("FutureGameObject1");
 		Transform transform = new Transform(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
 
 		GameObject futureGameObject2 = new GameObject("FutureGameObject2");
@@ -99,6 +101,13 @@ public class TimeCapsule extends Game{
 		futureGameObject2.addComponent(transform2);
 		futureGameObject2.addComponent(physicsBody);
 		futureGameObject2.addComponent(input);
+*/
+		Player futureGameObject1 = new Player("FutureGameObject1", new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
+		Player futureGameObject2 = new Player("FutureGameObject2",new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+		future.addGameObject(futureGameObject1);
+		future.addGameObject(futureGameObject2);
+
+		Enemy chauveSouris= new Enemy("chauvesouris", new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f),new Vector2f(0.0f, 0.0f),new Vector2f(100.0f, 100.0f));
 
 
 

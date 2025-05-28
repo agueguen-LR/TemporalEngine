@@ -1,0 +1,43 @@
+package Entity;
+
+import games.temporalstudio.temporalengine.component.GameObject;
+import games.temporalstudio.temporalengine.component.Input;
+import org.joml.Vector2f;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+
+public class Player extends Entity {
+
+    private float gauge;
+    private Input input;
+    private Inventory<GameObject> inventory;
+
+    public Player(String name, Vector2f scale, Vector2f position) {
+        super(name, scale, position);
+        gauge = 0.0f;
+        Input input = new Input();
+        this.addComponent(input);
+        inventory = new Inventory<GameObject>();
+        this.addComponent(inventory);
+
+    }
+
+    public void fedding(){
+        gauge = 1.0f;
+    }
+
+    public void dynamicMovement(){
+        input.addControl(GLFW_KEY_W, (context) -> {this.moveUp(gauge);});
+        input.addControl(GLFW_KEY_S, (context) -> {this.moveDown(gauge);});
+        input.addControl(GLFW_KEY_A, (context) -> {this.moveLeft(gauge);});
+        input.addControl(GLFW_KEY_D, (context) -> {this.moveRight(gauge);});
+        input.addControl(GLFW_KEY_UP, (context) -> {this.moveUp(gauge);});
+        input.addControl(GLFW_KEY_DOWN, (context) -> {this.moveDown(gauge);});
+        input.addControl(GLFW_KEY_LEFT, (context) -> {this.moveLeft(gauge);});
+        input.addControl(GLFW_KEY_RIGHT, (context) -> {this.moveRight(gauge);});
+        input.addControl(GLFW_KEY_SPACE, (context) -> {this.jump();});
+        input.addControl(GLFW_KEY_RIGHT_SHIFT, (context) -> {this.jump();});
+    }
+
+}
