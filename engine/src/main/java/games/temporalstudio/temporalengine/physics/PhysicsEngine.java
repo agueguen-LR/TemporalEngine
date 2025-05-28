@@ -59,8 +59,9 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		}
 	}
 
-	private void detectCollisions(GameObject gameObject) {
+	private void detectCollisions(GameObject gameObject, float deltaTime) {
 		Collider2D collider = gameObject.getComponent(Collider2D.class);
+		PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
 		if (collider == null) {
 			return; // No collider to check for collisions
 		}
@@ -70,21 +71,30 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 				continue; // Skip self-collision
 			}
 			Collider2D otherCollider = other.getComponent(Collider2D.class);
-			if (collider.collidesWith(otherCollider)) {
-				collider.setColliding(other, true);
-				collider.getPhysicsOnCollide().accept(gameObject, other);
-				otherCollider.setColliding(gameObject, true);
-				otherCollider.getPhysicsOnCollide().accept(other, gameObject);
+
+			if (collider.collidesWith(otherCollider, new Vector2f(physicsBody.getVelocity()).mul(deltaTime))){
+				Game.LOGGER.info(
+						"Collision detected between " + gameObject.getName() + " and " + other.getName()
+				);
+				collider.getOnCollide().accept(gameObject, other);
+				otherCollider.getOnCollide().accept(other, gameObject);
+			}
+
+			if (collider.intersectsWith(otherCollider)) {
+				collider.setIntersecting(other, true);
+				collider.getOnIntersects().accept(gameObject, other);
+				otherCollider.setIntersecting(gameObject, true);
+				otherCollider.getOnIntersects().accept(other, gameObject);
 			} else {
-				collider.setColliding(other, false);
-				collider.getPhysicsOnSeparate().accept(gameObject, other);
-				otherCollider.setColliding(gameObject, false);
-				otherCollider.getPhysicsOnSeparate().accept(other, gameObject);
+				collider.setIntersecting(other, false);
+				collider.getOnSeparates().accept(gameObject, other);
+				otherCollider.setIntersecting(gameObject, false);
+				otherCollider.getOnSeparates().accept(other, gameObject);
 			}
 		}
 	}
 
-	private void applyPhysicsToGameObject(GameObject gameObject, double deltaTime) {
+	private void applyPhysicsToGameObject(GameObject gameObject, float deltaTime) {
 		PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
 		Transform transform = gameObject.getComponent(Transform.class);
 		if (transform == null || physicsBody == null) {
@@ -96,11 +106,11 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 
 		applyForce(physicsBody, deltaTime);
 
-		detectCollisions(gameObject);
+		detectCollisions(gameObject, deltaTime);
 
 		if (physicsBody.getVelocity().lengthSquared() > 0) {
 			transform.setPosition(
-					transform.getPosition().add(physicsBody.getVelocity().mul((float) deltaTime))
+					transform.getPosition().add(physicsBody.getVelocity().mul(deltaTime))
 			);
 		}
 
@@ -108,7 +118,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	}
 
 	@Override
-	public void compute(LifeCycleContext context, double deltaTime) {
+	public void compute(LifeCycleContext context, float deltaTime) {
 		if (!(context instanceof Game game)){
 			Game.LOGGER.severe("PhysicsEngine compute method requires a Game context.");
 			return;
