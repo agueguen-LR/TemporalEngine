@@ -44,13 +44,9 @@ public abstract class Game extends App implements LifeCycleContext{
 	}
 
 	// GETTERS
-	public Scene getLeftScene() {
-		return leftScene;
-	}
-
-	public Scene getRightScene() {
-		return rightScene;
-	}
+	public Scene getMainMenu(){ return mainMenu; }
+	public Scene getLeftScene(){ return leftScene; }
+	public Scene getRightScene(){ return rightScene; }
 
 	// FUNCTIONS
 	@Override

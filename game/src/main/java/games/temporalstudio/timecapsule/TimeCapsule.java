@@ -11,7 +11,10 @@ import games.temporalstudio.temporalengine.component.Trigger;
 import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.physics.*;
+import games.temporalstudio.temporalengine.rendering.component.ColorRender;
+
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -24,6 +27,7 @@ public class TimeCapsule extends Game{
 		super();
 
 		setTitle(getI18n().getSentence("game.title", getVersion()));
+
 		setMainMenu(new Scene("MainMenu"));
 		setFirstLeftScene(this.createPastScenes());
 		setFirstRightScene(this.createFutureScenes());
@@ -73,10 +77,10 @@ public class TimeCapsule extends Game{
 		Scene future = new Scene("Future");
 
 		GameObject futureGameObject1 = new GameObject("FutureGameObject1");
-		Transform transform = new Transform(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
+		Transform transform = new Transform(new Vector2f(0.0f, 0.0f), new Vector2f(-1, -1));
 
 		GameObject futureGameObject2 = new GameObject("FutureGameObject2");
-		Transform transform2 = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+		Transform transform2 = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(0, 0));
 		PhysicsBody physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
 		Input input = new Input();
 		input.addControl(GLFW_KEY_W, (context) -> {
@@ -93,14 +97,19 @@ public class TimeCapsule extends Game{
 		});
 
 		futureGameObject1.addComponent(transform);
+		futureGameObject1.addComponent(new ColorRender(new Vector4f(
+			0, 1, 0, 1
+		)));
 
-		future.addGameObject(futureGameObject1);
-		future.addGameObject(futureGameObject2);
 		futureGameObject2.addComponent(transform2);
+		futureGameObject2.addComponent(new ColorRender(new Vector4f(
+			1, 0, 0, 1
+		)));
 		futureGameObject2.addComponent(physicsBody);
 		futureGameObject2.addComponent(input);
 
-
+		future.addGameObject(futureGameObject1);
+		future.addGameObject(futureGameObject2);
 
 		future.addChild(new Scene("FutureChild1"));
 		future.addChild(new Scene("FutureChild2"));
