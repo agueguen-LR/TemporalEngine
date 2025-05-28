@@ -6,7 +6,7 @@ import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.component.Player;
+import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.component.Trigger;
 import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
@@ -78,7 +78,19 @@ public class TimeCapsule extends Game{
 		GameObject futureGameObject2 = new GameObject("FutureGameObject2");
 		Transform transform2 = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
 		PhysicsBody physicsBody = new PhysicsBody(1.0f, 1.0f);
-		Player player = new Player();
+		Input input = new Input();
+		input.addControl(GLFW_KEY_W, (context) -> {
+			physicsBody.applyForce(new Vector2f(0.0f, 1.0f));
+		});
+		input.addControl(GLFW_KEY_S, (context) -> {
+			physicsBody.applyForce(new Vector2f(0.0f, -1.0f));
+		});
+		input.addControl(GLFW_KEY_A, (context) -> {
+			physicsBody.applyForce(new Vector2f(-1.0f, 0.0f));
+		});
+		input.addControl(GLFW_KEY_D, (context) -> {
+			physicsBody.applyForce(new Vector2f(1.0f, 0.0f));
+		});
 
 		futureGameObject1.addComponent(transform);
 
@@ -86,7 +98,7 @@ public class TimeCapsule extends Game{
 		future.addGameObject(futureGameObject2);
 		futureGameObject2.addComponent(transform2);
 		futureGameObject2.addComponent(physicsBody);
-		futureGameObject2.addComponent(player);
+		futureGameObject2.addComponent(input);
 
 
 
