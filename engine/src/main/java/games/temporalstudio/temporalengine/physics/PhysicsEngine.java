@@ -8,7 +8,7 @@ import org.joml.Vector2f;
 
 public class PhysicsEngine implements PhysicsEngineLifeCycle{
 
-	public void applyForce(PhysicsBody physicsBody, double deltaTime, Transform transform) {
+	public void applyForce(PhysicsBody physicsBody, double deltaTime) {
 		Vector2f force = physicsBody.getExertedForce();
 		if (force.lengthSquared() == 0) {
 			// No force to apply, return early
@@ -18,15 +18,35 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		float mass = physicsBody.getMass();
 		Vector2f velocity = physicsBody.getVelocity();
 		float maxVelocity = physicsBody.getMaxVelocity();
+		float minVelocity = physicsBody.getMinVelocity();
 		if (mass == 0) {
 			Game.LOGGER.severe("Cannot apply force to a PhysicsBody with zero mass.");
 			return;
 		}
 
 		velocity.fma((float) (deltaTime / mass), force);
+		if (velocity.lengthSquared() < minVelocity * minVelocity) {
+			physicsBody.setVelocity(0.0f, 0.0f);
+			return;
+		}
 		// Comparing squares to avoid costly square root calculation
 		if (velocity.lengthSquared() > maxVelocity * maxVelocity) {
 			velocity.normalize(maxVelocity);
+		}
+	}
+
+	public void applyDrag(PhysicsBody physicsBody, double deltaTime) {
+		Vector2f velocity = physicsBody.getVelocity();
+		float drag = physicsBody.getDrag();
+		if (drag <= 0 || velocity.lengthSquared() == 0) {
+			return; // No drag to apply or no velocity
+		}
+
+		float dragForceMagnitude = (float) (drag * deltaTime);
+		if (velocity.lengthSquared() < dragForceMagnitude * dragForceMagnitude) {
+			physicsBody.setExertedForce(0.0f, 0.0f);
+		} else {
+			physicsBody.applyForce(velocity.mul(-dragForceMagnitude / velocity.length(), new Vector2f()));
 		}
 	}
 
@@ -40,13 +60,15 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			return;
 		}
 
-		applyForce(physicsBody, deltaTime, transform);
+		applyForce(physicsBody, deltaTime);
 
 		if (physicsBody.getVelocity().lengthSquared() > 0) {
 			transform.setPosition(
 					transform.getPosition().add(physicsBody.getVelocity().mul((float) deltaTime))
 			);
 		}
+
+		applyDrag(physicsBody, deltaTime);
 	}
 
 	@Override
