@@ -62,6 +62,8 @@ project(":engine"){
 		runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
 		runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
 		implementation "org.joml:joml:${jomlVersion}"
+
+		implementation 'com.electronwill.night-config:toml:3.8.2'
 	}
 }
 
