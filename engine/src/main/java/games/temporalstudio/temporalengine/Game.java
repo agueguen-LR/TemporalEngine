@@ -29,8 +29,8 @@ public abstract class Game extends App implements LifeCycleContext{
 
 	public Game(String title){
 		this.window = new Window(this::update, title);
-		this.physicsEngine = new PhysicsEngine();
 		this.renderer = new Renderer();
+		this.physicsEngine = new PhysicsEngine();
 		LOGGER = this.getLogger();
 	}
 	public Game(){
@@ -44,13 +44,9 @@ public abstract class Game extends App implements LifeCycleContext{
 	}
 
 	// GETTERS
-	public Scene getLeftScene() {
-		return leftScene;
-	}
-
-	public Scene getRightScene() {
-		return rightScene;
-	}
+	public Scene getMainMenu(){ return mainMenu; }
+	public Scene getLeftScene(){ return leftScene; }
+	public Scene getRightScene(){ return rightScene; }
 
 	// FUNCTIONS
 	@Override
@@ -61,10 +57,9 @@ public abstract class Game extends App implements LifeCycleContext{
 		window.start(this);
 
 		physicsEngine.init(this);
-		physicsEngine.start(this);
-
 		renderer.init(this);
 
+		physicsEngine.start(this);
 		renderer.start(this);
 
 		window.run(this);
@@ -96,6 +91,9 @@ public abstract class Game extends App implements LifeCycleContext{
 				if (rightScene != null) {
 					rightScene.update(this, deltaTime);
 				}
+
+				physicsEngine.compute(this, deltaTime);
+
 				if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
 					paused = true;
 					transitioning = true;
@@ -104,7 +102,6 @@ public abstract class Game extends App implements LifeCycleContext{
 			}
 		}
 
-		physicsEngine.compute(this, deltaTime);
 		renderer.render(this);
 	}
 
