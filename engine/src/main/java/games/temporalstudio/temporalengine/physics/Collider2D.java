@@ -4,7 +4,7 @@ import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.Component;
 import games.temporalstudio.temporalengine.component.GameObject;
-import org.joml.Vector2f;
+import games.temporalstudio.temporalengine.physics.shapes.Shape;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.function.BiConsumer;
 
 
 public class Collider2D implements Component {
-	private AABB aabb;
+	private Shape shape;
 	private BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnCollide;
 	private BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnSeparate;
 	private BiConsumer<LifeCycleContext, LifeCycleContext> gameOnCollide;
@@ -25,13 +25,16 @@ public class Collider2D implements Component {
 			Game.LOGGER.severe("Collider2D cannot be created with null Transform.");
 			return;
 		}
-		this.aabb = new AABB(transform);
 		this.colliding = new HashMap<>();
 		this.physicsOnCollide = (object, other) -> {};
 		this.physicsOnSeparate = (object, other) -> {};
 		this.gameOnCollide = (object, other) -> {};
 		this.gameOnSeparate = (object, other) -> {};
 		this.enabled = true;
+	}
+
+	public void setShape(Shape shape) {
+		this.shape = shape;
 	}
 
 	public void setPhysicsOnCollide(BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnCollide) {
@@ -59,19 +62,11 @@ public class Collider2D implements Component {
 	}
 
 	public void setOffset(float x, float y) {
-		this.aabb.setOffset(x, y);
+		this.shape.setOffset(x, y);
 	}
 
 	public void setMagnitude(float x, float y) {
-		this.aabb.setMagnitude(x, y);
-	}
-
-	public Vector2f getMin() {
-		return this.aabb.getMin();
-	}
-
-	public Vector2f getMax() {
-		return this.aabb.getMax();
+		this.shape.setMagnitude(x, y);
 	}
 
 	public void enable(){
@@ -86,13 +81,12 @@ public class Collider2D implements Component {
 		return enabled;
 	}
 
-	void updateAABB() {
-		if (this.aabb == null) {
-			Game.LOGGER.severe("Collider2D updateAABB called on null AABB.");
+	void updateCollider2D() {
+		if (this.shape == null) {
+			Game.LOGGER.severe("updateCollider2D called on null shape.");
 			return;
 		}
-		this.aabb.updateMin();
-		this.aabb.updateMax();
+		this.shape.updateShape();
 	}
 
 	/**
@@ -105,10 +99,7 @@ public class Collider2D implements Component {
 			Game.LOGGER.severe("Collision2D collidesWith called with null argument.");
 			return false;
 		}
-		// if a separating axis exists, then the two AABBs do not collide
-		if (this.aabb.getMax().x < other.getMin().x || this.aabb.getMin().x > other.getMax().x)return false;
-		if (this.aabb.getMax().y < other.getMin().y || this.aabb.getMin().y > other.getMax().y)return false;
-		return true;
+		return this.shape.intersects(other.shape);
 	}
 
 	public void setColliding(LifeCycleContext context, boolean isColliding) {
