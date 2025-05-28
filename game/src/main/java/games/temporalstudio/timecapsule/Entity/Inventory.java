@@ -1,4 +1,4 @@
-package Entity;
+package games.temporalstudio.timecapsule.Entity;
 
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.Component;

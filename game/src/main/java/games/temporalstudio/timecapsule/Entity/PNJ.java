@@ -1,4 +1,4 @@
-package Entity;
+package games.temporalstudio.timecapsule.Entity;
 
 import org.joml.Vector2f;
 
@@ -7,7 +7,7 @@ public class PNJ extends Entity {
 
 
     public PNJ(String name, Vector2f scale){
-        super(name, scale);
+        super(name, scale, new Vector2f());
     }
 
     public PNJ(String name, Vector2f scale, Vector2f position){
