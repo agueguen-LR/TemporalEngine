@@ -7,39 +7,14 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import org.joml.Vector2f;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PhysicsEngine implements PhysicsEngineLifeCycle{
-	private static Set<GameObject> colliders;
+	private Set<GameObject> colliders;
 
 	public PhysicsEngine() {
-		PhysicsEngine.colliders = new HashSet<>();
-	}
-
-	public static void addCollider(GameObject gameObject) {
-		if (gameObject == null) {
-			Game.LOGGER.severe("Cannot add null GameObject as a collider.");
-			return;
-		}
-		if (!(gameObject.hasComponent(Collider2D.class))) {
-			Game.LOGGER.severe(
-					"GameObject " + gameObject.getName() + " does not have a Collider2D component, cannot add it as a collider."
-			);
-		}
-		colliders.add(gameObject);
-	}
-
-	public static void removeCollider(GameObject gameObject) {
-		if (gameObject == null) {
-			Game.LOGGER.severe("Cannot remove null GameObject from colliders.");
-			return;
-		}
-		if (!(gameObject.hasComponent(Collider2D.class))) {
-			Game.LOGGER.warning(
-					"GameObject " + gameObject.getName() + " does not have a Collider2D component, cannot remove it from colliders."
-			);
-		}
-		colliders.remove(gameObject);
+		this.colliders = new HashSet<>();
 	}
 
 	private void applyForce(PhysicsBody physicsBody, double deltaTime) {
@@ -139,13 +114,26 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			return;
 		}
 		Scene leftScene = game.getLeftScene();
-		leftScene.getGameObjects().forEach(gameObject -> {
+		Scene rightScene = game.getRightScene();
+
+		colliders = new HashSet<>(leftScene.getGOsByComponent(Collider2D.class).stream().filter(
+				gameObject -> gameObject.getComponent(Collider2D.class).isEnabled()
+		).toList());
+		List<GameObject> physicsBodies = colliders.stream().filter(
+				gameObject -> gameObject.hasComponent(PhysicsBody.class)
+		).toList();
+		physicsBodies.forEach(gameObject -> {
 			if (gameObject.hasComponent(PhysicsBody.class)){
 				applyPhysicsToGameObject(gameObject, deltaTime);
 			}
 		});
-		Scene rightScene = game.getRightScene();
-		rightScene.getGameObjects().forEach(gameObject -> {
+		colliders = new HashSet<>(rightScene.getGOsByComponent(Collider2D.class).stream().filter(
+				gameObject -> gameObject.getComponent(Collider2D.class).isEnabled()
+		).toList());
+		physicsBodies = colliders.stream().filter(
+				gameObject -> gameObject.hasComponent(PhysicsBody.class)
+		).toList();
+		physicsBodies.forEach(gameObject -> {
 			if (gameObject.hasComponent(PhysicsBody.class)){
 				applyPhysicsToGameObject(gameObject, deltaTime);
 			}
