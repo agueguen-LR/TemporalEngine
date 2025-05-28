@@ -3,6 +3,7 @@ package games.temporalstudio.temporalengine.rendering.shader;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
+import games.temporalstudio.temporalengine.App;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
@@ -69,7 +70,7 @@ public class Shader {
 					);
 
 				type = ShaderType.getByName(rawType);
-				shadersSource.put(type, new String());
+				shadersSource.put(type, "");
 			}else
 				shadersSource.put(type,
 					shadersSource.get(type).concat(l).concat("\n")
@@ -77,7 +78,7 @@ public class Shader {
 		}
 	}
     private void load(Path path){
-		Optional<InputStream> opIs = Optional.of(
+		Optional<InputStream> opIs = Optional.ofNullable(
 			ClassLoader.getSystemResourceAsStream(path.toString())
 		);
         if(opIs.isEmpty())
