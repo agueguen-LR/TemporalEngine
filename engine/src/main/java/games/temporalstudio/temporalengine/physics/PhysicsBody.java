@@ -1,6 +1,5 @@
 package games.temporalstudio.temporalengine.physics;
 
-import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.Component;
 import org.joml.Vector2f;
@@ -9,20 +8,20 @@ public class PhysicsBody implements Component {
 	private float mass;
 	private Vector2f velocity;
 	private float maxVelocity;
+	private float minVelocity;
+	private float drag;
 	private Vector2f exertedForce = new Vector2f();
 
-	public PhysicsBody(float mass, float maxVelocity) {
+	public PhysicsBody(float mass, float maxVelocity, float minVelocity, float drag) {
 		this.mass = mass;
 		this.maxVelocity = maxVelocity;
+		this.minVelocity = minVelocity;
 		this.velocity = new Vector2f();
+		this.drag = drag;
 	}
 
 	public void applyForce(Vector2f force) {
 		exertedForce.add(force);
-	}
-
-	public void resetForce() {
-		exertedForce.set(0, 0);
 	}
 
 	public float getMass() {
@@ -39,6 +38,22 @@ public class PhysicsBody implements Component {
 
 	public float getMaxVelocity() {
 		return maxVelocity;
+	}
+
+	public float getMinVelocity() {
+		return minVelocity;
+	}
+
+	public float getDrag() {
+		return drag;
+	}
+
+	public void setExertedForce(float x, float y) {
+		this.exertedForce.set(x, y);
+	}
+
+	public void setVelocity(float x, float y) {
+		this.velocity.set(x, y);
 	}
 
 	@Override
