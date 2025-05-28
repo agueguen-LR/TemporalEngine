@@ -24,6 +24,7 @@ public class TimeCapsule extends Game{
 		super();
 
 		setTitle(getI18n().getSentence("game.title", getVersion()));
+		setIcon("icon.png");
 		setMainMenu(new Scene("MainMenu"));
 		setFirstLeftScene(this.createPastScenes());
 		setFirstRightScene(this.createFutureScenes());

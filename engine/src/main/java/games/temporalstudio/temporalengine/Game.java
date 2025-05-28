@@ -10,6 +10,7 @@ import games.temporalstudio.temporalengine.physics.PhysicsEngine;
 import games.temporalstudio.temporalengine.rendering.Renderer;
 import games.temporalstudio.temporalengine.window.Window;
 
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.Version;
 
 public abstract class Game extends App implements LifeCycleContext{
@@ -27,20 +28,23 @@ public abstract class Game extends App implements LifeCycleContext{
 	private boolean transitioning = false;
 	private float transitionTime = 0.5f; // Time in seconds for transitions
 
-	public Game(String title){
-		this.window = new Window(this::update, title);
+	public Game(String title, @Nullable String iconPath){
+		this.window = new Window(this::update, title, iconPath);
 		this.physicsEngine = new PhysicsEngine();
 		this.renderer = new Renderer();
 		LOGGER = this.getLogger();
 	}
 	public Game(){
-		this(null);
+		this(null, null);
 	}
 
 
 	// SETTERS
 	public void setTitle(String title){
 		this.window.setTitle(title);
+	}
+	public void setIcon(String iconPath){
+		this.window.setIcon(iconPath);
 	}
 
 	// GETTERS
