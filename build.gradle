@@ -79,6 +79,7 @@ project(":game"){
 		implementation project(':engine')
 		implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 		implementation "org.lwjgl:lwjgl-glfw"
+		implementation "org.joml:joml:${jomlVersion}"
 	}
 
 	application{
