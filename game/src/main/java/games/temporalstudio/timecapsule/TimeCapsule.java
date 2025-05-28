@@ -11,6 +11,7 @@ import games.temporalstudio.temporalengine.component.Trigger;
 import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.physics.*;
+import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.View;
@@ -133,6 +134,7 @@ public class TimeCapsule extends Game{
 		Trigger trigger = new Trigger(1.0f , triggerActivated::get);
 
 		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setShape(new AABB(transform));
 		collider2D.setGameOnCollide((context, other) -> triggerActivated.set(true));
 		collider2D.setGameOnSeparate((context, other) -> triggerActivated.set(false));
 
@@ -151,6 +153,7 @@ public class TimeCapsule extends Game{
 		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(5.0f, 2.0f));
 		PhysicsBody physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
 		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setShape(new AABB(transform));
 
 		Input input = new Input();
 		input.addControl(GLFW_KEY_W, (context) -> {
@@ -182,6 +185,7 @@ public class TimeCapsule extends Game{
 		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 2.0f));
 
 		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setShape(new AABB(transform));
 		collider2D.setPhysicsOnCollide((context, other) -> {
 			if (!(other instanceof GameObject otherObject)) {
 				Game.LOGGER.severe("Collider2D onCollide called with non-GameObject context.");
