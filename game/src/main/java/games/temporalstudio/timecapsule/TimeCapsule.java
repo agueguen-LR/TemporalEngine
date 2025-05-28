@@ -13,6 +13,7 @@ import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.physics.*;
 import org.joml.Vector2f;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -72,12 +73,42 @@ public class TimeCapsule extends Game{
 	public Scene createFutureScenes() {
 		Scene future = new Scene("Future");
 
-		GameObject futureGameObject1 = new GameObject("FutureGameObject1");
-		Transform transform = new Transform(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
+		GameObject button = createButton();
+		GameObject player = createPlayer();
+		GameObject door = createDoor(button);
 
-		GameObject futureGameObject2 = new GameObject("FutureGameObject2");
-		Transform transform2 = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+		future.addGameObject(player);
+		future.addGameObject(button);
+		future.addGameObject(door);
+
+		return future;
+	}
+
+	private GameObject createButton() {
+		GameObject button = new GameObject("button");
+		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+
+		AtomicBoolean triggerActivated = new AtomicBoolean(false);
+		Trigger trigger = new Trigger(1.0f , triggerActivated::get);
+
+		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setGameOnCollide((context, other) -> triggerActivated.set(true));
+		collider2D.setGameOnSeparate((context, other) -> triggerActivated.set(false));
+
+		button.addComponent(transform);
+		button.addComponent(collider2D);
+		button.addComponent(trigger);
+
+		PhysicsEngine.addCollider(button);
+		return button;
+	}
+
+	private GameObject createPlayer() {
+		GameObject player = new GameObject("player");
+		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(3.0f, 3.0f));
 		PhysicsBody physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
+		Collider2D collider2D = new Collider2D(transform);
+
 		Input input = new Input();
 		input.addControl(GLFW_KEY_W, (context) -> {
 			physicsBody.applyForce(new Vector2f(0.0f, 100.0f));
@@ -92,22 +123,55 @@ public class TimeCapsule extends Game{
 			physicsBody.applyForce(new Vector2f(100.0f, 0.0f));
 		});
 
-		futureGameObject1.addComponent(transform);
+		player.addComponent(transform);
+		player.addComponent(physicsBody);
+		player.addComponent(input);
+		player.addComponent(collider2D);
 
-		future.addGameObject(futureGameObject1);
-		future.addGameObject(futureGameObject2);
-		futureGameObject2.addComponent(transform2);
-		futureGameObject2.addComponent(physicsBody);
-		futureGameObject2.addComponent(input);
+		PhysicsEngine.addCollider(player);
 
+		return player;
+	}
 
+	private GameObject createDoor(GameObject button) {
+		GameObject door = new GameObject("door");
+		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 3.0f));
 
-		future.addChild(new Scene("FutureChild1"));
-		future.addChild(new Scene("FutureChild2"));
-		future.addChild(new Scene("FutureChild3"));
-		Scene futureChild4 = new Scene("FutureChild4");
-		future.addChild(futureChild4);
-		futureChild4.addChild(new Scene("FutureChild4Child1"));
-		return future;
+		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setPhysicsOnCollide((context, other) -> {
+			if (!(other instanceof GameObject otherObject)) {
+				Game.LOGGER.severe("Collider2D onCollide called with non-GameObject context.");
+				return;
+			}
+			PhysicsBody physicsBody = otherObject.getComponent(PhysicsBody.class);
+			if (physicsBody == null) {
+				Game.LOGGER.severe("Collider2D collided with GameObject that has no PhysicsBody.");
+				return;
+			}
+			physicsBody.setVelocity(0.0f, 0.0f);
+		});
+
+		Trigger trigger = button.getComponent(Trigger.class);
+		var ref = new Object() {
+			Triggerable triggerable = null;
+		};
+		ref.triggerable = new Triggerable(context -> {
+			if (context instanceof GameObject object) {
+				PhysicsEngine.removeCollider(door);
+				trigger.removeTriggerable(ref.triggerable);
+				button.removeComponent(trigger);
+			} else {
+				Game.LOGGER.warning("Door trigger action executed with non-GameObject context.");
+			}
+		});
+		trigger.addTriggerable(ref.triggerable);
+
+		door.addComponent(transform);
+		door.addComponent(collider2D);
+		door.addComponent(ref.triggerable);
+
+		PhysicsEngine.addCollider(door);
+
+		return door;
 	}
 }
