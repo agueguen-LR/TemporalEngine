@@ -135,8 +135,8 @@ public class TimeCapsule extends Game{
 
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
-		collider2D.setGameOnCollide((context, other) -> triggerActivated.set(true));
-		collider2D.setGameOnSeparate((context, other) -> triggerActivated.set(false));
+		collider2D.setOnIntersects((context, other) -> triggerActivated.set(true));
+		collider2D.setOnSeparates((context, other) -> triggerActivated.set(false));
 
 		button.addComponent(transform);
 		button.addComponent(render);
@@ -186,7 +186,7 @@ public class TimeCapsule extends Game{
 
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
-		collider2D.setPhysicsOnCollide((context, other) -> {
+		collider2D.setOnCollides((context, other) -> {
 			if (!(other instanceof GameObject otherObject)) {
 				Game.LOGGER.severe("Collider2D onCollide called with non-GameObject context.");
 				return;
