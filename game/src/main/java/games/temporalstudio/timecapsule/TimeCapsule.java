@@ -141,7 +141,6 @@ public class TimeCapsule extends Game{
 		button.addComponent(collider2D);
 		button.addComponent(trigger);
 
-		PhysicsEngine.addCollider(button);
 		return button;
 	}
 
@@ -173,8 +172,6 @@ public class TimeCapsule extends Game{
 		player.addComponent(input);
 		player.addComponent(collider2D);
 
-		PhysicsEngine.addCollider(player);
-
 		return player;
 	}
 
@@ -204,9 +201,9 @@ public class TimeCapsule extends Game{
 		};
 		ref.triggerable = new Triggerable(context -> {
 			if (context instanceof GameObject object) {
-				PhysicsEngine.removeCollider(door);
 				trigger.removeTriggerable(ref.triggerable);
 				button.removeComponent(trigger);
+				collider2D.disable();
 			} else {
 				Game.LOGGER.warning("Door trigger action executed with non-GameObject context.");
 			}
@@ -217,8 +214,6 @@ public class TimeCapsule extends Game{
 		door.addComponent(render);
 		door.addComponent(collider2D);
 		door.addComponent(ref.triggerable);
-
-		PhysicsEngine.addCollider(door);
 
 		return door;
 	}
