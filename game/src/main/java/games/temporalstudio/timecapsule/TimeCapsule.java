@@ -115,11 +115,13 @@ public class TimeCapsule extends Game{
 		GameObject button = createButton();
 		GameObject player = createPlayer();
 		GameObject door = createDoor(button);
+		GameObject rock = createBreakableRock();
 
 		future.addGameObject(camera);
 		future.addGameObject(player);
 		future.addGameObject(button);
 		future.addGameObject(door);
+		future.addGameObject(rock);
 
 		return future;
 	}
@@ -168,6 +170,7 @@ public class TimeCapsule extends Game{
 		input.addControl(GLFW_KEY_D, (context) -> {
 			physicsBody.applyForce(new Vector2f(100.0f, 0.0f));
 		});
+		input.addControl(GLFW_KEY_Q, (context) -> {});
 
 		player.addComponent(transform);
 		player.addComponent(render);
@@ -209,5 +212,31 @@ public class TimeCapsule extends Game{
 		door.addComponent(ref.triggerable);
 
 		return door;
+	}
+
+	private GameObject createBreakableRock(){
+		GameObject rock = new GameObject("rock");
+
+		Render render = new ColorRender(new Vector4f(0.5f, 0.25f, 0.1f, 1.0f));
+		Transform transform = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(5.0f, .5f));
+		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setShape(new AABB(transform));
+		collider2D.setRigid(true);
+
+		collider2D.setOnCollides((context, other) -> {
+			if (other instanceof GameObject player && player.getName().equals("player")) {
+				if (player.getComponent(Input.class).isControlPressed(GLFW_KEY_Q)) {
+					Game.LOGGER.info("Rock broken by player!");
+					collider2D.disable();
+					rock.removeComponent(render);
+				}
+			}
+		});
+
+		rock.addComponent(transform);
+		rock.addComponent(render);
+		rock.addComponent(collider2D);
+
+		return rock;
 	}
 }
