@@ -56,4 +56,12 @@ public class AABB implements Shape {
 		if (this.max.y < otherMin.y || this.min.y > otherMax.y)return false;
 		return true;
 	}
+
+	@Override
+	public AABB cast(Vector2f translation) {
+		AABB aabb = new AABB(transform);
+		aabb.setOffset(offset.x + translation.x, offset.y + translation.y);
+		aabb.setMagnitude(magnitude.x, magnitude.y);
+		return aabb;
+	}
 }
