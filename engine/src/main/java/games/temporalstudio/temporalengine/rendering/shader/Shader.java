@@ -69,7 +69,7 @@ public class Shader {
 					);
 
 				type = ShaderType.getByName(rawType);
-				shadersSource.put(type, new String());
+				shadersSource.put(type, "");
 			}else
 				shadersSource.put(type,
 					shadersSource.get(type).concat(l).concat("\n")
@@ -77,8 +77,8 @@ public class Shader {
 		}
 	}
     private void load(Path path){
-		Optional<InputStream> opIs = Optional.of(
-			ClassLoader.getSystemResourceAsStream(path.toString())
+		Optional<InputStream> opIs = Optional.ofNullable(
+			Shader.class.getResourceAsStream(path.toString())
 		);
         if(opIs.isEmpty())
             throw new IllegalArgumentException(
