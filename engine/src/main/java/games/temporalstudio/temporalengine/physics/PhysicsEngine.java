@@ -73,19 +73,26 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			Collider2D otherCollider = other.getComponent(Collider2D.class);
 
 			if (collider.collidesWith(otherCollider, new Vector2f(physicsBody.getVelocity()).mul(deltaTime))){
-				Game.LOGGER.info(
-						"Collision detected between " + gameObject.getName() + " and " + other.getName()
-				);
+				// Perform collision response
 				collider.getOnCollide().accept(gameObject, other);
 				otherCollider.getOnCollide().accept(other, gameObject);
+
+				if (otherCollider.isRigid()){ // Block this gameObject from entering a rigid collider
+					Vector2f newVector = otherCollider.computeRigidCollisionNewVelocity(collider, physicsBody.getVelocity());
+					if (newVector.x == .0f) physicsBody.setExertedForce(0.0f, physicsBody.getExertedForce().y);
+					if (newVector.y == .0f) physicsBody.setExertedForce(physicsBody.getExertedForce().x, 0.0f);
+					physicsBody.setVelocity(newVector.x, newVector.y);
+				}
 			}
 
 			if (collider.intersectsWith(otherCollider)) {
+				// Perform intersection response
 				collider.setIntersecting(other, true);
 				collider.getOnIntersects().accept(gameObject, other);
 				otherCollider.setIntersecting(gameObject, true);
 				otherCollider.getOnIntersects().accept(other, gameObject);
 			} else {
+				// Perform separation response
 				collider.setIntersecting(other, false);
 				collider.getOnSeparates().accept(gameObject, other);
 				otherCollider.setIntersecting(gameObject, false);
@@ -137,6 +144,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 				applyPhysicsToGameObject(gameObject, deltaTime);
 			}
 		});
+
 		colliders = new HashSet<>(rightScene.getGOsByComponent(Collider2D.class).stream().filter(
 				gameObject -> gameObject.getComponent(Collider2D.class).isEnabled()
 		).toList());

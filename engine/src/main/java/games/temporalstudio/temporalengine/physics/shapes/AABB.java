@@ -19,6 +19,18 @@ public class AABB implements Shape {
 		updateShape();
 	}
 
+	private enum AABBRelation {
+		LEFT, RIGHT, UP, DOWN, OVERLAPPING
+	}
+
+	private AABBRelation getRelation(AABB a, AABB b) {
+		if (a.getMax().x < b.getMin().x) return AABBRelation.LEFT;
+		if (a.getMin().x > b.getMax().x) return AABBRelation.RIGHT;
+		if (a.getMin().y > b.getMax().y) return AABBRelation.UP;
+		if (a.getMax().y < b.getMin().y) return AABBRelation.DOWN;
+		return AABBRelation.OVERLAPPING;
+	}
+
 	public void updateShape(){
 		Vector2f position = transform.getPosition();
 		Vector2f scale = transform.getScale();
@@ -50,11 +62,8 @@ public class AABB implements Shape {
 			Game.LOGGER.severe("AABB intersects function currently only supports AABB shapes.");
 			return false;
 		}
-		Vector2f otherMin = aabb.getMin();
-		Vector2f otherMax = aabb.getMax();
-		if (this.max.x < otherMin.x || this.min.x > otherMax.x)return false;
-		if (this.max.y < otherMin.y || this.min.y > otherMax.y)return false;
-		return true;
+		AABBRelation relation = getRelation(this, aabb);
+		return relation.equals(AABBRelation.OVERLAPPING);
 	}
 
 	@Override
@@ -63,5 +72,28 @@ public class AABB implements Shape {
 		aabb.setOffset(offset.x + translation.x, offset.y + translation.y);
 		aabb.setMagnitude(magnitude.x, magnitude.y);
 		return aabb;
+	}
+
+	@Override
+	public Vector2f computeRigidCollisionNewVelocity(Shape other, Vector2f incomingVelocity) {
+		if (!(other instanceof AABB otherAABB)) {
+			Game.LOGGER.severe("AABB computeRigidCollisionResponse function currently only supports AABB shapes.");
+			return new Vector2f(0, 0);
+		}
+		switch (getRelation(this, otherAABB)) {
+			case LEFT:
+			case RIGHT:
+				return new Vector2f(0, incomingVelocity.y);
+			case UP:
+			case DOWN:
+				return new Vector2f(incomingVelocity.x, 0);
+			case OVERLAPPING:
+				Game.LOGGER.severe(
+						"Nothing should overlap a rigid Collider2D. This shape: " + this + " and " + otherAABB + " are overlapping."
+				);
+			default:
+				Game.LOGGER.severe("Unexpected AABB relation: " + getRelation(this, otherAABB));
+				return new Vector2f(0, 0);
+		}
 	}
 }

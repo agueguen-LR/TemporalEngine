@@ -8,4 +8,5 @@ public interface Shape {
 	public void setOffset(float x, float y);
 	public void setMagnitude(float x, float y);
 	public Shape cast(Vector2f translation);
+	public Vector2f computeRigidCollisionNewVelocity(Shape other, Vector2f incomingVelocity);
 }

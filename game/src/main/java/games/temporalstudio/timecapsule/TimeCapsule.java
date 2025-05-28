@@ -186,18 +186,7 @@ public class TimeCapsule extends Game{
 
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
-		collider2D.setOnCollides((context, other) -> {
-			if (!(other instanceof GameObject otherObject)) {
-				Game.LOGGER.severe("Collider2D onCollide called with non-GameObject context.");
-				return;
-			}
-			PhysicsBody physicsBody = otherObject.getComponent(PhysicsBody.class);
-			if (physicsBody == null) {
-				Game.LOGGER.severe("Collider2D collided with GameObject that has no PhysicsBody.");
-				return;
-			}
-			physicsBody.setVelocity(0.0f, 0.0f);
-		});
+		collider2D.setRigid(true);
 
 		Trigger trigger = button.getComponent(Trigger.class);
 		var ref = new Object() {

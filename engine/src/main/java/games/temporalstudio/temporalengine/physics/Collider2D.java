@@ -19,6 +19,7 @@ public class Collider2D implements Component {
 	private BiConsumer<LifeCycleContext, LifeCycleContext> onSeparates;
 	private Map<LifeCycleContext, Boolean> intersecting;
 	private boolean enabled;
+	private boolean isRigid;
 
 	public Collider2D(Transform transform) {
 		if (transform == null) {
@@ -30,6 +31,7 @@ public class Collider2D implements Component {
 		this.onIntersects = (object, other) -> {};
 		this.onSeparates = (object, other) -> {};
 		this.enabled = true;
+		this.isRigid = false;
 	}
 
 	public void setShape(Shape shape) {
@@ -48,6 +50,26 @@ public class Collider2D implements Component {
 		this.onSeparates = onSeparates;
 	}
 
+	public void setOffset(float x, float y) {
+		this.shape.setOffset(x, y);
+	}
+
+	public void setMagnitude(float x, float y) {
+		this.shape.setMagnitude(x, y);
+	}
+
+	public void setIntersecting(LifeCycleContext context, boolean isIntersecting) {
+		if (context == null) {
+			Game.LOGGER.severe("Collider2D setIntersecting called with null context.");
+			return;
+		}
+		intersecting.put(context, isIntersecting);
+	}
+
+	public void setRigid(boolean isRigid) {
+		this.isRigid = isRigid;
+	}
+
 	public BiConsumer<LifeCycleContext, LifeCycleContext> getOnIntersects() {
 		return onIntersects;
 	}
@@ -60,14 +82,6 @@ public class Collider2D implements Component {
 		return onCollide;
 	}
 
-	public void setOffset(float x, float y) {
-		this.shape.setOffset(x, y);
-	}
-
-	public void setMagnitude(float x, float y) {
-		this.shape.setMagnitude(x, y);
-	}
-
 	public void enable(){
 		this.enabled = true;
 	}
@@ -78,6 +92,10 @@ public class Collider2D implements Component {
 
 	public boolean isEnabled() {
 		return enabled;
+	}
+
+	public boolean isRigid() {
+		return isRigid;
 	}
 
 	void updateCollider2D() {
@@ -119,12 +137,12 @@ public class Collider2D implements Component {
 		return this.shape.cast(castTranslation).intersects(other.shape);
 	}
 
-	public void setIntersecting(LifeCycleContext context, boolean isIntersecting) {
-		if (context == null) {
-			Game.LOGGER.severe("Collider2D setIntersecting called with null context.");
-			return;
+	public Vector2f computeRigidCollisionNewVelocity(Collider2D other, Vector2f incomingVelocity) {
+		if (other == null || this.shape == null || other.shape == null) {
+			Game.LOGGER.severe("Collider2D computeRigidCollisionNewVelocity called with null argument.");
+			return new Vector2f(0, 0);
 		}
-		intersecting.put(context, isIntersecting);
+		return this.shape.computeRigidCollisionNewVelocity(other.shape, incomingVelocity);
 	}
 
 	@Override
