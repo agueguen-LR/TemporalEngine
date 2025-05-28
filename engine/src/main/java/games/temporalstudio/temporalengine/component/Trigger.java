@@ -13,9 +13,15 @@ public class Trigger implements Component {
 	private boolean coolingDown = false;
 	private float cooldown;
 
-	private final Supplier<Boolean> triggerCondition;
+	private Supplier<Boolean> triggerCondition;
 
 	private Set<Triggerable> triggerables;
+
+	public Trigger(float cooldown) {
+		this.cooldown = cooldown;
+		this.triggerables = new HashSet<>();
+		this.triggerCondition = () -> false;
+	}
 
 	/**
 	 * Creates a Trigger with a specified cooldown.
@@ -53,6 +59,14 @@ public class Trigger implements Component {
 		}
 	}
 
+	public void setTriggerCondition(Supplier<Boolean> triggerCondition) {
+		if (triggerCondition == null) {
+			Game.LOGGER.severe("Trigger condition cannot be set to null.");
+			return;
+		}
+		this.triggerCondition = triggerCondition;
+	}
+
 	@Override
 	public void update(LifeCycleContext context, float delta) {
 		if (coolingDown){
@@ -60,12 +74,12 @@ public class Trigger implements Component {
 				coolingDown = false;
 			}
 			cooldown -= delta;
-		} else if (triggerCondition.get()) {
-			triggered = true;
-		} else if (triggered) {
+		} if (triggered) {
 			trigger(context);
 			triggered = false;
 			coolingDown = true;
+		} else if (triggerCondition.get()) {
+			triggered = true;
 		}
 	}
 

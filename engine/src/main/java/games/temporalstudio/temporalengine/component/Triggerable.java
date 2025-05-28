@@ -23,7 +23,6 @@ public class Triggerable implements Component{
 			return;
 		}
 		if (!triggered){
-			Game.LOGGER.info("Triggerable triggered by GameObject: " + object.getName());
 			this.triggered = true;
 		} else {
 			Game.LOGGER.warning("Triggerable already triggered, ignoring.");
@@ -37,7 +36,7 @@ public class Triggerable implements Component{
 				Game.LOGGER.severe("Triggerable can only be used with GameObject context.");
 				return;
 			}
-			Game.LOGGER.info("Object " + object.getName() + " is triggered, performing action.");
+			Game.LOGGER.info("Triggerable " + object.getName() + " has been triggered, performing action.");
 			action.accept(context);
 			triggered = false;
 		}
