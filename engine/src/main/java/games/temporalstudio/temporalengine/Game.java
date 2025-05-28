@@ -32,12 +32,20 @@ public abstract class Game extends App implements LifeCycleContext{
 		this.window = new Window(this::update, title, iconPath);
 		this.physicsEngine = new PhysicsEngine();
 		this.renderer = new Renderer();
+		this.physicsEngine = new PhysicsEngine();
+
 		LOGGER = this.getLogger();
 	}
 	public Game(){
 		this(null, null);
 	}
 
+	// GETTERS
+	public Scene getMainMenu(){ return mainMenu; }
+	public Scene getLeftScene(){ return leftScene; }
+	public Scene getRightScene(){ return rightScene; }
+
+	public boolean isPaused(){ return paused; }
 
 	// SETTERS
 	public void setTitle(String title){
@@ -47,14 +55,6 @@ public abstract class Game extends App implements LifeCycleContext{
 		this.window.setIcon(iconPath);
 	}
 
-	// GETTERS
-	public Scene getLeftScene() {
-		return leftScene;
-	}
-
-	public Scene getRightScene() {
-		return rightScene;
-	}
 
 	// FUNCTIONS
 	@Override
@@ -65,10 +65,9 @@ public abstract class Game extends App implements LifeCycleContext{
 		window.start(this);
 
 		physicsEngine.init(this);
-		physicsEngine.start(this);
-
 		renderer.init(this);
 
+		physicsEngine.start(this);
 		renderer.start(this);
 
 		window.run(this);
@@ -79,37 +78,41 @@ public abstract class Game extends App implements LifeCycleContext{
 	}
 
 	public void update(float deltaTime){
-		if (deltaTime >= 0){
+		if(deltaTime >= 0){
 			if(transitioning){
 				transitionTime -= deltaTime;
-				if (transitionTime <= 0) {
+
+				if(transitionTime <= 0){
 					transitioning = false;
 					transitionTime = 0.5f; // Reset transition time
 				}
 			}else if(paused){
 				mainMenu.update(this, deltaTime);
-				if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
+
+				if(KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)){
 					paused = false;
 					transitioning = true;
 					this.getLogger().info("Transitioning to game");
 				}
 			}else{
-				if (leftScene != null) {
+				if(leftScene != null){
 					leftScene.update(this, deltaTime);
 				}
-				if (rightScene != null) {
+				if(rightScene != null){
 					rightScene.update(this, deltaTime);
 				}
-				if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
+
+				physicsEngine.compute(this, deltaTime);
+
+				if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)){
 					paused = true;
 					transitioning = true;
 					this.getLogger().info("Transitioning to main menu");
 				}
 			}
-		}
 
-		physicsEngine.compute(this, deltaTime);
-		renderer.render(this);
+			renderer.render(this);
+		}
 	}
 
 	public void changeLeftScene(String name){

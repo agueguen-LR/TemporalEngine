@@ -6,9 +6,43 @@ import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import org.joml.Vector2f;
 
-public class PhysicsEngine implements PhysicsEngineLifeCycle{
+import java.util.HashSet;
+import java.util.Set;
 
-	public void applyForce(PhysicsBody physicsBody, double deltaTime) {
+public class PhysicsEngine implements PhysicsEngineLifeCycle{
+	private static Set<GameObject> colliders;
+
+	public PhysicsEngine() {
+		PhysicsEngine.colliders = new HashSet<>();
+	}
+
+	public static void addCollider(GameObject gameObject) {
+		if (gameObject == null) {
+			Game.LOGGER.severe("Cannot add null GameObject as a collider.");
+			return;
+		}
+		if (!(gameObject.hasComponent(Collider2D.class))) {
+			Game.LOGGER.severe(
+					"GameObject " + gameObject.getName() + " does not have a Collider2D component, cannot add it as a collider."
+			);
+		}
+		colliders.add(gameObject);
+	}
+
+	public static void removeCollider(GameObject gameObject) {
+		if (gameObject == null) {
+			Game.LOGGER.severe("Cannot remove null GameObject from colliders.");
+			return;
+		}
+		if (!(gameObject.hasComponent(Collider2D.class))) {
+			Game.LOGGER.warning(
+					"GameObject " + gameObject.getName() + " does not have a Collider2D component, cannot remove it from colliders."
+			);
+		}
+		colliders.remove(gameObject);
+	}
+
+	private void applyForce(PhysicsBody physicsBody, double deltaTime) {
 		Vector2f force = physicsBody.getExertedForce();
 		if (force.lengthSquared() == 0) {
 			// No force to apply, return early
@@ -35,7 +69,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		}
 	}
 
-	public void applyDrag(PhysicsBody physicsBody, double deltaTime) {
+	private void applyDrag(PhysicsBody physicsBody, double deltaTime) {
 		Vector2f velocity = physicsBody.getVelocity();
 		float drag = physicsBody.getDrag();
 		if (drag <= 0 || velocity.lengthSquared() == 0) {
@@ -50,6 +84,31 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		}
 	}
 
+	private void detectCollisions(GameObject gameObject) {
+		Collider2D collider = gameObject.getComponent(Collider2D.class);
+		if (collider == null) {
+			return; // No collider to check for collisions
+		}
+		collider.updateAABB();
+		for (GameObject other : colliders) {
+			if (other.equals(gameObject)) {
+				continue; // Skip self-collision
+			}
+			Collider2D otherCollider = other.getComponent(Collider2D.class);
+			if (collider.collidesWith(otherCollider)) {
+				collider.setColliding(other, true);
+				collider.getPhysicsOnCollide().accept(gameObject, other);
+				otherCollider.setColliding(gameObject, true);
+				otherCollider.getPhysicsOnCollide().accept(other, gameObject);
+			} else {
+				collider.setColliding(other, false);
+				collider.getPhysicsOnSeparate().accept(gameObject, other);
+				otherCollider.setColliding(gameObject, false);
+				otherCollider.getPhysicsOnSeparate().accept(other, gameObject);
+			}
+		}
+	}
+
 	private void applyPhysicsToGameObject(GameObject gameObject, double deltaTime) {
 		PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
 		Transform transform = gameObject.getComponent(Transform.class);
@@ -61,6 +120,8 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		}
 
 		applyForce(physicsBody, deltaTime);
+
+		detectCollisions(gameObject);
 
 		if (physicsBody.getVelocity().lengthSquared() > 0) {
 			transform.setPosition(
