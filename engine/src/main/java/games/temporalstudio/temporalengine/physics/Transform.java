@@ -9,15 +9,17 @@ public class Transform implements Component{
 	private Vector2f position;
 	private Vector2f scale;
 
-	public Transform(Vector2f scale, Vector2f position) {
+	public Transform(Vector2f scale, Vector2f position){
 		this.scale = scale;
 		this.position = position;
+	}
+	public Transform(){
+		this(new Vector2f(), new Vector2f());
 	}
 
 	// GETTERS
 	public Vector2f getPosition(){ return position; }
 	public Vector2f getScale(){ return scale; }
-
 
 	// SETTERS
 	public void setPosition(Vector2f position){

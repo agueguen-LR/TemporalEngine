@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL30C.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.joml.Vector2f;
@@ -22,6 +23,7 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.View;
 
 public class RenderBatch implements RenderLifeCycle{
 
@@ -36,13 +38,18 @@ public class RenderBatch implements RenderLifeCycle{
     private static final int POS_OFFSET = 0;
     private static final int COLOR_OFFSET = POS_OFFSET + POS_SIZE*Float.BYTES;
 
+	private static final String PROJECTION_UNIFORM_NAME = "uProjection";
+	private static final String VIEW_UNIFORM_NAME = "uView";
+
+	private final Renderer renderer;
 	private final int size;
 	private FloatBuffer vertices = null;
 	private IntBuffer indices = null;
 
 	private int vao, vbo, ebo;
 
-	public RenderBatch(int size){
+	public RenderBatch(Renderer renderer, int size){
+		this.renderer = renderer;
 		this.size = size;
 	}
 
@@ -186,10 +193,30 @@ public class RenderBatch implements RenderLifeCycle{
 			return;
 		}
 
+		// Handles camera
+		Set<GameObject> cameras = scene.getGOsByComponent(
+			View.class
+		);
+		if(cameras.size() != 1){
+			Game.LOGGER.severe(
+				"Not any or too many cameras; Not rendering anything."
+			);
+			return;
+		}
+
+		View view = cameras.stream().findFirst().get().getComponent(
+			View.class
+		);
+		renderer.getShader().uploadMatrix4f(
+			PROJECTION_UNIFORM_NAME, view.getProjection()
+		);
+		renderer.getShader().uploadMatrix4f(VIEW_UNIFORM_NAME, view.getView());
+
+		// Updates VBO
 		AtomicInteger aInt = new AtomicInteger(0);
-		boolean shouldBeUpdated = scene.getGameObjects().stream()
-			.filter(go -> go.hasComponent(Render.class))
-			.reduce(false,
+		boolean shouldBeUpdated = scene.getGOsByComponent(
+				Render.class
+			).stream().reduce(false,
 				(updated, go) -> updateVerticesAt(aInt.getAndIncrement(), go),
 				(a, b) -> a || b
 			);
@@ -197,6 +224,7 @@ public class RenderBatch implements RenderLifeCycle{
 		if(shouldBeUpdated)
 			glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.rewind());
 
+		// Draws
 		glDrawElements(GL_TRIANGLES,
 			aInt.get()*SHAPE_PER_OBJECT*SHAPE_SIZE,
 			GL_UNSIGNED_INT, 0

@@ -1,44 +1,52 @@
 package games.temporalstudio.temporalengine;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import games.temporalstudio.temporalengine.component.Component;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.UpdateLifeCycle;
 
 public class Scene implements UpdateLifeCycle, LifeCycleContext{
 
 	private String name;
-
 	private Scene parent;
-	private HashMap<String, Scene> children;
+	private Map<String, Scene> children = new HashMap<>();
 
-	private Set<GameObject> gameObjects;
+	private Set<GameObject> gameObjects = new HashSet<>();
 
-	public Scene(String name) {
+	public Scene(String name){
 		this.name = name;
-		this.children = new HashMap<>();
-		this.gameObjects = new HashSet<>();
 	}
 
-	public String getName() {
-		return name;
+	// GETTERS
+	public String getName(){ return name; }
+	public Scene getParent(){ return parent; }
+	public Scene getChild(String name){
+		return children.get(name);
 	}
 
-	public Scene getParent() {
-		return parent;
+	public Set<GameObject> getGameObjects(){
+		return Collections.unmodifiableSet(gameObjects);
+	}
+	public Set<GameObject> getGOsByComponent(
+		Class<? extends Component> componentClass
+	){
+		return new HashSet<>(getGameObjects().stream()
+			.filter(go -> go.hasComponent(componentClass))
+			.toList()
+		);
 	}
 
-	public void addChild(Scene child) {
-		if (child != null) {
+	// SETTERS
+	public void addChild(Scene child){
+		if(child != null){
 			child.parent = this;
 			children.put(child.getName(), child);
 		}
-	}
-
-	public Scene getChild(String name) {
-		return children.get(name);
 	}
 
 	public GameObject addGameObject(GameObject gameObject) {
@@ -46,40 +54,27 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 		return gameObject;
 	}
 
-	public Set<GameObject> getGameObjects() {
-		return gameObjects;
-	}
-
+	// LIFECYLE FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){
 		if(!(context instanceof Game game)) return;
 		game.getLogger().info("Initializing scene: " + name);
-		if (gameObjects != null) {
-			gameObjects.forEach(o -> o.init(this));
-		}
 
+		gameObjects.forEach(o -> o.init(this));
 	}
-
 	@Override
 	public void start(LifeCycleContext context){
 		if(!(context instanceof Game game)) return;
 		game.getLogger().info("Starting scene: " + name);
-		if (gameObjects != null) {
-			gameObjects.forEach(o -> o.start(this));
-		}
-	}
 
+		gameObjects.forEach(o -> o.start(this));
+	}
 	@Override
 	public void update(LifeCycleContext context, float delta){
-		if (gameObjects != null) {
-			gameObjects.forEach(o -> o.update(this, delta));
-		}
+		gameObjects.forEach(o -> o.update(this, delta));
 	}
-
 	@Override
 	public void destroy(LifeCycleContext context){
-		if (gameObjects != null) {
-			gameObjects.forEach(o -> o.destroy(this));
-		}
+		gameObjects.forEach(o -> o.destroy(this));
 	}
 }
