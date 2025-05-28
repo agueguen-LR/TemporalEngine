@@ -64,7 +64,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		if (collider == null) {
 			return; // No collider to check for collisions
 		}
-		collider.updateAABB();
+		collider.updateCollider2D();
 		for (GameObject other : colliders) {
 			if (other.equals(gameObject)) {
 				continue; // Skip self-collision
