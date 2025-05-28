@@ -86,17 +86,11 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			}
 
 			if (collider.intersectsWith(otherCollider)) {
-				// Perform intersection response
-				collider.setIntersecting(other, true);
-				collider.getOnIntersects().accept(gameObject, other);
-				otherCollider.setIntersecting(gameObject, true);
-				otherCollider.getOnIntersects().accept(other, gameObject);
+				collider.addIntersecting(other);
+				otherCollider.addIntersecting(gameObject);
 			} else {
-				// Perform separation response
-				collider.setIntersecting(other, false);
-				collider.getOnSeparates().accept(gameObject, other);
-				otherCollider.setIntersecting(gameObject, false);
-				otherCollider.getOnSeparates().accept(other, gameObject);
+				collider.removeIntersecting(other);
+				otherCollider.removeIntersecting(gameObject);
 			}
 		}
 	}

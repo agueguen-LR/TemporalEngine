@@ -138,7 +138,6 @@ public class TimeCapsule extends Game{
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
 		collider2D.setOnIntersects((context, other) -> triggerActivated.set(true));
-		collider2D.setOnSeparates((context, other) -> triggerActivated.set(false));
 
 		button.addComponent(transform);
 		button.addComponent(render);
@@ -223,7 +222,7 @@ public class TimeCapsule extends Game{
 		collider2D.setShape(new AABB(transform));
 		collider2D.setRigid(true);
 
-		collider2D.setOnCollides((context, other) -> {
+		collider2D.setOnCollide((context, other) -> {
 			if (other instanceof GameObject player && player.getName().equals("player")) {
 				if (player.getComponent(Input.class).isControlPressed(GLFW_KEY_Q)) {
 					Game.LOGGER.info("Rock broken by player!");

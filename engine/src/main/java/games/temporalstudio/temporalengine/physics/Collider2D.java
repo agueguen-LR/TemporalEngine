@@ -7,17 +7,15 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.shapes.Shape;
 import org.joml.Vector2f;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiConsumer;
-
 
 public class Collider2D implements Component {
 	private Shape shape;
 	private BiConsumer<LifeCycleContext, LifeCycleContext> onCollide;
 	private BiConsumer<LifeCycleContext, LifeCycleContext> onIntersects;
-	private BiConsumer<LifeCycleContext, LifeCycleContext> onSeparates;
-	private Map<LifeCycleContext, Boolean> intersecting;
+	private Set<LifeCycleContext> intersecting;
 	private boolean enabled;
 	private boolean isRigid;
 
@@ -26,10 +24,9 @@ public class Collider2D implements Component {
 			Game.LOGGER.severe("Collider2D cannot be created with null Transform.");
 			return;
 		}
-		this.intersecting = new HashMap<>();
+		this.intersecting = new HashSet<>();
 		this.onCollide = (object, other) -> {};
 		this.onIntersects = (object, other) -> {};
-		this.onSeparates = (object, other) -> {};
 		this.enabled = true;
 		this.isRigid = false;
 	}
@@ -38,16 +35,12 @@ public class Collider2D implements Component {
 		this.shape = shape;
 	}
 
-	public void setOnCollides(BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnCollide) {
-		this.onCollide = physicsOnCollide;
+	public void setOnCollide(BiConsumer<LifeCycleContext, LifeCycleContext> onCollide) {
+		this.onCollide = onCollide;
 	}
 
-	public void setOnIntersects(BiConsumer<LifeCycleContext, LifeCycleContext>gameOnCollide) {
-		this.onIntersects = gameOnCollide;
-	}
-
-	public void setOnSeparates(BiConsumer<LifeCycleContext, LifeCycleContext> onSeparates) {
-		this.onSeparates = onSeparates;
+	public void setOnIntersects(BiConsumer<LifeCycleContext, LifeCycleContext> onIntersects) {
+		this.onIntersects =  onIntersects;
 	}
 
 	public void setOffset(float x, float y) {
@@ -58,12 +51,12 @@ public class Collider2D implements Component {
 		this.shape.setMagnitude(x, y);
 	}
 
-	public void setIntersecting(LifeCycleContext context, boolean isIntersecting) {
-		if (context == null) {
-			Game.LOGGER.severe("Collider2D setIntersecting called with null context.");
-			return;
-		}
-		intersecting.put(context, isIntersecting);
+	public void addIntersecting(LifeCycleContext context) {
+		intersecting.add(context);
+	}
+
+	public void removeIntersecting(LifeCycleContext context) {
+		intersecting.remove(context);
 	}
 
 	public void setRigid(boolean isRigid) {
@@ -72,10 +65,6 @@ public class Collider2D implements Component {
 
 	public BiConsumer<LifeCycleContext, LifeCycleContext> getOnIntersects() {
 		return onIntersects;
-	}
-
-	public BiConsumer<LifeCycleContext, LifeCycleContext> getOnSeparates() {
-		return onSeparates;
 	}
 
 	BiConsumer<LifeCycleContext, LifeCycleContext> getOnCollide() {
@@ -159,13 +148,7 @@ public class Collider2D implements Component {
 			Game.LOGGER.severe("Collider2D requires a Transform component.");
 			return;
 		}
-		intersecting.forEach((otherContext, isColliding) -> {
-			if (isColliding) {
-				onIntersects.accept(context, otherContext);
-			} else {
-				onSeparates.accept(context, otherContext);
-			}
-		});
+		intersecting.forEach(otherContext -> onIntersects.accept(context, otherContext));
 	}
 
 	@Override
