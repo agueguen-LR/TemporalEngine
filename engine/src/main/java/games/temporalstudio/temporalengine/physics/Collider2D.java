@@ -18,6 +18,7 @@ public class Collider2D implements Component {
 	private BiConsumer<LifeCycleContext, LifeCycleContext> gameOnCollide;
 	private BiConsumer<LifeCycleContext, LifeCycleContext> gameOnSeparate;
 	private Map<LifeCycleContext, Boolean> colliding;
+	private boolean enabled;
 
 	public Collider2D(Transform transform) {
 		if (transform == null) {
@@ -30,6 +31,7 @@ public class Collider2D implements Component {
 		this.physicsOnSeparate = (object, other) -> {};
 		this.gameOnCollide = (object, other) -> {};
 		this.gameOnSeparate = (object, other) -> {};
+		this.enabled = true;
 	}
 
 	public void setPhysicsOnCollide(BiConsumer<LifeCycleContext, LifeCycleContext> physicsOnCollide) {
@@ -72,6 +74,18 @@ public class Collider2D implements Component {
 		return this.aabb.getMax();
 	}
 
+	public void enable(){
+		this.enabled = true;
+	}
+
+	public void disable(){
+		this.enabled = false;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
 	void updateAABB() {
 		if (this.aabb == null) {
 			Game.LOGGER.severe("Collider2D updateAABB called on null AABB.");
@@ -107,6 +121,9 @@ public class Collider2D implements Component {
 
 	@Override
 	public void update(LifeCycleContext context, float delta) {
+		if (!enabled) {
+			return; // Skip update if collider is disabled
+		}
 		if (!(context instanceof GameObject gameObject)) {
 			Game.LOGGER.severe("Collider2D can only be used with GameObject context.");
 			return;
