@@ -21,9 +21,9 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 	private static Shader shader;
 
 	public Renderer(){
-		mainMenuBatches.add(new RenderBatch(MAX_BATCH_SIZE));
-		leftSceneBatches.add(new RenderBatch(MAX_BATCH_SIZE));
-		rightSceneBatches.add(new RenderBatch(MAX_BATCH_SIZE));
+		mainMenuBatches.add(new RenderBatch(this, MAX_BATCH_SIZE));
+		leftSceneBatches.add(new RenderBatch(this, MAX_BATCH_SIZE));
+		rightSceneBatches.add(new RenderBatch(this, MAX_BATCH_SIZE));
 	}
 
 	// GETTERS
@@ -77,9 +77,12 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 
 		shader.use();
 
-		mainMenuBatches.forEach(b -> b.render(game.getMainMenu()));
-		leftSceneBatches.forEach(b -> b.render(game.getLeftScene()));
-		rightSceneBatches.forEach(b -> b.render(game.getRightScene()));
+		if(game.isPaused())
+			mainMenuBatches.forEach(b -> b.render(game.getMainMenu()));
+		else{
+			leftSceneBatches.forEach(b -> b.render(game.getLeftScene()));
+			rightSceneBatches.forEach(b -> b.render(game.getRightScene()));
+		}
 
 		shader.detach();
 	}
