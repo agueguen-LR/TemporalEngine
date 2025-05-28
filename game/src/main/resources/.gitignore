@@ -1,0 +1,2 @@
+# To make sure the game works on Windows, copy the shaders folder from the engine project to this folder
+shaders/

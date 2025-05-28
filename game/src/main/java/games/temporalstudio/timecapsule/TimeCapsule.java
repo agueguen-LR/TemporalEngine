@@ -74,34 +74,6 @@ public class TimeCapsule extends Game{
 	public Scene createFutureScenes() {
 		Scene future = new Scene("Future");
 
-		/*GameObject futureGameObject1 = new GameObject("FutureGameObject1");
-		Transform transform = new Transform(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
-
-		GameObject futureGameObject2 = new GameObject("FutureGameObject2");
-		Transform transform2 = new Transform(new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
-		PhysicsBody physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
-		Input input = new Input();
-		input.addControl(GLFW_KEY_W, (context) -> {
-			physicsBody.applyForce(new Vector2f(0.0f, 100.0f));
-		});
-		input.addControl(GLFW_KEY_S, (context) -> {
-			physicsBody.applyForce(new Vector2f(0.0f, -100.0f));
-		});
-		input.addControl(GLFW_KEY_A, (context) -> {
-			physicsBody.applyForce(new Vector2f(-100.0f, 0.0f));
-		});
-		input.addControl(GLFW_KEY_D, (context) -> {
-			physicsBody.applyForce(new Vector2f(100.0f, 0.0f));
-		});
-
-		futureGameObject1.addComponent(transform);
-
-		future.addGameObject(futureGameObject1);
-		future.addGameObject(futureGameObject2);
-		futureGameObject2.addComponent(transform2);
-		futureGameObject2.addComponent(physicsBody);
-		futureGameObject2.addComponent(input);
-*/
 		Player futureGameObject1 = new Player("FutureGameObject1", new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
 		Player futureGameObject2 = new Player("FutureGameObject2",new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
 		future.addGameObject(futureGameObject1);

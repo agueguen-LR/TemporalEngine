@@ -1,20 +1,30 @@
 package games.temporalstudio.temporalengine.rendering.component;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.LifeCycleContext;
 
-public final class ColorRender implements Render, Colored{
+public final class ColorRender implements Render{
 
-	private Vector4f color;
-	
+	private List<Vector4f> colors = new ArrayList<>();
+
 	public ColorRender(Vector4f color){
-		this.color = color;
+		for(int i = 0; i < 4; i++)
+			this.colors.add(color);
+	}
+	public ColorRender(Collection<Vector4f> colors){
+		if(colors.size() != 4)
+			throw new IllegalArgumentException("Invalid color count;");
+
+		this.colors.addAll(colors);
 	}
 
 	// GETTERS
-	@Override
-	public Vector4f getColor(){ return color; }
+	public List<Vector4f> getColors(){ return colors; }
 
 	// LIFECYCLE FUNCTIONS
 	@Override

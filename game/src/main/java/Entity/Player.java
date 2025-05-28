@@ -16,9 +16,11 @@ public class Player extends Entity {
     public Player(String name, Vector2f scale, Vector2f position) {
         super(name, scale, position);
         gauge = 0.0f;
-        Input input = new Input();
+        input = new Input();
+        this.dynamicMovement();
         this.addComponent(input);
         inventory = new Inventory<GameObject>();
+
         this.addComponent(inventory);
 
     }
@@ -28,7 +30,7 @@ public class Player extends Entity {
     }
 
     public void dynamicMovement(){
-        input.addControl(GLFW_KEY_W, (context) -> {this.moveUp(gauge);});
+        this.input.addControl(GLFW_KEY_W, (context) -> {this.moveUp(gauge);});
         input.addControl(GLFW_KEY_S, (context) -> {this.moveDown(gauge);});
         input.addControl(GLFW_KEY_A, (context) -> {this.moveLeft(gauge);});
         input.addControl(GLFW_KEY_D, (context) -> {this.moveRight(gauge);});
