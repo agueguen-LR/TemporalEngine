@@ -79,7 +79,7 @@ public class Shader {
 	}
     private void load(Path path){
 		Optional<InputStream> opIs = Optional.ofNullable(
-			ClassLoader.getSystemResourceAsStream(path.toString())
+			Shader.class.getResourceAsStream(path.toString())
 		);
         if(opIs.isEmpty())
             throw new IllegalArgumentException(
