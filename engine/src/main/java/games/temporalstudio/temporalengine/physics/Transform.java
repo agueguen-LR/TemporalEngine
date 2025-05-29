@@ -12,8 +12,8 @@ public class Transform implements Component{
 	private Vector2f scale;
 
 	public Transform(Vector2f position, Vector2f scale){
-		this.scale = scale;
 		this.position = position;
+		this.scale = scale;
 	}
 	public Transform(Vector2f position){
 		this(position, new Vector2f(DEFAULT_SCALE));

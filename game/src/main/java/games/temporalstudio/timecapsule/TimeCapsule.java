@@ -45,10 +45,8 @@ public class TimeCapsule extends Game{
 		Scene mainMenu = new Scene("MainMenu");
 
 		GameObject camera = new GameObject("camera");
-		camera.addComponent(new Transform(
-			new Vector2f(6.4f, 3.6f), new Vector2f(0, 0)
-		));
-		camera.addComponent(new View());
+		camera.addComponent(new Transform());
+		camera.addComponent(new View(.1f));
 		mainMenu.addGameObject(camera);
 
 		return mainMenu;
@@ -59,19 +57,19 @@ public class TimeCapsule extends Game{
 		// Game objects
 		GameObject camera = new GameObject("PastCamera");
 
-		GameObject player = createPlayer();
+		GameObject player = createPlayer(new int[]{
+			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT
+		});
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
 		// Components
-		camera.addComponent(new Transform(
-			new Vector2f(6.4f, 3.6f), new Vector2f(0, 0)
-		));
-		camera.addComponent(new View());
-		
+		camera.addComponent(new Transform());
+		camera.addComponent(new View(.1f));
+
 		compulsiveMerger.addComponent(new Transform(new Vector2f(1, 2)));
 		compulsiveMerger.addComponent(new ColorRender(List.of(
 			new Vector4f(1, .6f, 0, 1),
-			new Vector4f(.75f, .1f, .1f, 1),
+			new Vector4f(.75f, .45f, .15f, 1),
 			new Vector4f(1, .6f, 0, 1),
 			new Vector4f(1, .6f, 0, 1)
 		)));
@@ -87,13 +85,13 @@ public class TimeCapsule extends Game{
 		Scene future = new Scene("Future");
 
 		GameObject camera = new GameObject("camera");
-		camera.addComponent(new Transform(
-			new Vector2f(6.4f, 3.6f), new Vector2f(0, 0)
-		));
-		camera.addComponent(new View());
+		camera.addComponent(new Transform());
+		camera.addComponent(new View(.1f));
 
 		GameObject button = createButton();
-		GameObject player = createPlayer();
+		GameObject player = createPlayer(new int[]{
+			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D
+		});
 		GameObject door = createDoor(button);
 
 		future.addGameObject(camera);
@@ -129,7 +127,7 @@ public class TimeCapsule extends Game{
 		PhysicsEngine.addCollider(button);
 		return button;
 	}
-	private GameObject createPlayer(){
+	private GameObject createPlayer(int[] keys){
 		GameObject player = new GameObject("player");
 
 		Render render = new ColorRender(new Vector4f(0, 0, 1, 1));
@@ -140,16 +138,16 @@ public class TimeCapsule extends Game{
 		Collider2D collider2D = new Collider2D(transform);
 
 		Input input = new Input();
-		input.addControl(GLFW_KEY_W, (context) -> {
+		input.addControl(keys[0], (context) -> {
 			physicsBody.applyForce(new Vector2f(0.0f, 100.0f));
 		});
-		input.addControl(GLFW_KEY_S, (context) -> {
+		input.addControl(keys[1], (context) -> {
 			physicsBody.applyForce(new Vector2f(0.0f, -100.0f));
 		});
-		input.addControl(GLFW_KEY_A, (context) -> {
+		input.addControl(keys[2], (context) -> {
 			physicsBody.applyForce(new Vector2f(-100.0f, 0.0f));
 		});
-		input.addControl(GLFW_KEY_D, (context) -> {
+		input.addControl(keys[3], (context) -> {
 			physicsBody.applyForce(new Vector2f(100.0f, 0.0f));
 		});
 
