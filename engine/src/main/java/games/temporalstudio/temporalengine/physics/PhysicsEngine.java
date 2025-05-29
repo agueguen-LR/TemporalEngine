@@ -128,9 +128,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		Scene leftScene = game.getLeftScene();
 		Scene rightScene = game.getRightScene();
 
-		colliders = new HashSet<>(leftScene.getGOsByComponent(Collider2D.class).stream().filter(
-				gameObject -> gameObject.getComponent(Collider2D.class).isEnabled()
-		).toList());
+		colliders = new HashSet<>(leftScene.getGOsByComponent(Collider2D.class));
 		List<GameObject> physicsBodies = colliders.stream().filter(
 				gameObject -> gameObject.hasComponent(PhysicsBody.class)
 		).toList();
@@ -140,9 +138,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			}
 		});
 
-		colliders = new HashSet<>(rightScene.getGOsByComponent(Collider2D.class).stream().filter(
-				gameObject -> gameObject.getComponent(Collider2D.class).isEnabled()
-		).toList());
+		colliders = new HashSet<>(rightScene.getGOsByComponent(Collider2D.class));
 		physicsBodies = colliders.stream().filter(
 				gameObject -> gameObject.hasComponent(PhysicsBody.class)
 		).toList();

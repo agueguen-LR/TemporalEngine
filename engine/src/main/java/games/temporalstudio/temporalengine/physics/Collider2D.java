@@ -17,7 +17,6 @@ public class Collider2D implements Component {
 	private BiConsumer<LifeCycleContext, LifeCycleContext> onIntersects;
 	private Set<LifeCycleContext> intersecting;
 	private Set<LifeCycleContext> colliding;
-	private boolean enabled;
 	private boolean isRigid;
 
 	public Collider2D(Transform transform) {
@@ -29,7 +28,6 @@ public class Collider2D implements Component {
 		this.colliding = new HashSet<>();
 		this.onCollide = (object, other) -> {};
 		this.onIntersects = (object, other) -> {};
-		this.enabled = true;
 		this.isRigid = false;
 	}
 
@@ -79,18 +77,6 @@ public class Collider2D implements Component {
 
 	BiConsumer<LifeCycleContext, LifeCycleContext> getOnCollide() {
 		return onCollide;
-	}
-
-	public void enable(){
-		this.enabled = true;
-	}
-
-	public void disable(){
-		this.enabled = false;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
 	}
 
 	public boolean isRigid() {
@@ -146,9 +132,6 @@ public class Collider2D implements Component {
 
 	@Override
 	public void update(LifeCycleContext context, float delta) {
-		if (!enabled) {
-			return; // Skip update if collider is disabled
-		}
 		if (!(context instanceof GameObject gameObject)) {
 			Game.LOGGER.severe("Collider2D can only be used with GameObject context.");
 			return;
