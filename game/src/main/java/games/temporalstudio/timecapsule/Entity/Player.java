@@ -3,6 +3,8 @@ package games.temporalstudio.timecapsule.Entity;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
+
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -13,21 +15,27 @@ public class Player extends Entity {
     private Input input;
     private Inventory<GameObject> inventory;
 
-    public Player(String name, Vector2f position) {
-        super(name, position, new Vector2f());
+    public Player(String name, Vector2f position, int[] keyCodes, Vector4f color) {
+        super(name, position, new Vector2f(), color);
+        if (keyCodes.length !=5){
+            throw new IllegalArgumentException("keyCodes.length must be 5");
+        }
         gauge=0.0f;
         input=new Input();
-        this.keyControllDefinition();
+        this.keyControllDefinition(keyCodes);
         inventory= new Inventory<>();
         this.addComponent(input);
         this.addComponent(inventory);
     }
 
-    public Player(String name, Vector2f scale, Vector2f position) {
-        super(name, scale, position);
+    public Player(String name, Vector2f scale, Vector2f position, int[] keyCodes, Vector4f color) {
+        super(name, scale, position, color);
+        if (keyCodes.length !=5){
+            throw new IllegalArgumentException("keyCodes.length must be 5");
+        }
         gauge = 0.0f;
         input = new Input();
-        this.keyControllDefinition();
+        this.keyControllDefinition(keyCodes);
         inventory = new Inventory<>();
         this.addComponent(input);
         this.addComponent(inventory);
@@ -37,17 +45,23 @@ public class Player extends Entity {
         gauge = 1.0f;
     }
 
-    public void keyControllDefinition(){
-        this.input.addControl(GLFW_KEY_W, (context) -> {this.moveUp(gauge);});
-        input.addControl(GLFW_KEY_S, (context) -> {this.moveDown(gauge);});
-        input.addControl(GLFW_KEY_A, (context) -> {this.moveLeft(gauge);});
-        input.addControl(GLFW_KEY_D, (context) -> {this.moveRight(gauge);});
-        input.addControl(GLFW_KEY_SPACE, (context) -> {this.jump();});
-        /*input.addControl(GLFW_KEY_UP, (context) -> {this.moveUp(gauge);});
-        input.addControl(GLFW_KEY_DOWN, (context) -> {this.moveDown(gauge);});
-        input.addControl(GLFW_KEY_LEFT, (context) -> {this.moveLeft(gauge);});
-        input.addControl(GLFW_KEY_RIGHT, (context) -> {this.moveRight(gauge);});
-        input.addControl(GLFW_KEY_RIGHT_SHIFT, (context) -> {this.jump();});*/
+    public void keyControllDefinition(int[] keyCodes) {
+        input.addControl(keyCodes[0], (context) -> {
+            this.moveUp(gauge);
+        });
+        input.addControl(keyCodes[1], (context) -> {
+            this.moveDown(gauge);
+        });
+        input.addControl(keyCodes[2], (context) -> {
+            this.moveLeft(gauge);
+        });
+        input.addControl(keyCodes[3], (context) -> {
+            this.moveRight(gauge);
+        });
+        input.addControl(keyCodes[4], (context) -> {
+            this.jump();
+        });
+
     }
 
 }

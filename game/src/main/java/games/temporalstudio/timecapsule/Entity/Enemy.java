@@ -1,14 +1,15 @@
 package games.temporalstudio.timecapsule.Entity;
 
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 public class Enemy extends PNJ {
 
     private Vector2f[] loopPoints;
     private int direction;
 
-    public Enemy(String name, Vector2f scale, Vector2f position, Vector2f[] coords) {
-        super(name, scale, position);
+    public Enemy(String name, Vector2f scale, Vector2f position, Vector4f color, Vector2f[] coords) {
+        super(name, scale, position, color);
         if(coords.length < 2){
             System.out.println("Not enough coordinates !");
         }

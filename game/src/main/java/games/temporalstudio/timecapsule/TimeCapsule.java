@@ -16,6 +16,7 @@ import games.temporalstudio.temporalengine.physics.*;
 import games.temporalstudio.temporalengine.rendering.component.View;
 
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -110,12 +111,20 @@ public class TimeCapsule extends Game{
 		camera.addComponent(new View());
 		future.addGameObject(camera);
 
-		Player futureGameObject1 = new Player("FutureGameObject1",new Vector2f(0.0f, 0.0f));
-		Player futureGameObject2 = new Player("FutureGameObject2",new Vector2f(1.0f, 1.0f));
+
+
+		Player futureGameObject1 = new Player("FutureGameObject1",new Vector2f(0.0f, 0.0f),
+			new int[]{GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,GLFW_KEY_SPACE},
+			new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+		Player futureGameObject2 = new Player("FutureGameObject2",new Vector2f(1.0f, 1.0f),
+				new int[]{GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,GLFW_KEY_LEFT_SHIFT},
+				new Vector4f(1.0f, 1.0f, 0.1f, 1.0f)
+		);
 
 		Vector2f[] coords={new Vector2f(), new Vector2f(100.0f, 100.0f)};
 		Enemy chauveSouris= new Enemy("chauvesouris",
-				new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f),coords);
+				new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f),
+				new Vector4f(0.5f,0.5f,0.5f,0.5f),coords);
 
 
 		future.addGameObject(futureGameObject1);
