@@ -13,6 +13,7 @@ public class PhysicsBody implements Component {
 	private float maxVelocity;
 	private float minVelocity;
 	private float drag;
+	private float fluidDensity;
 	private Set<Vector2f> appliedForces;
 
 	public PhysicsBody(float mass, float maxVelocity, float minVelocity, float drag) {
@@ -21,6 +22,7 @@ public class PhysicsBody implements Component {
 		this.minVelocity = minVelocity;
 		this.velocity = new Vector2f();
 		this.drag = drag;
+		this.fluidDensity = 1.0f; // Default to 1.0 for air density
 		this.appliedForces = new HashSet<>();
 	}
 
@@ -56,12 +58,21 @@ public class PhysicsBody implements Component {
 		return drag;
 	}
 
+	float getFluidDensity() {
+		return fluidDensity;
+	}
+
 	public void emptyAppliedForces() {
 		appliedForces.clear();
 	}
 
-	public void setVelocity(float x, float y) {
-		this.velocity.set(x, y);
+	public void addVelocity(Vector2f velocity) {
+		this.velocity.add(velocity);
+		if (velocity.lengthSquared() < minVelocity * minVelocity) {
+			velocity.set(0, 0);
+		} else if (velocity.lengthSquared() > maxVelocity * maxVelocity) {
+			velocity.normalize(maxVelocity);
+		}
 	}
 
 	@Override
