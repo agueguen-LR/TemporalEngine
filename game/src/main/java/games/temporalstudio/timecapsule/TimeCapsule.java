@@ -198,7 +198,7 @@ public class TimeCapsule extends Game{
 			if (context instanceof GameObject object) {
 				trigger.removeTriggerable(ref.triggerable);
 				button.removeComponent(trigger);
-				collider2D.disable();
+				object.removeComponent(collider2D);
 			} else {
 				Game.LOGGER.warning("Door trigger action executed with non-GameObject context.");
 			}
@@ -224,10 +224,14 @@ public class TimeCapsule extends Game{
 
 		collider2D.setOnCollide((context, other) -> {
 			if (other instanceof GameObject player && player.getName().equals("player")) {
+				if (!(context instanceof GameObject rockObject)) {
+					Game.LOGGER.severe("Collider2D onCollide called with non-GameObject context.");
+					return;
+				}
 				if (player.getComponent(Input.class).isControlPressed(GLFW_KEY_Q)) {
 					Game.LOGGER.info("Rock broken by player!");
-					collider2D.disable();
-					rock.removeComponent(render);
+					rockObject.removeComponent(collider2D);
+					rockObject.removeComponent(render);
 				}
 			}
 		});

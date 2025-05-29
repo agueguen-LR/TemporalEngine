@@ -18,8 +18,8 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	}
 
 	private void applyForce(PhysicsBody physicsBody, double deltaTime) {
-		Vector2f force = physicsBody.getAppliedForces().stream().reduce(new Vector2f(), Vector2f::add);
-		if (force.lengthSquared() == 0) {
+		Vector2f sumOfForces = physicsBody.getAppliedForces().stream().reduce(new Vector2f(), Vector2f::add);
+		if (sumOfForces.lengthSquared() == 0.0f) {
 			// No force to apply, return early
 			return;
 		}
@@ -33,7 +33,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			return;
 		}
 
-		velocity.fma((float) (deltaTime / mass), force);
+		velocity.fma((float) (deltaTime / mass), sumOfForces);
 		if (velocity.lengthSquared() < minVelocity * minVelocity) {
 			physicsBody.setVelocity(0.0f, 0.0f);
 			return;
@@ -72,13 +72,16 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 
 			if (collider.collidesWith(otherCollider, new Vector2f(physicsBody.getVelocity()).mul(deltaTime))){
 				// Perform collision response
-				collider.getOnCollide().accept(gameObject, other);
-				otherCollider.getOnCollide().accept(other, gameObject);
+				collider.addColliding(other);
+				otherCollider.addColliding(gameObject);
 
 				if (otherCollider.isRigid()){ // Block this gameObject from entering a rigid collider
 					Vector2f newVector = otherCollider.computeRigidCollisionNewVelocity(collider, physicsBody.getVelocity());
 					physicsBody.setVelocity(newVector.x, newVector.y);
 				}
+			} else {
+				collider.removeColliding(other);
+				otherCollider.removeColliding(gameObject);
 			}
 
 			if (collider.intersectsWith(otherCollider)) {

@@ -11,6 +11,11 @@ public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 	private String name;
 	private Set<Component> components = new HashSet<>();
 
+	private boolean duringRuntime = false;
+	private Set<Component> runtimeComponents;
+	private Set<Component> componentsToRemove = new HashSet<>();
+	private Set<Component> componentsToAdd = new HashSet<>();
+
 	public GameObject(String name){
 		this.name = name;
 	}
@@ -40,17 +45,25 @@ public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 	public boolean addComponent(Component component){
 		if(component == null)
 			throw new IllegalArgumentException();
-
+		if (duringRuntime) {
+			componentsToAdd.add(component);
+		}
 		return components.add(component);
 	}
 	public <T extends Component> Collection<T> removeAllComponents(
 		Class<T> componentClass
 	){
 		Collection<T> comps = getComponents(componentClass);
+		if (duringRuntime) {
+			componentsToRemove.addAll(comps);
+		}
 		components.removeAll(comps);
 		return comps;
 	}
 	public boolean removeComponent(Component component){
+		if (duringRuntime) {
+			componentsToRemove.add(component);
+		}
 		return components.remove(component);
 	}
 
@@ -65,13 +78,20 @@ public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 	public void start(LifeCycleContext context){
 		if (components != null){
 		components.forEach(c -> c.start(this));
+		this.runtimeComponents = new HashSet<>(this.components);
+		this.duringRuntime = true;
 		}
 	}
 	@Override
 	public void update(LifeCycleContext context, float delta){
 		if (components != null) {
-			components.forEach(c -> c.update(this, delta));
+			runtimeComponents.forEach(c -> c.update(this, delta));
+			runtimeComponents.removeAll(componentsToRemove);
+			componentsToRemove.clear();
+			runtimeComponents.addAll(componentsToAdd);
+			componentsToAdd.clear();
 		}
+
 	}
 	@Override
 	public void destroy(LifeCycleContext context){

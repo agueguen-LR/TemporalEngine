@@ -16,6 +16,7 @@ public class Collider2D implements Component {
 	private BiConsumer<LifeCycleContext, LifeCycleContext> onCollide;
 	private BiConsumer<LifeCycleContext, LifeCycleContext> onIntersects;
 	private Set<LifeCycleContext> intersecting;
+	private Set<LifeCycleContext> colliding;
 	private boolean enabled;
 	private boolean isRigid;
 
@@ -25,6 +26,7 @@ public class Collider2D implements Component {
 			return;
 		}
 		this.intersecting = new HashSet<>();
+		this.colliding = new HashSet<>();
 		this.onCollide = (object, other) -> {};
 		this.onIntersects = (object, other) -> {};
 		this.enabled = true;
@@ -57,6 +59,14 @@ public class Collider2D implements Component {
 
 	public void removeIntersecting(LifeCycleContext context) {
 		intersecting.remove(context);
+	}
+
+	public void addColliding(LifeCycleContext context) {
+		colliding.add(context);
+	}
+
+	public void removeColliding(LifeCycleContext context) {
+		colliding.remove(context);
 	}
 
 	public void setRigid(boolean isRigid) {
@@ -149,6 +159,9 @@ public class Collider2D implements Component {
 			return;
 		}
 		intersecting.forEach(otherContext -> onIntersects.accept(context, otherContext));
+		intersecting.clear();
+		colliding.forEach(otherContext -> onCollide.accept(context, otherContext));
+		colliding.clear();
 	}
 
 	@Override
