@@ -18,7 +18,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	}
 
 	private void applyForce(PhysicsBody physicsBody, double deltaTime) {
-		Vector2f force = physicsBody.getExertedForce();
+		Vector2f force = physicsBody.getAppliedForces().stream().reduce(new Vector2f(), Vector2f::add);
 		if (force.lengthSquared() == 0) {
 			// No force to apply, return early
 			return;
@@ -52,9 +52,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		}
 
 		float dragForceMagnitude = (float) (drag * deltaTime);
-		if (velocity.lengthSquared() < dragForceMagnitude * dragForceMagnitude) {
-			physicsBody.setExertedForce(0.0f, 0.0f);
-		} else {
+		if (velocity.lengthSquared() > dragForceMagnitude * dragForceMagnitude) {
 			physicsBody.applyForce(velocity.mul(-dragForceMagnitude / velocity.length(), new Vector2f()));
 		}
 	}
@@ -79,8 +77,6 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 
 				if (otherCollider.isRigid()){ // Block this gameObject from entering a rigid collider
 					Vector2f newVector = otherCollider.computeRigidCollisionNewVelocity(collider, physicsBody.getVelocity());
-					if (newVector.x == .0f) physicsBody.setExertedForce(0.0f, physicsBody.getExertedForce().y);
-					if (newVector.y == .0f) physicsBody.setExertedForce(physicsBody.getExertedForce().x, 0.0f);
 					physicsBody.setVelocity(newVector.x, newVector.y);
 				}
 			}
@@ -114,6 +110,8 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 					transform.getPosition().add(physicsBody.getVelocity().mul(deltaTime))
 			);
 		}
+
+		physicsBody.emptyAppliedForces();
 
 		applyDrag(physicsBody, deltaTime);
 	}
