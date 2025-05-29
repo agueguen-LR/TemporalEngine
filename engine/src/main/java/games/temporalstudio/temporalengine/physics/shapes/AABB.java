@@ -46,6 +46,10 @@ public class AABB implements Shape {
 		return max;
 	}
 
+	public float getArea() {
+		return (max.x - min.x) * (max.y - min.y);
+	}
+
 	public void setOffset(float x, float y) {
 		this.offset = new Vector2f(x, y);
 		updateShape();
@@ -75,25 +79,17 @@ public class AABB implements Shape {
 	}
 
 	@Override
-	public Vector2f computeRigidCollisionNewVelocity(Shape other, Vector2f incomingVelocity) {
+	public Vector2f collisionNormal(Shape other) {
 		if (!(other instanceof AABB otherAABB)) {
-			Game.LOGGER.severe("AABB computeRigidCollisionResponse function currently only supports AABB shapes.");
+			Game.LOGGER.severe("AABB collisionNormal function currently only supports AABB shapes.");
 			return new Vector2f(0, 0);
 		}
-		switch (getRelation(this, otherAABB)) {
-			case LEFT:
-			case RIGHT:
-				return new Vector2f(0, incomingVelocity.y);
-			case UP:
-			case DOWN:
-				return new Vector2f(incomingVelocity.x, 0);
-			case OVERLAPPING:
-				Game.LOGGER.severe(
-						"Nothing should overlap a rigid Collider2D. This shape: " + this + " and " + otherAABB + " are overlapping."
-				);
-			default:
-				Game.LOGGER.severe("Unexpected AABB relation: " + getRelation(this, otherAABB));
-				return new Vector2f(0, 0);
-		}
+		return switch (getRelation(this, otherAABB)) {
+			case LEFT -> new Vector2f(-1, 0);
+			case RIGHT -> new Vector2f(1, 0);
+			case UP -> new Vector2f(0, -1);
+			case DOWN -> new Vector2f(0, 1);
+			default -> new Vector2f(0, 0);
+		};
 	}
 }
