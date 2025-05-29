@@ -33,6 +33,9 @@ public class Transform implements Component{
 	public void setScale(Vector2f scale){
 		this.scale = scale;
 	}
+	public void move(Vector2f translation){
+		this.position.add(translation);
+	}
 
 	// LIFECYCLE FUNCTIONS
 	@Override
