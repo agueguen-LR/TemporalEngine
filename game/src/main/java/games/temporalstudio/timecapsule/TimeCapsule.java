@@ -10,8 +10,8 @@ import games.temporalstudio.temporalengine.component.Trigger;
 import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
-import games.temporalstudio.temporalengine.physics.PhysicsEngine;
 import games.temporalstudio.temporalengine.physics.Transform;
+import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.View;
@@ -58,7 +58,8 @@ public class TimeCapsule extends Game{
 		GameObject camera = new GameObject("PastCamera");
 
 		GameObject player = createPlayer(new int[]{
-			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT
+			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
+			GLFW_KEY_Q
 		});
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
@@ -90,14 +91,17 @@ public class TimeCapsule extends Game{
 
 		GameObject button = createButton();
 		GameObject player = createPlayer(new int[]{
-			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D
+			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
+			GLFW_KEY_SLASH
 		});
 		GameObject door = createDoor(button);
+		GameObject rock = createBreakableRock();
 
 		future.addGameObject(camera);
 		future.addGameObject(player);
 		future.addGameObject(button);
 		future.addGameObject(door);
+		future.addGameObject(rock);
 
 		return future;
 	}
@@ -109,14 +113,12 @@ public class TimeCapsule extends Game{
 		Transform transform = new Transform(new Vector2f(1f, .5f));
 
 		AtomicBoolean triggerActivated = new AtomicBoolean(false);
-		Trigger trigger = new Trigger(1.0f , triggerActivated::get);
+		Trigger trigger = new Trigger(1 , triggerActivated::get);
 
 		Collider2D collider2D = new Collider2D(transform);
-		collider2D.setGameOnCollide(
+		collider2D.setShape(new AABB(transform));
+		collider2D.setOnIntersects(
 			(context, other) -> triggerActivated.set(true)
-		);
-		collider2D.setGameOnSeparate(
-			(context, other) -> triggerActivated.set(false)
 		);
 
 		button.addComponent(transform);
@@ -124,32 +126,33 @@ public class TimeCapsule extends Game{
 		button.addComponent(collider2D);
 		button.addComponent(trigger);
 
-		PhysicsEngine.addCollider(button);
 		return button;
 	}
 	private GameObject createPlayer(int[] keys){
 		GameObject player = new GameObject("player");
 
 		Render render = new ColorRender(new Vector4f(0, 0, 1, 1));
-		Transform transform = new Transform(new Vector2f(5.0f, 2.0f));
+		Transform transform = new Transform(new Vector2f(5, 2));
 		PhysicsBody physicsBody = new PhysicsBody(
-			1.0f, 1.0f, 0.1f, 1.0f
+			1, 1, .1f, 1
 		);
 		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setShape(new AABB(transform));
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
-			physicsBody.applyForce(new Vector2f(0.0f, 100.0f));
+			physicsBody.applyForce(new Vector2f(0, 100));
 		});
 		input.addControl(keys[1], (context) -> {
-			physicsBody.applyForce(new Vector2f(0.0f, -100.0f));
+			physicsBody.applyForce(new Vector2f(0, -100));
 		});
 		input.addControl(keys[2], (context) -> {
-			physicsBody.applyForce(new Vector2f(-100.0f, 0.0f));
+			physicsBody.applyForce(new Vector2f(-100, 0));
 		});
 		input.addControl(keys[3], (context) -> {
-			physicsBody.applyForce(new Vector2f(100.0f, 0.0f));
+			physicsBody.applyForce(new Vector2f(100, 0));
 		});
+		input.addControl(keys[4], (context) -> {});
 
 		player.addComponent(transform);
 		player.addComponent(render);
@@ -157,36 +160,17 @@ public class TimeCapsule extends Game{
 		player.addComponent(input);
 		player.addComponent(collider2D);
 
-		PhysicsEngine.addCollider(player);
-
 		return player;
 	}
 	private GameObject createDoor(GameObject button){
 		GameObject door = new GameObject("door");
 
 		Render render = new ColorRender(new Vector4f(1, 0, 0, 1));
-		Transform transform = new Transform(new Vector2f(1.0f, 2.0f));
+		Transform transform = new Transform(new Vector2f(1, 2));
 
 		Collider2D collider2D = new Collider2D(transform);
-		collider2D.setPhysicsOnCollide((context, other) -> {
-			if (!(other instanceof GameObject otherObject)) {
-				Game.LOGGER.severe(
-					"Collider2D onCollide called with non-GameObject context."
-				);
-				return;
-			}
-
-			PhysicsBody physicsBody = otherObject.getComponent(
-				PhysicsBody.class
-			);
-			if (physicsBody == null){
-				Game.LOGGER.severe(
-					"Collider2D collided with GameObject that has no PhysicsBody."
-				);
-				return;
-			}
-			physicsBody.setVelocity(0.0f, 0.0f);
-		});
+		collider2D.setShape(new AABB(transform));
+		collider2D.setRigid(true);
 
 		Trigger trigger = button.getComponent(Trigger.class);
 		var ref = new Object() {
@@ -194,9 +178,9 @@ public class TimeCapsule extends Game{
 		};
 		ref.triggerable = new Triggerable(context -> {
 			if(context instanceof GameObject){
-				PhysicsEngine.removeCollider(door);
 				trigger.removeTriggerable(ref.triggerable);
 				button.removeComponent(trigger);
+				collider2D.disable();
 			}else
 				Game.LOGGER.warning(
 					"Door trigger action executed with non-GameObject context."
@@ -209,8 +193,34 @@ public class TimeCapsule extends Game{
 		door.addComponent(collider2D);
 		door.addComponent(ref.triggerable);
 
-		PhysicsEngine.addCollider(door);
-
 		return door;
+	}
+	private GameObject createBreakableRock(){
+		GameObject rock = new GameObject("rock");
+
+		Render render = new ColorRender(
+			new Vector4f(.5f, .25f, .1f, 1)
+		);
+		Transform transform = new Transform(new Vector2f(5, .5f));
+		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setShape(new AABB(transform));
+		collider2D.setRigid(true);
+		collider2D.setOnCollide((context, other) -> {
+			if(other instanceof GameObject player
+				&& player.getName().equals("player")
+				&& player.getComponent(Input.class)
+					.isControlPressed(GLFW_KEY_SLASH)
+			){
+				Game.LOGGER.info("Rock broken by player!");
+				collider2D.disable();
+				rock.removeComponent(render);
+			}
+		});
+
+		rock.addComponent(transform);
+		rock.addComponent(render);
+		rock.addComponent(collider2D);
+
+		return rock;
 	}
 }
