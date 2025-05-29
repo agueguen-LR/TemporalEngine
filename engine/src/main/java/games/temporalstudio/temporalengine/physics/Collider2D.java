@@ -18,6 +18,11 @@ public class Collider2D implements Component {
 	private Set<LifeCycleContext> intersecting;
 	private Set<LifeCycleContext> colliding;
 	private boolean isRigid;
+	/**
+	 * The coefficient of restitution for this collider, which determines how bouncy it is.
+	 * Only relevant if isRigid is true, or if the gameObject also has a PhysicsBody component.
+	 */
+	private float restitution;
 
 	public Collider2D(Transform transform) {
 		if (transform == null) {
@@ -29,6 +34,7 @@ public class Collider2D implements Component {
 		this.onCollide = (object, other) -> {};
 		this.onIntersects = (object, other) -> {};
 		this.isRigid = false;
+		this.restitution = 0.0f; // Default to no bounce
 	}
 
 	public void setShape(Shape shape) {
@@ -51,6 +57,20 @@ public class Collider2D implements Component {
 		this.shape.setMagnitude(x, y);
 	}
 
+	public void setRigid(boolean isRigid) {
+		this.isRigid = isRigid;
+	}
+
+	/**
+	 * Sets the restitution (bounciness) of the collider2D.
+	 * Only relevant if isRigid is true, or if the gameObject also has a PhysicsBody component.
+	 * @param restitution the restitution value to set
+	 */
+	public void setRestitution(float restitution) {
+		this.restitution = restitution;
+	}
+
+
 	public void addIntersecting(LifeCycleContext context) {
 		intersecting.add(context);
 	}
@@ -67,16 +87,28 @@ public class Collider2D implements Component {
 		colliding.remove(context);
 	}
 
-	public void setRigid(boolean isRigid) {
-		this.isRigid = isRigid;
+	public float getArea() {
+		return this.shape.getArea();
+	}
+
+	public float getRestitution() {
+		return restitution;
 	}
 
 	public BiConsumer<LifeCycleContext, LifeCycleContext> getOnIntersects() {
 		return onIntersects;
 	}
 
-	BiConsumer<LifeCycleContext, LifeCycleContext> getOnCollide() {
+	public BiConsumer<LifeCycleContext, LifeCycleContext> getOnCollide() {
 		return onCollide;
+	}
+
+	public Vector2f getCollisionNormal(Collider2D other) {
+		if (other == null || this.shape == null || other.shape == null) {
+			Game.LOGGER.severe("Collider2D getCollisionNormal called with null argument.");
+			return new Vector2f(0, 0);
+		}
+		return this.shape.collisionNormal(other.shape);
 	}
 
 	public boolean isRigid() {
@@ -120,14 +152,6 @@ public class Collider2D implements Component {
 			return false;
 		}
 		return this.shape.cast(castTranslation).intersects(other.shape);
-	}
-
-	public Vector2f computeRigidCollisionNewVelocity(Collider2D other, Vector2f incomingVelocity) {
-		if (other == null || this.shape == null || other.shape == null) {
-			Game.LOGGER.severe("Collider2D computeRigidCollisionNewVelocity called with null argument.");
-			return new Vector2f(0, 0);
-		}
-		return this.shape.computeRigidCollisionNewVelocity(other.shape, incomingVelocity);
 	}
 
 	@Override
