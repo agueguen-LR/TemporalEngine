@@ -58,7 +58,8 @@ public class TimeCapsule extends Game{
 		GameObject camera = new GameObject("PastCamera");
 
 		GameObject player = createPlayer(new int[]{
-			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D
+			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
+			GLFW_KEY_A
 		});
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
@@ -90,7 +91,8 @@ public class TimeCapsule extends Game{
 
 		GameObject button = createButton();
 		GameObject player = createPlayer(new int[]{
-			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT
+			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
+			GLFW_KEY_SLASH
 		});
 		GameObject door = createDoor(button);
 		GameObject rock = createBreakableRock(GLFW_KEY_SLASH);
@@ -150,6 +152,7 @@ public class TimeCapsule extends Game{
 		input.addControl(keys[3], (context) -> {
 			physicsBody.applyForce(new Vector2f(100, 0));
 		});
+		input.addControl(keys[4], (context) -> {});
 
 		player.addComponent(transform);
 		player.addComponent(render);
