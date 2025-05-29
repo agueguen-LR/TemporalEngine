@@ -95,7 +95,7 @@ public class TimeCapsule extends Game{
 			GLFW_KEY_SLASH
 		});
 		GameObject door = createDoor(button);
-		GameObject rock = createBreakableRock(GLFW_KEY_SLASH);
+		GameObject rock = createBreakableRock(GLFW_KEY_SLASH, future);
 
 		future.addGameObject(camera);
 		future.addGameObject(player);
@@ -195,7 +195,7 @@ public class TimeCapsule extends Game{
 
 		return door;
 	}
-	private GameObject createBreakableRock(int key){
+	private GameObject createBreakableRock(int key, Scene scene){
 		GameObject rock = new GameObject("rock");
 
 		Render render = new ColorRender(
@@ -212,8 +212,8 @@ public class TimeCapsule extends Game{
 							&& player.getComponent(Input.class).isControlPressed(key)
 					) {
 						Game.LOGGER.info("Rock broken by player!");
-						rockObject.removeComponent(collider2D);
-						rockObject.removeComponent(render);
+						scene.removeGameObject(rockObject);
+						rockObject.destroy(scene);
 					}
 		});
 
