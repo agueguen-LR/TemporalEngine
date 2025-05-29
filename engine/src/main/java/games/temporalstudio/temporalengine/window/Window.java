@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11C.*;
 
 import java.util.function.Consumer;
 
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
@@ -47,6 +48,16 @@ public class Window implements WindowLifeCycle{
 	// GETTERS
 	public static boolean hasInstance(){ return instance != null; }
 
+	public Vector2i getSize(){
+		int[] width = new int[1];
+		int[] height = new int[1];
+
+		glfwGetWindowSize(id, width, height);
+
+		return new Vector2i(width[0], height[0]);
+	}
+
+	// SETTERS
 	public void setTitle(String title){
 		if(!hasInstance())
 			throw new RuntimeException();

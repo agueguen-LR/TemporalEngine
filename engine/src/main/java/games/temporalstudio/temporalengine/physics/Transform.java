@@ -6,15 +6,20 @@ import org.joml.Vector2f;
 
 public class Transform implements Component{
 
+	private static final Vector2f DEFAULT_SCALE = new Vector2f(1, 1);
+
 	private Vector2f position;
 	private Vector2f scale;
 
-	public Transform(Vector2f scale, Vector2f position){
-		this.scale = scale;
+	public Transform(Vector2f position, Vector2f scale){
 		this.position = position;
+		this.scale = scale;
+	}
+	public Transform(Vector2f position){
+		this(position, new Vector2f(DEFAULT_SCALE));
 	}
 	public Transform(){
-		this(new Vector2f(), new Vector2f());
+		this(new Vector2f(), new Vector2f(DEFAULT_SCALE));
 	}
 
 	// GETTERS

@@ -5,6 +5,8 @@ import static org.lwjgl.opengl.GL11C.*;
 import java.util.ArrayList;
 import java.util.SequencedCollection;
 
+import org.joml.Vector2i;
+
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.rendering.shader.Shader;
@@ -74,13 +76,18 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 			);
 			return;
 		}
+		Vector2i winSize = game.getWindowInfo().getSize();
 
 		shader.use();
 
-		if(game.isPaused())
+		if(game.isPaused()){
+			glViewport(0, 0, winSize.x(), winSize.y());
 			mainMenuBatches.forEach(b -> b.render(game.getMainMenu()));
-		else{
+		}else{
+			glViewport(0, 0, winSize.x()/2, winSize.y());
 			leftSceneBatches.forEach(b -> b.render(game.getLeftScene()));
+
+			glViewport(winSize.x()/2, 0, winSize.x()/2, winSize.y());
 			rightSceneBatches.forEach(b -> b.render(game.getRightScene()));
 		}
 
