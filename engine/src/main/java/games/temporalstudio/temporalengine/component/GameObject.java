@@ -71,13 +71,12 @@ public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 		if (componentsToAdd != null){
 			componentsToAdd.forEach(c -> c.init(this));
 		}
-		components = new HashSet<>();
 	}
 	@Override
 	public void start(LifeCycleContext context){
 		if (componentsToAdd != null){
 		componentsToAdd.forEach(c -> c.start(this));
-		components.addAll(componentsToAdd);
+		components = new HashSet<>(componentsToAdd);
 		componentsToAdd.clear();
 		}
 	}
