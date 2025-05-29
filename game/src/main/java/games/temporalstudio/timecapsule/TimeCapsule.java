@@ -124,7 +124,7 @@ public class TimeCapsule extends Game{
 		Vector2f[] coords={new Vector2f(), new Vector2f(100.0f, 100.0f)};
 		Enemy chauveSouris= new Enemy("chauvesouris",
 				new Vector2f(1.0f, 1.0f), new Vector2f(1.0f, 1.0f),
-				new Vector4f(0.5f,0.5f,0.5f,0.5f),coords);
+				new Vector4f(1.0f,1.0f,0.0f,0f),coords);
 
 
 		future.addGameObject(futureGameObject1);
