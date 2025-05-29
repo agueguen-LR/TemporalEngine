@@ -58,8 +58,7 @@ public class TimeCapsule extends Game{
 		GameObject camera = new GameObject("PastCamera");
 
 		GameObject player = createPlayer(new int[]{
-			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
-			GLFW_KEY_Q
+			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D
 		});
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
@@ -91,11 +90,10 @@ public class TimeCapsule extends Game{
 
 		GameObject button = createButton();
 		GameObject player = createPlayer(new int[]{
-			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
-			GLFW_KEY_SLASH
+			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT
 		});
 		GameObject door = createDoor(button);
-		GameObject rock = createBreakableRock();
+		GameObject rock = createBreakableRock(GLFW_KEY_SLASH);
 
 		future.addGameObject(camera);
 		future.addGameObject(player);
@@ -152,7 +150,6 @@ public class TimeCapsule extends Game{
 		input.addControl(keys[3], (context) -> {
 			physicsBody.applyForce(new Vector2f(100, 0));
 		});
-		input.addControl(keys[4], (context) -> {});
 
 		player.addComponent(transform);
 		player.addComponent(render);
@@ -195,7 +192,7 @@ public class TimeCapsule extends Game{
 
 		return door;
 	}
-	private GameObject createBreakableRock(){
+	private GameObject createBreakableRock(int key){
 		GameObject rock = new GameObject("rock");
 
 		Render render = new ColorRender(
@@ -209,7 +206,7 @@ public class TimeCapsule extends Game{
 			if(other instanceof GameObject player
 				&& player.getName().equals("player")
 				&& player.getComponent(Input.class)
-					.isControlPressed(GLFW_KEY_SLASH)
+					.isControlPressed(key)
 			){
 				Game.LOGGER.info("Rock broken by player!");
 				collider2D.disable();
