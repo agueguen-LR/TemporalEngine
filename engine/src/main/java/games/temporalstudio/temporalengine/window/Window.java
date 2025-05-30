@@ -138,7 +138,13 @@ public class Window implements WindowLifeCycle{
 				"Unable to create the GLFW window;"
 			);
 
-		loadIcon();
+		if(!glfwPlatformSupported(glfwGetPlatform())){
+			loadIcon();
+		}else
+			game.getLogger().warning(
+				"Current platform %s isn't supported by GLFW; Some features may not be available."
+					.formatted(Platform.getByID(glfwGetPlatform()))
+			);
 	}
 	@Override
 	public void start(LifeCycleContext context){
