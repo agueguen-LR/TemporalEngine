@@ -37,6 +37,20 @@ public class Collider2D implements Component {
 		this.restitution = 0.0f; // Default to no bounce
 	}
 
+	public Collider2D(Collider2D toCopy) {
+		if (toCopy == null) {
+			Game.LOGGER.severe("Collider2D cannot be created from null Collider2D.");
+			return;
+		}
+		this.shape = toCopy.shape.copy();
+		this.onCollide = (object, other) -> {};
+		this.onIntersects = (object, other) -> {};
+		this.intersecting = new HashSet<>(toCopy.intersecting);
+		this.colliding = new HashSet<>(toCopy.colliding);
+		this.isRigid = toCopy.isRigid;
+		this.restitution = toCopy.restitution;
+	}
+
 	public void setShape(Shape shape) {
 		this.shape = shape;
 	}
@@ -49,12 +63,12 @@ public class Collider2D implements Component {
 		this.onIntersects =  onIntersects;
 	}
 
-	public void setOffset(float x, float y) {
-		this.shape.setOffset(x, y);
+	public void setOffset(Vector2f offset) {
+		this.shape.setOffset(offset);
 	}
 
-	public void setMagnitude(float x, float y) {
-		this.shape.setMagnitude(x, y);
+	public void setMagnitude(Vector2f magnitude) {
+		this.shape.setMagnitude(magnitude);
 	}
 
 	public void setRigid(boolean isRigid) {
@@ -134,24 +148,6 @@ public class Collider2D implements Component {
 			return false;
 		}
 		return this.shape.intersects(other.shape);
-	}
-
-	/**
-	 * Checks if this collision box intersects with another collision box after casting it by a translation vector.
-	 * @param other The other Collision2D object to check for collision against.
-	 * @param castTranslation The translation vector to cast this collider by before checking for collision.
-	 * @return true if the two collision boxes overlap after casting, false otherwise.
-	 */
-	public boolean collidesWith(Collider2D other, Vector2f castTranslation) {
-		if (other == null) {
-			Game.LOGGER.severe("Collider2D collidesWith called with null argument.");
-			return false;
-		}
-		if (this.shape == null || other.shape == null) {
-			Game.LOGGER.severe("Collider2D collidesWith called with null shape.");
-			return false;
-		}
-		return this.shape.cast(castTranslation).intersects(other.shape);
 	}
 
 	@Override
