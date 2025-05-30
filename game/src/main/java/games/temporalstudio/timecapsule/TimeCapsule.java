@@ -27,13 +27,13 @@ public class TimeCapsule extends Game{
 	private static final String IDENTIFIER = "timecapsule";
 
 	public TimeCapsule(){
-		super();
+		super(null, "icon.png");
 
 		setTitle(getI18n().getSentence("game.title", getVersion()));
 
 		setMainMenu(createMainMenu());
-		setFirstLeftScene(createPastScenes());
-		setFirstRightScene(createFutureScenes());
+		setFirstLeftScene(this.createPastScenes());
+		setFirstRightScene(this.createFutureScenes());
 	}
 
 	// GETTERS
