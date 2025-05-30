@@ -4,13 +4,16 @@ import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.Component;
 import org.joml.Vector2f;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class PhysicsBody implements Component {
 	private float mass;
 	private Vector2f velocity;
 	private float maxVelocity;
 	private float minVelocity;
 	private float drag;
-	private Vector2f exertedForce = new Vector2f();
+	private Set<Vector2f> appliedForces;
 
 	public PhysicsBody(float mass, float maxVelocity, float minVelocity, float drag) {
 		this.mass = mass;
@@ -18,10 +21,15 @@ public class PhysicsBody implements Component {
 		this.minVelocity = minVelocity;
 		this.velocity = new Vector2f();
 		this.drag = drag;
+		this.appliedForces = new HashSet<>();
+	}
+
+	public void applyForce(float x, float y) {
+		appliedForces.add(new Vector2f(x, y));
 	}
 
 	public void applyForce(Vector2f force) {
-		exertedForce.add(force);
+		appliedForces.add(force);
 	}
 
 	public float getMass() {
@@ -32,8 +40,8 @@ public class PhysicsBody implements Component {
 		return velocity;
 	}
 
-	public Vector2f getExertedForce() {
-		return exertedForce;
+	public Set<Vector2f> getAppliedForces() {
+		return appliedForces;
 	}
 
 	public float getMaxVelocity() {
@@ -48,8 +56,8 @@ public class PhysicsBody implements Component {
 		return drag;
 	}
 
-	public void setExertedForce(float x, float y) {
-		this.exertedForce.set(x, y);
+	public void emptyAppliedForces() {
+		appliedForces.clear();
 	}
 
 	public void setVelocity(float x, float y) {

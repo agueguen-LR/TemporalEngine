@@ -16,7 +16,9 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 	private Scene parent;
 	private Map<String, Scene> children = new HashMap<>();
 
-	private Set<GameObject> gameObjects = new HashSet<>();
+	private Set<GameObject> gameObjects;
+	private Set<GameObject> gameObjectsToAdd = new HashSet<>();
+	private Set<GameObject> gameObjectsToRemove = new HashSet<>();
 
 	public Scene(String name){
 		this.name = name;
@@ -30,11 +32,20 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 	}
 
 	public Set<GameObject> getGameObjects(){
+		if(gameObjects == null){
+			return Collections.unmodifiableSet(gameObjectsToAdd);
+		}
 		return Collections.unmodifiableSet(gameObjects);
 	}
 	public Set<GameObject> getGOsByComponent(
 		Class<? extends Component> componentClass
 	){
+		if (gameObjects == null) {
+			return new HashSet<>(gameObjectsToAdd.stream()
+				.filter(go -> go.hasComponent(componentClass))
+				.toList()
+			);
+		}
 		return new HashSet<>(getGameObjects().stream()
 			.filter(go -> go.hasComponent(componentClass))
 			.toList()
@@ -49,9 +60,12 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 		}
 	}
 
-	public GameObject addGameObject(GameObject gameObject) {
-		gameObjects.add(gameObject);
-		return gameObject;
+	public boolean addGameObject(GameObject gameObject) {
+		return gameObjectsToAdd.add(gameObject);
+	}
+
+	public boolean removeGameObject(GameObject gameObject) {
+		return gameObjectsToRemove.add(gameObject);
 	}
 
 	// LIFECYLE FUNCTIONS
@@ -60,18 +74,28 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 		if(!(context instanceof Game game)) return;
 		game.getLogger().info("Initializing scene: " + name);
 
-		gameObjects.forEach(o -> o.init(this));
+		gameObjectsToAdd.forEach(o -> o.init(this));
 	}
 	@Override
 	public void start(LifeCycleContext context){
 		if(!(context instanceof Game game)) return;
 		game.getLogger().info("Starting scene: " + name);
 
-		gameObjects.forEach(o -> o.start(this));
+		gameObjectsToAdd.forEach(o -> o.start(this));
+		gameObjects = new HashSet<>(gameObjectsToAdd);
+		gameObjectsToAdd.clear();
 	}
 	@Override
 	public void update(LifeCycleContext context, float delta){
 		gameObjects.forEach(o -> o.update(this, delta));
+		gameObjects.removeAll(gameObjectsToRemove);
+		gameObjectsToAdd.forEach(o -> {
+			o.init(this);
+			o.start(this);
+		});
+		gameObjects.addAll(gameObjectsToAdd);
+		gameObjectsToAdd.clear();
+		gameObjectsToRemove.clear();
 	}
 	@Override
 	public void destroy(LifeCycleContext context){

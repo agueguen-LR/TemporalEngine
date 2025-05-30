@@ -207,8 +207,11 @@ public class RenderBatch implements RenderLifeCycle{
 		View view = cameras.stream().findFirst().get().getComponent(
 			View.class
 		);
+		int[] size = new int[4];
+		glGetIntegerv(GL_VIEWPORT, size);
+
 		renderer.getShader().uploadMatrix4f(
-			PROJECTION_UNIFORM_NAME, view.getProjection()
+			PROJECTION_UNIFORM_NAME, view.getProjection(size[2], size[3])
 		);
 		renderer.getShader().uploadMatrix4f(VIEW_UNIFORM_NAME, view.getView());
 
@@ -232,11 +235,13 @@ public class RenderBatch implements RenderLifeCycle{
 	}
 	@Override
 	public void destroy(LifeCycleContext context){
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+
 		glBindVertexArray((int) MemoryUtil.NULL);
 		glBindBuffer(GL_ARRAY_BUFFER, (int) MemoryUtil.NULL);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (int) MemoryUtil.NULL);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
+		glDeleteBuffers(new int[]{vao, vbo, ebo});
 	}
 }

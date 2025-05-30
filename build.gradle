@@ -47,23 +47,24 @@ project(":engine"){
 	}
 
 	dependencies{
-		implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+		api platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
 		implementation "org.lwjgl:lwjgl"
 		implementation "org.lwjgl:lwjgl-assimp"
-		implementation "org.lwjgl:lwjgl-glfw"
+		api "org.lwjgl:lwjgl-glfw"
 		implementation "org.lwjgl:lwjgl-openal"
 		implementation "org.lwjgl:lwjgl-opengl"
 		implementation "org.lwjgl:lwjgl-stb"
+
+		implementation 'com.electronwill.night-config:toml:3.8.2'
+		api "org.joml:joml:${jomlVersion}"
+
 		runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
 		runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
 		runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
 		runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
 		runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
 		runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
-		implementation "org.joml:joml:${jomlVersion}"
-
-		implementation 'com.electronwill.night-config:toml:3.8.2'
 	}
 }
 
@@ -79,14 +80,20 @@ project(":game"){
 
 	dependencies{
 		implementation project(':engine')
-		implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
-		implementation "org.lwjgl:lwjgl-glfw"
-		implementation "org.joml:joml:${jomlVersion}"
 	}
 
 	application{
 		applicationName = appName
 		mainClass = "games.temporalstudio.timecapsule.Launcher"
+	}
+
+	task runEngine(type: JavaExec){
+		group = "application"
+		description = "Runs engine test part this project as a JVM application."
+
+		mainClass = application.mainClass
+    	classpath = sourceSets.main.runtimeClasspath
+		args = ["engine"]
 	}
 
 	distributions{
