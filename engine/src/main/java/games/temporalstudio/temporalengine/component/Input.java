@@ -1,5 +1,6 @@
 package games.temporalstudio.temporalengine.component;
 
+import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
 
@@ -17,6 +18,14 @@ public class Input implements Component{
 
 	public void addControl(int key, Consumer<LifeCycleContext> action) {
 		controls.put(key, action);
+	}
+
+	public boolean isControlPressed(Integer key){
+		if (controls.containsKey(key)){
+			return KeyListener.isKeyPressed(key);
+		}
+		Game.LOGGER.warning("Control doesn't exist: " + key);
+		return false;
 	}
 
 	@Override
