@@ -1,19 +1,19 @@
 package games.temporalstudio.temporalengine.window;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11C.*;
-import static org.lwjgl.stb.STBImage.stbi_image_free;
-import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
-import static org.lwjgl.system.MemoryUtil.memAllocInt;
+import static org.lwjgl.stb.STBImage.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.function.Consumer;
 
-import games.temporalstudio.temporalengine.utils.IOUtil;
+import games.temporalstudio.temporalengine.utils.NIOUtils;
+
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL;
@@ -25,6 +25,7 @@ import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.listeners.MouseListener;
 
 public class Window implements WindowLifeCycle{
+
 	private static final String DEFAULT_TITLE = "Temporal Engine Game";
 	private static final String DEFAULT_ICON_PATH = "default_icon.png";
 
@@ -38,9 +39,11 @@ public class Window implements WindowLifeCycle{
 
 	private long id = MemoryUtil.NULL;
 
-	public Window(Consumer<Float> handler, @Nullable String title, @Nullable String iconPath){
-		if(instance != null)
-			new RuntimeException("Multiple windows isn't supported.");
+	public Window(Consumer<Float> handler,
+		@Nullable String title, @Nullable String iconPath
+	){
+		if(Window.hasInstance())
+			new RuntimeException("Multiple windows isn't supported;");
 
 		this.title = title != null ? title : DEFAULT_TITLE;
 		this.iconPath = iconPath != null ? iconPath : DEFAULT_ICON_PATH;
@@ -59,40 +62,53 @@ public class Window implements WindowLifeCycle{
 	public static boolean hasInstance(){ return instance != null; }
 
 	public void setTitle(String title){
-		if(!hasInstance())
-			throw new RuntimeException();
-
 		this.title = title;
 	}
 
 	public void setIcon(String iconPath) {
-		if(!hasInstance()) { throw new RuntimeException(); }
 		this.iconPath = iconPath;
 	}
 
-	private ByteBuffer loadIconBuffer() throws IOException {
-		try { return IOUtil.ioResourceToByteBuffer(iconPath, 512 * 512 * 4); }
-		catch (Exception e) {
-			Game.LOGGER.warning("Failed to load icon from path: %s. Using default icon.".formatted(iconPath));
-			return IOUtil.ioResourceToByteBuffer(DEFAULT_ICON_PATH, 512 * 512 * 4);
+	// FUNCTIONS
+	private ByteBuffer loadIconBuffer() throws IOException{
+		try{
+			return NIOUtils.getResourceAsByteBuffer(iconPath);
+		}catch (Exception e){
+			Game.LOGGER.warning(
+				"Failed to load icon at %s; Using default icon."
+					.formatted(iconPath)
+			);
+			return NIOUtils.getResourceAsByteBuffer(DEFAULT_ICON_PATH);
 		}
 	}
+	private void loadIcon(){
+		IntBuffer w = BufferUtils.createIntBuffer(1);
+		IntBuffer h = BufferUtils.createIntBuffer(1);
+		IntBuffer comp = BufferUtils.createIntBuffer(1);
 
-	private void loadIcon() {
-		IntBuffer w = memAllocInt(1);
-		IntBuffer h = memAllocInt(1);
-		IntBuffer comp = memAllocInt(1);
-
-		try (GLFWImage.Buffer icons = GLFWImage.malloc(1)) {
+		try(GLFWImage.Buffer icons = GLFWImage.malloc(1)){
 			ByteBuffer icon = loadIconBuffer();
-            ByteBuffer pixels = stbi_load_from_memory(icon, w, h, comp, 4);
-			if (pixels == null) { throw new IOException("Failed to load icon image from memory."); }
-			icons.position(0).width(w.get(0)).height(h.get(0)).pixels(pixels);
-			icons.position(0);
+            ByteBuffer pixels = stbi_load_from_memory(icon,
+				w, h, comp, 4
+			);
+
+			if(pixels == null)
+				throw new IOException(
+					"Failed to load icon image from memory;"
+				);
+
+			icons.position(0)
+				.width(w.get(0))
+				.height(h.get(0))
+				.pixels(pixels);
+
 			glfwSetWindowIcon(id, icons);
+
 			stbi_image_free(pixels);
-		} catch (IOException e) {
-            throw new RuntimeException("Failed to load icon or default icon: " + iconPath, e);
+		}catch(IOException e){
+            throw new RuntimeException(
+				"Failed to load any icon: %s;".formatted(iconPath), e
+			);
         }
     }
 
@@ -106,7 +122,7 @@ public class Window implements WindowLifeCycle{
 		));
 
 		if(!glfwInit())
-			throw new IllegalStateException("Unable to initialize GLFW");
+			throw new IllegalStateException("Unable to initialize GLFW;");
 
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -119,7 +135,7 @@ public class Window implements WindowLifeCycle{
 
 		if(id == MemoryUtil.NULL)
 			throw new IllegalStateException(
-				"Unable to create the GLFW window."
+				"Unable to create the GLFW window;"
 			);
 
 		loadIcon();
