@@ -9,6 +9,7 @@ import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.physics.PhysicsEngine;
 import games.temporalstudio.temporalengine.rendering.Renderer;
 import games.temporalstudio.temporalengine.window.Window;
+import games.temporalstudio.temporalengine.window.WindowInfo;
 
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.Version;
@@ -16,9 +17,10 @@ import org.lwjgl.Version;
 public abstract class Game extends App implements LifeCycleContext{
 	public static Logger LOGGER;
 
-	private Window window;
-	private Renderer renderer;
-	private PhysicsEngine physicsEngine;
+	private final Window window;
+	private final WindowInfo windowInfo;
+	private final Renderer renderer;
+	private final PhysicsEngine physicsEngine;
 
 	private Scene mainMenu;
 	private Scene leftScene;
@@ -30,7 +32,7 @@ public abstract class Game extends App implements LifeCycleContext{
 
 	public Game(String title, @Nullable String iconPath){
 		this.window = new Window(this::update, title, iconPath);
-		this.physicsEngine = new PhysicsEngine();
+		this.windowInfo = new WindowInfo(window);
 		this.renderer = new Renderer();
 		this.physicsEngine = new PhysicsEngine();
 
@@ -41,6 +43,8 @@ public abstract class Game extends App implements LifeCycleContext{
 	}
 
 	// GETTERS
+	public WindowInfo getWindowInfo(){ return windowInfo; }
+
 	public Scene getMainMenu(){ return mainMenu; }
 	public Scene getLeftScene(){ return leftScene; }
 	public Scene getRightScene(){ return rightScene; }
@@ -54,7 +58,6 @@ public abstract class Game extends App implements LifeCycleContext{
 	public void setIcon(String iconPath){
 		this.window.setIcon(iconPath);
 	}
-
 
 	// FUNCTIONS
 	@Override

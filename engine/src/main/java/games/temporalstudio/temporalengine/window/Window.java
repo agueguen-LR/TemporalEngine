@@ -10,9 +10,8 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.function.Consumer;
 
-import games.temporalstudio.temporalengine.utils.NIOUtils;
-
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
@@ -23,6 +22,7 @@ import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.listeners.KeyListener;
 import games.temporalstudio.temporalengine.listeners.MouseListener;
+import games.temporalstudio.temporalengine.utils.NIOUtils;
 
 public class Window implements WindowLifeCycle{
 
@@ -61,6 +61,16 @@ public class Window implements WindowLifeCycle{
 	// GETTERS
 	public static boolean hasInstance(){ return instance != null; }
 
+	public Vector2i getSize(){
+		int[] width = new int[1];
+		int[] height = new int[1];
+
+		glfwGetWindowSize(id, width, height);
+
+		return new Vector2i(width[0], height[0]);
+	}
+
+	// SETTERS
 	public void setTitle(String title){
 		this.title = title;
 	}
