@@ -16,7 +16,7 @@ public class Collider2D implements Component {
 	private BiConsumer<LifeCycleContext, LifeCycleContext> onCollide;
 	private BiConsumer<LifeCycleContext, LifeCycleContext> onIntersects;
 	private Set<LifeCycleContext> intersecting;
-	private boolean enabled;
+	private Set<LifeCycleContext> colliding;
 	private boolean isRigid;
 
 	public Collider2D(Transform transform) {
@@ -25,9 +25,9 @@ public class Collider2D implements Component {
 			return;
 		}
 		this.intersecting = new HashSet<>();
+		this.colliding = new HashSet<>();
 		this.onCollide = (object, other) -> {};
 		this.onIntersects = (object, other) -> {};
-		this.enabled = true;
 		this.isRigid = false;
 	}
 
@@ -59,6 +59,14 @@ public class Collider2D implements Component {
 		intersecting.remove(context);
 	}
 
+	public void addColliding(LifeCycleContext context) {
+		colliding.add(context);
+	}
+
+	public void removeColliding(LifeCycleContext context) {
+		colliding.remove(context);
+	}
+
 	public void setRigid(boolean isRigid) {
 		this.isRigid = isRigid;
 	}
@@ -69,18 +77,6 @@ public class Collider2D implements Component {
 
 	BiConsumer<LifeCycleContext, LifeCycleContext> getOnCollide() {
 		return onCollide;
-	}
-
-	public void enable(){
-		this.enabled = true;
-	}
-
-	public void disable(){
-		this.enabled = false;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
 	}
 
 	public boolean isRigid() {
@@ -136,9 +132,6 @@ public class Collider2D implements Component {
 
 	@Override
 	public void update(LifeCycleContext context, float delta) {
-		if (!enabled) {
-			return; // Skip update if collider is disabled
-		}
 		if (!(context instanceof GameObject gameObject)) {
 			Game.LOGGER.severe("Collider2D can only be used with GameObject context.");
 			return;
@@ -149,6 +142,9 @@ public class Collider2D implements Component {
 			return;
 		}
 		intersecting.forEach(otherContext -> onIntersects.accept(context, otherContext));
+		intersecting.clear();
+		colliding.forEach(otherContext -> onCollide.accept(context, otherContext));
+		colliding.clear();
 	}
 
 	@Override

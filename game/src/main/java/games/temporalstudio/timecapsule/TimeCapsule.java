@@ -95,7 +95,7 @@ public class TimeCapsule extends Game{
 			GLFW_KEY_SLASH
 		});
 		GameObject door = createDoor(button);
-		GameObject rock = createBreakableRock(GLFW_KEY_SLASH);
+		GameObject rock = createBreakableRock(GLFW_KEY_SLASH, future);
 
 		future.addGameObject(camera);
 		future.addGameObject(player);
@@ -177,10 +177,10 @@ public class TimeCapsule extends Game{
 			Triggerable triggerable = null;
 		};
 		ref.triggerable = new Triggerable(context -> {
-			if(context instanceof GameObject){
+			if(context instanceof GameObject buttonObject){
 				trigger.removeTriggerable(ref.triggerable);
 				button.removeComponent(trigger);
-				collider2D.disable();
+				buttonObject.removeComponent(collider2D);
 			}else
 				Game.LOGGER.warning(
 					"Door trigger action executed with non-GameObject context."
@@ -195,7 +195,7 @@ public class TimeCapsule extends Game{
 
 		return door;
 	}
-	private GameObject createBreakableRock(int key){
+	private GameObject createBreakableRock(int key, Scene scene){
 		GameObject rock = new GameObject("rock");
 
 		Render render = new ColorRender(
@@ -206,16 +206,17 @@ public class TimeCapsule extends Game{
 		collider2D.setShape(new AABB(transform));
 		collider2D.setRigid(true);
 		collider2D.setOnCollide((context, other) -> {
-			if(other instanceof GameObject player
-				&& player.getName().equals("player")
-				&& player.getComponent(Input.class)
-					.isControlPressed(key)
-			){
-				Game.LOGGER.info("Rock broken by player!");
-				collider2D.disable();
-				rock.removeComponent(render);
-			}
+					if (context instanceof GameObject rockObject
+							&& other instanceof GameObject player
+							&& player.getName().equals("player")
+							&& player.getComponent(Input.class).isControlPressed(key)
+					) {
+						Game.LOGGER.info("Rock broken by player!");
+						scene.removeGameObject(rockObject);
+						rockObject.destroy(scene);
+					}
 		});
+
 
 		rock.addComponent(transform);
 		rock.addComponent(render);
