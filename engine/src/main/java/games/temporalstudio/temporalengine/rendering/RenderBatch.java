@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.joml.Vector2f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
@@ -90,14 +91,15 @@ public class RenderBatch implements RenderLifeCycle{
 
 
 		// Position
-		Vector2f position = new Vector2f();
+		Matrix4f transformMat = new Matrix4f();
 
 		if(renderable.hasComponent(Transform.class)){
-			Transform transform = renderable.getComponent(
+			Transform t = renderable.getComponent(
 				Transform.class
 			);
 
-			position = transform.getPosition();
+			transformMat.translate(new Vector3f(t.getPosition(), 0))
+				.scale(new Vector3f(t.getScale(), 0));
 		}
 
 		// Visual
@@ -115,14 +117,17 @@ public class RenderBatch implements RenderLifeCycle{
 		}
 
 		int vertexOffset;
-		Vector2f vertexPos;
+		Vector4f vertexPos;
 		for(int vertex = 0; vertex < SHAPE_VERTEX_COUNT; vertex++){
 			vertexOffset = offset + vertex*VERTEX_SIZE;
 
 			// Vertex position
-			vertexPos = new Vector2f(position);
-			if(vertex >= 1 && vertex <= 2) vertexPos.add(1, 0);
-			if(vertex <= 1) vertexPos.add(0, 1);
+			vertexPos = new Vector4f(0, 0, 0, 1)
+				.mul(transformMat.translate(new Vector3f(
+					vertex >= 1 && vertex <= 2 ? 1 : 0,
+					vertex <= 1 ? 1 : 0,
+					0
+				), new Matrix4f()));
 
 			vertices.put(vertexOffset, new float[]{
 				vertexPos.x(), vertexPos.y(), 0
