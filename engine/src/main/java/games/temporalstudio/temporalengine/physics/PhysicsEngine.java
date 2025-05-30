@@ -6,14 +6,18 @@ import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import org.joml.Vector2f;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	private Set<GameObject> colliders;
+	private Map<GameObject, Set<GameObject>> collidingObjects;
 
 	public PhysicsEngine() {
 		this.colliders = new HashSet<>();
+		this.collidingObjects = new HashMap<>();
 	}
 
 	/**
@@ -37,7 +41,23 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			return new Vector2f();
 		}
 
-		return sumOfForces.mul(deltaTime / mass); // F = ma, so v = F/m * deltaTime
+		return convertForceToDeltaVelocity(sumOfForces, mass, deltaTime);
+	}
+
+	private Vector2f convertForceToDeltaVelocity(Vector2f force, float mass, float deltaTime) {
+		if (mass == 0) {
+			Game.LOGGER.severe("Cannot apply force to a PhysicsBody with zero mass.");
+			return new Vector2f();
+		}
+		return new Vector2f(force).mul(deltaTime / mass); // F = ma, so deltaV = F * deltaTime/m
+	}
+
+	private Vector2f convertDeltaVelocityToRequiredForce(Vector2f deltaVelocity, float mass, float deltaTime) {
+		if (mass == 0) {
+			Game.LOGGER.severe("Cannot apply force to a PhysicsBody with zero mass.");
+			return new Vector2f();
+		}
+		return new Vector2f(deltaVelocity).mul(mass / deltaTime); // F = ma, so F = deltaV * m/deltaTime
 	}
 
 	/**
@@ -47,62 +67,88 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	 *
 	 * @param gameObject The GameObject to apply drag to.
 	 */
-	private void applyDrag(GameObject gameObject) {
+	private void applyDrag(GameObject gameObject, float deltaTime) {
 		PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
 		Collider2D collider = gameObject.getComponent(Collider2D.class);
-		Vector2f velocity = physicsBody.getVelocity();
+		Vector2f velocity = new Vector2f(physicsBody.getVelocity());
+
 		float speed2 = velocity.lengthSquared();
-		if (speed2 > 0) {
-		    float dragCoefficient = physicsBody.getDrag(); // C_d
-		    float fluidDensity = physicsBody.getFluidDensity(); // ρ
-		    float area = collider.getArea(); // A
-		    float dragMagnitude = 0.5f * dragCoefficient * fluidDensity * area * speed2;
-		    Vector2f dragForce = new Vector2f(velocity).normalize().mul(-dragMagnitude);
-		    physicsBody.applyForce(dragForce);
+		if (speed2 == 0) {
+			return; // No drag force if velocity is zero
 		}
+
+		float dragCoefficient = physicsBody.getDrag(); // C_d
+		float fluidDensity = physicsBody.getFluidDensity(); // ρ
+		float area = collider.getArea(); // A
+		float dragMagnitude = 0.5f * dragCoefficient * fluidDensity * area * speed2;
+		Vector2f dragForce = velocity.normalize().mul(-dragMagnitude);
+
+		physicsBody.applyForce(dragForce);
+
 	}
 
 	/**
-	 * Applies collision detection and response for a given GameObject.
-	 * This method checks for collisions with all other colliders in the scene,
-	 * updates the collider's state, and applies collision responses if necessary.
+	 * Detects collisions for a given GameObject against all other colliders in the scene.
+	 * This method checks if the GameObject's collider intersects with any other colliders,
+	 * and if not, checks for potential collisions based on the next position
+	 * after applying forces.
 	 *
 	 * @param gameObject The GameObject to check for collisions.
-	 * @param deltaTime The time step for the physics update, used to calculate velocity changes.
+	 * @param deltaTime The time step for the physics update, used to calculate next position.
 	 */
-	private void applyCollisions(GameObject gameObject, float deltaTime) {
+	private void detectCollisions(GameObject gameObject, float deltaTime) {
+
 		Collider2D collider = gameObject.getComponent(Collider2D.class);
 		PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
 		if (collider == null) {
 			return; // No collider to check for collisions
 		}
+
 		collider.updateCollider2D();
 		for (GameObject other : colliders) {
 			if (other.equals(gameObject)) {
 				continue; // Skip self-collision
 			}
+
 			Collider2D otherCollider = other.getComponent(Collider2D.class);
-			Vector2f nextPosition = new Vector2f(physicsBody.getVelocity())
-					.add(convertForceToVelocity(physicsBody, deltaTime))
-					.mul(deltaTime);
-
-			if (collider.collidesWith(otherCollider, nextPosition)){
-				collider.addColliding(other);
-				otherCollider.addColliding(gameObject);
-				applyCollision(gameObject, other, deltaTime);
-			} else {
-				collider.removeColliding(other);
-				otherCollider.removeColliding(gameObject);
-			}
-
 			if (collider.intersectsWith(otherCollider)) {
 				collider.addIntersecting(other);
 				otherCollider.addIntersecting(gameObject);
-			} else {
+			} else { // Only check for collisions if not intersecting
 				collider.removeIntersecting(other);
 				otherCollider.removeIntersecting(gameObject);
+
+				Collider2D nextPosition = new Collider2D(collider);
+				nextPosition.setOffset(new Vector2f(physicsBody.getVelocity()).mul(deltaTime));
+				Collider2D otherNextPosition = new Collider2D(otherCollider);
+				if (other.hasComponent(PhysicsBody.class)){
+					otherNextPosition.setOffset(new Vector2f(other.getComponent(PhysicsBody.class).getVelocity()).mul(deltaTime));
+				}
+
+				if (nextPosition.intersectsWith(otherNextPosition)){
+
+					if (!collidingObjects.containsKey(other) || !collidingObjects.get(other).contains(gameObject)){
+						if (!collidingObjects.containsKey(gameObject)){
+							collidingObjects.put(gameObject, new HashSet<>());
+						}
+						collidingObjects.get(gameObject).add(other);
+						Game.LOGGER.info("Collision detected between " + gameObject.getName() + " and " + other.getName() + "" + collidingObjects.size());
+
+					}
+
+				} else {
+					collider.removeColliding(other);
+					otherCollider.removeColliding(gameObject);
+				}
 			}
 		}
+	}
+
+	private void applyCollisions(float deltaTime) {
+		collidingObjects.forEach((gameObject, collidingSet) -> collidingSet.forEach(other -> {
+			applyCollision(gameObject, other, deltaTime);
+		}));
+		collidingObjects.clear(); // Clear after processing all collisions
 	}
 
 	/**
@@ -115,12 +161,16 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	 * @param deltaTime The time step for the physics update, used to calculate velocity changes.
 	*/
 	private void applyCollision(GameObject gameObject, GameObject other, float deltaTime) {
+		Collider2D thisCollider = gameObject.getComponent(Collider2D.class);
 		Collider2D otherCollider = other.getComponent(Collider2D.class);
+		thisCollider.addColliding(other);
+		otherCollider.addColliding(gameObject);
+
 		if (!other.hasComponent(PhysicsBody.class) && !otherCollider.isRigid()) {
-			return; // Other object is not a physics body or rigid collider, no collision response needed
+			return; // Other object is not a physics body or rigid collider, no physical collision response needed
 		}
 
-		Collider2D thisCollider = gameObject.getComponent(Collider2D.class);
+
 		Vector2f collisionNormal = thisCollider.getCollisionNormal(otherCollider);
 		if (collisionNormal.lengthSquared() == 0) {
 			return; // No valid collision normal, skip collision handling
@@ -130,26 +180,20 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 
 		// Mass and velocity for 'other'
 		float massB = 1f;
-		Vector2f predictedVelocityB = new Vector2f();
+		Vector2f velocityB = new Vector2f();
 		if (other.hasComponent(PhysicsBody.class)) {
+
 			PhysicsBody otherPhysicsBody = other.getComponent(PhysicsBody.class);
-
 			massB = otherPhysicsBody.getMass();
-			Vector2f totalForceB = otherPhysicsBody.getAppliedForces().stream().reduce(new Vector2f(), Vector2f::add);
-			Vector2f velocityB = new Vector2f(otherPhysicsBody.getVelocity());
-
-			predictedVelocityB = velocityB.fma((deltaTime / massB), totalForceB);
+			velocityB = new Vector2f(otherPhysicsBody.getVelocity());
 		}
 
 		// Mass and velocity for 'this'
 		float massA = thisPhysicsBody.getMass();
-		Vector2f totalForceA = thisPhysicsBody.getAppliedForces().stream().reduce(new Vector2f(), Vector2f::add);
 		Vector2f velocityA = new Vector2f(thisPhysicsBody.getVelocity());
 
-		Vector2f predictedVelocityA = velocityA.fma((deltaTime / massA), totalForceA);
-
 		// Relative velocity and projection
-		Vector2f relativeVelocity = new Vector2f(predictedVelocityA).sub(predictedVelocityB);
+		Vector2f relativeVelocity = new Vector2f(velocityA).sub(velocityB);
 		float velocityAlongNormal = relativeVelocity.dot(collisionNormal);
 
 		// Restitution
@@ -163,10 +207,12 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		// Apply forces
 		Vector2f forceOnA = new Vector2f(impulse).mul(1f / deltaTime);
 		thisPhysicsBody.applyForce(forceOnA);
+		Game.LOGGER.info("Applying force on " + gameObject.getName() + " : " + forceOnA);
 
 		if (other.hasComponent(PhysicsBody.class)) {
 			Vector2f forceOnB = new Vector2f(impulse).mul(-1f / deltaTime);
 			other.getComponent(PhysicsBody.class).applyForce(forceOnB);
+			Game.LOGGER.info("Applying force on " + other.getName() + " : " + forceOnB);
 		}
 	}
 
@@ -180,9 +226,10 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	 */
 	private void applyForcesToPhysicsObjects(Set<GameObject> gameObjects, float deltaTime) {
 		gameObjects.forEach(gameObject -> {
-			applyDrag(gameObject);
-			applyCollisions(gameObject, deltaTime);
+			applyDrag(gameObject, deltaTime);
+			detectCollisions(gameObject, deltaTime);
 		});
+		applyCollisions(deltaTime);
 	}
 
 	/**
@@ -196,7 +243,12 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	private void updateVelocitiesAndPositions(Set<GameObject> physicsBodies, float deltaTime) {
 		physicsBodies.forEach(gameObject -> {
 			PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
+			Vector2f before = new Vector2f(physicsBody.getVelocity());
 			physicsBody.addVelocity(convertForceToVelocity(physicsBody, deltaTime));
+			Vector2f change = new Vector2f(before).sub(physicsBody.getVelocity());
+			if (before.lengthSquared() > 0 && change.lengthSquared() > 0) {
+				Game.LOGGER.info("change in velocity for " + gameObject.getName() + " : " + before + "-" + physicsBody.getVelocity() + " = " + change);
+			}
 			Transform transform = gameObject.getComponent(Transform.class);
 			transform.move(new Vector2f(physicsBody.getVelocity()).mul(deltaTime));
 			physicsBody.emptyAppliedForces();
