@@ -68,10 +68,10 @@ public class PhysicsBody implements Component {
 
 	public void addVelocity(Vector2f velocity) {
 		this.velocity.add(velocity);
-		if (velocity.lengthSquared() < minVelocity * minVelocity) {
-			velocity.set(0, 0);
-		} else if (velocity.lengthSquared() > maxVelocity * maxVelocity) {
-			velocity.normalize(maxVelocity);
+		if (this.velocity.lengthSquared() > maxVelocity * maxVelocity) {
+			this.velocity.normalize(maxVelocity);
+		} else if (this.velocity.lengthSquared() < minVelocity * minVelocity) {
+			this.velocity.set(0);
 		}
 	}
 
