@@ -101,17 +101,26 @@ public class TestGame extends Game{
 
 		GameObject button = createButton();
 		GameObject player = createPlayer(new int[]{
-			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
-			GLFW_KEY_SLASH
+				GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
+				GLFW_KEY_SLASH
+		});
+		GameObject slippyPlayer = createSlippyPlayer(new int[]{
+				GLFW_KEY_I, GLFW_KEY_K, GLFW_KEY_J, GLFW_KEY_L,
+				GLFW_KEY_SLASH
 		});
 		GameObject door = createDoor(button);
-		GameObject rock = createBreakableRock(GLFW_KEY_SLASH, future);
+		GameObject rock1 = createBreakableRock(GLFW_KEY_SLASH, future);
+		GameObject ice = createBouncyIce();
+		GameObject spring = createSpring();
 
 		future.addGameObject(camera);
 		future.addGameObject(player);
+		future.addGameObject(slippyPlayer);
 		future.addGameObject(button);
 		future.addGameObject(door);
-		future.addGameObject(rock);
+		future.addGameObject(rock1);
+		future.addGameObject(ice);
+		future.addGameObject(spring);
 
 		return future;
 	}
@@ -128,7 +137,7 @@ public class TestGame extends Game{
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
 		collider2D.setOnIntersects(
-			(context, other) -> triggerActivated.set(true)
+				(context, other) -> triggerActivated.set(true)
 		);
 
 		button.addComponent(transform);
@@ -142,25 +151,25 @@ public class TestGame extends Game{
 		GameObject player = new GameObject("player");
 
 		Render render = new ColorRender(new Vector4f(0, 0, 1, 1));
-		Transform transform = new Transform(new Vector2f(5, 2));
+		Transform transform = new Transform(new Vector2f(1, 4.25f));
 		PhysicsBody physicsBody = new PhysicsBody(
-			1, 1, .1f, 1
-		);
+				1, 10, .1f, 20f);
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
+		collider2D.setRestitution(1f);
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
-			physicsBody.applyForce(new Vector2f(0, 100));
+			physicsBody.applyForce(new Vector2f(0, 10));
 		});
 		input.addControl(keys[1], (context) -> {
-			physicsBody.applyForce(new Vector2f(0, -100));
+			physicsBody.applyForce(new Vector2f(0, -10));
 		});
 		input.addControl(keys[2], (context) -> {
-			physicsBody.applyForce(new Vector2f(-100, 0));
+			physicsBody.applyForce(new Vector2f(-10, 0));
 		});
 		input.addControl(keys[3], (context) -> {
-			physicsBody.applyForce(new Vector2f(100, 0));
+			physicsBody.applyForce(new Vector2f(10, 0));
 		});
 		input.addControl(keys[4], (context) -> {});
 
@@ -172,6 +181,41 @@ public class TestGame extends Game{
 
 		return player;
 	}
+
+	private GameObject createSlippyPlayer(int[] keys){
+		GameObject player = new GameObject("slippyPlayer");
+
+		Render render = new ColorRender(new Vector4f(0.56f, 0.93f, 0.56f, 1));
+		Transform transform = new Transform(new Vector2f(5, 6.5f));
+		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
+		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setShape(new AABB(transform));
+		collider2D.setRestitution(.5f);
+
+		Input input = new Input();
+		input.addControl(keys[0], (context) -> {
+			physicsBody.applyForce(new Vector2f(0, 10));
+		});
+		input.addControl(keys[1], (context) -> {
+			physicsBody.applyForce(new Vector2f(0, -10));
+		});
+		input.addControl(keys[2], (context) -> {
+			physicsBody.applyForce(new Vector2f(-10, 0));
+		});
+		input.addControl(keys[3], (context) -> {
+			physicsBody.applyForce(new Vector2f(10, 0));
+		});
+		input.addControl(keys[4], (context) -> {});
+
+		player.addComponent(transform);
+		player.addComponent(render);
+		player.addComponent(physicsBody);
+		player.addComponent(input);
+		player.addComponent(collider2D);
+
+		return player;
+	}
+
 	private GameObject createDoor(GameObject button){
 		GameObject door = new GameObject("door");
 
@@ -193,7 +237,7 @@ public class TestGame extends Game{
 				buttonObject.removeComponent(collider2D);
 			}else
 				Game.LOGGER.warning(
-					"Door trigger action executed with non-GameObject context."
+						"Door trigger action executed with non-GameObject context."
 				);
 		});
 		trigger.addTriggerable(ref.triggerable);
@@ -209,22 +253,22 @@ public class TestGame extends Game{
 		GameObject rock = new GameObject("rock");
 
 		Render render = new ColorRender(
-			new Vector4f(.5f, .25f, .1f, 1)
+				new Vector4f(.5f, .25f, .1f, 1)
 		);
-		Transform transform = new Transform(new Vector2f(5, .5f));
+		Transform transform = new Transform(new Vector2f(1, 5.5f));
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
 		collider2D.setRigid(true);
 		collider2D.setOnCollide((context, other) -> {
-					if (context instanceof GameObject rockObject
-							&& other instanceof GameObject player
-							&& player.getName().equals("player")
-							&& player.getComponent(Input.class).isControlPressed(key)
-					) {
-						Game.LOGGER.info("Rock broken by player!");
-						scene.removeGameObject(rockObject);
-						rockObject.destroy(scene);
-					}
+			if (context instanceof GameObject rockObject
+					&& other instanceof GameObject player
+					&& player.getName().equals("player")
+					&& player.getComponent(Input.class).isControlPressed(key)
+			) {
+				Game.LOGGER.info("Rock broken by player!");
+				scene.removeGameObject(rockObject);
+				rockObject.destroy(scene);
+			}
 		});
 
 
@@ -233,5 +277,41 @@ public class TestGame extends Game{
 		rock.addComponent(collider2D);
 
 		return rock;
+	}
+
+	private GameObject createBouncyIce(){
+		GameObject ice = new GameObject("ice");
+
+		Render render = new ColorRender(new Vector4f(0.68f, 0.85f, 0.9f, 1));
+		Transform transform = new Transform(new Vector2f(5, 4f));
+		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setShape(new AABB(transform));
+		PhysicsBody physicsBody = new PhysicsBody(0.5f, 1000f, .1f, 0f);
+		collider2D.setRestitution(2f);
+
+
+		ice.addComponent(transform);
+		ice.addComponent(render);
+		ice.addComponent(collider2D);
+		ice.addComponent(physicsBody);
+
+		return ice;
+	}
+
+	private GameObject createSpring(){
+		GameObject spring = new GameObject("spring");
+
+		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1));
+		Transform transform = new Transform(new Vector2f(5, 1));
+		Collider2D collider2D = new Collider2D(transform);
+		collider2D.setRigid(true);
+		collider2D.setShape(new AABB(transform));
+		collider2D.setRestitution(5f);
+
+		spring.addComponent(transform);
+		spring.addComponent(render);
+		spring.addComponent(collider2D);
+
+		return spring;
 	}
 }
