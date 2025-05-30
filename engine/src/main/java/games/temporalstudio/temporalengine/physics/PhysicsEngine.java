@@ -11,6 +11,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The PhysicsEngine class is responsible for managing the physics simulation in the game.
+ * It handles the application of forces, collision detection, and response for GameObjects
+ * with PhysicsBody and Collider2D components.
+ *
+ * @author agueguen-LR
+ */
 public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	private Set<GameObject> colliders;
 	private Map<GameObject, Set<GameObject>> collidingObjects;
@@ -41,23 +48,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			return new Vector2f();
 		}
 
-		return convertForceToDeltaVelocity(sumOfForces, mass, deltaTime);
-	}
-
-	private Vector2f convertForceToDeltaVelocity(Vector2f force, float mass, float deltaTime) {
-		if (mass == 0) {
-			Game.LOGGER.severe("Cannot apply force to a PhysicsBody with zero mass.");
-			return new Vector2f();
-		}
-		return new Vector2f(force).mul(deltaTime / mass); // F = ma, so deltaV = F * deltaTime/m
-	}
-
-	private Vector2f convertDeltaVelocityToRequiredForce(Vector2f deltaVelocity, float mass, float deltaTime) {
-		if (mass == 0) {
-			Game.LOGGER.severe("Cannot apply force to a PhysicsBody with zero mass.");
-			return new Vector2f();
-		}
-		return new Vector2f(deltaVelocity).mul(mass / deltaTime); // F = ma, so F = deltaV * m/deltaTime
+		return sumOfForces.mul(deltaTime / mass); // F = ma, so deltaV = F * deltaTime/m
 	}
 
 	/**
@@ -67,10 +58,10 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	 *
 	 * @param gameObject The GameObject to apply drag to.
 	 */
-	private void applyDrag(GameObject gameObject, float deltaTime) {
+	private void applyDrag(GameObject gameObject) {
 		PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
 		Collider2D collider = gameObject.getComponent(Collider2D.class);
-		Vector2f velocity = new Vector2f(physicsBody.getVelocity());
+		Vector2f velocity = physicsBody.getVelocity();
 
 		float speed2 = velocity.lengthSquared();
 		if (speed2 == 0) {
@@ -84,7 +75,6 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		Vector2f dragForce = velocity.normalize().mul(-dragMagnitude);
 
 		physicsBody.applyForce(dragForce);
-
 	}
 
 	/**
@@ -104,7 +94,6 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			return; // No collider to check for collisions
 		}
 
-		collider.updateCollider2D();
 		for (GameObject other : colliders) {
 			if (other.equals(gameObject)) {
 				continue; // Skip self-collision
@@ -118,22 +107,29 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 				collider.removeIntersecting(other);
 				otherCollider.removeIntersecting(gameObject);
 
+				// Predict the next position of this collider after applying velocity and forces
 				Collider2D nextPosition = new Collider2D(collider);
-				nextPosition.setOffset(new Vector2f(physicsBody.getVelocity()).mul(deltaTime));
+				Vector2f predictedOffset = new Vector2f(physicsBody.getVelocity())
+					.add(convertForceToVelocity(physicsBody, deltaTime))
+					.mul(deltaTime);
+				nextPosition.setOffset(predictedOffset);
+
+				// Predict the next position of the other collider if it has a PhysicsBody
 				Collider2D otherNextPosition = new Collider2D(otherCollider);
-				if (other.hasComponent(PhysicsBody.class)){
-					otherNextPosition.setOffset(new Vector2f(other.getComponent(PhysicsBody.class).getVelocity()).mul(deltaTime));
+				if (other.hasComponent(PhysicsBody.class)) {
+					PhysicsBody otherPhysicsBody = other.getComponent(PhysicsBody.class);
+					Vector2f otherPredictedOffset = new Vector2f(otherPhysicsBody.getVelocity())
+						.add(convertForceToVelocity(otherPhysicsBody, deltaTime))
+						.mul(deltaTime);
+					otherNextPosition.setOffset(otherPredictedOffset);
 				}
 
 				if (nextPosition.intersectsWith(otherNextPosition)){
-
 					if (!collidingObjects.containsKey(other) || !collidingObjects.get(other).contains(gameObject)){
 						if (!collidingObjects.containsKey(gameObject)){
 							collidingObjects.put(gameObject, new HashSet<>());
 						}
 						collidingObjects.get(gameObject).add(other);
-						Game.LOGGER.info("Collision detected between " + gameObject.getName() + " and " + other.getName() + "" + collidingObjects.size());
-
 					}
 
 				} else {
@@ -144,23 +140,30 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		}
 	}
 
+	/**
+	 * Applies collisions for all colliding GameObjects.
+	 * This method iterates through the colliding objects and applies impulses
+	 * to simulate a physical response to the collisions.
+	 *
+	 * @param deltaTime The time step for the physics update, used to calculate impulse application.
+	 */
 	private void applyCollisions(float deltaTime) {
 		collidingObjects.forEach((gameObject, collidingSet) -> collidingSet.forEach(other -> {
-			applyCollision(gameObject, other, deltaTime);
+			applyImpulses(gameObject, other, deltaTime);
 		}));
 		collidingObjects.clear(); // Clear after processing all collisions
 	}
 
 	/**
-	 * Applies collision response between two GameObjects.
+	 * Applies impulses to the colliding GameObjects based on their PhysicsBody components.
 	 * This method calculates the collision normal, relative velocities, and applies impulses
-	 * to both objects based on their masses and restitution coefficients.
+	 * to both colliding objects to simulate a physical response to the collision.
 	 *
-	 * @param gameObject The GameObject that is being processed for collision.
-	 * @param other The other GameObject involved in the collision.
-	 * @param deltaTime The time step for the physics update, used to calculate velocity changes.
-	*/
-	private void applyCollision(GameObject gameObject, GameObject other, float deltaTime) {
+	 * @param gameObject The first GameObject involved in the collision.
+	 * @param other The second GameObject involved in the collision.
+	 * @param deltaTime The time step for the physics update, used to calculate impulse application.
+	 */
+	private void applyImpulses(GameObject gameObject, GameObject other, float deltaTime) {
 		Collider2D thisCollider = gameObject.getComponent(Collider2D.class);
 		Collider2D otherCollider = other.getComponent(Collider2D.class);
 		thisCollider.addColliding(other);
@@ -185,12 +188,12 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 
 			PhysicsBody otherPhysicsBody = other.getComponent(PhysicsBody.class);
 			massB = otherPhysicsBody.getMass();
-			velocityB = new Vector2f(otherPhysicsBody.getVelocity());
+			velocityB = otherPhysicsBody.getVelocity().add(convertForceToVelocity(otherPhysicsBody, deltaTime));
 		}
 
 		// Mass and velocity for 'this'
 		float massA = thisPhysicsBody.getMass();
-		Vector2f velocityA = new Vector2f(thisPhysicsBody.getVelocity());
+		Vector2f velocityA = thisPhysicsBody.getVelocity().add(convertForceToVelocity(thisPhysicsBody, deltaTime));
 
 		// Relative velocity and projection
 		Vector2f relativeVelocity = new Vector2f(velocityA).sub(velocityB);
@@ -207,12 +210,10 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		// Apply forces
 		Vector2f forceOnA = new Vector2f(impulse).mul(1f / deltaTime);
 		thisPhysicsBody.applyForce(forceOnA);
-		Game.LOGGER.info("Applying force on " + gameObject.getName() + " : " + forceOnA);
 
 		if (other.hasComponent(PhysicsBody.class)) {
 			Vector2f forceOnB = new Vector2f(impulse).mul(-1f / deltaTime);
 			other.getComponent(PhysicsBody.class).applyForce(forceOnB);
-			Game.LOGGER.info("Applying force on " + other.getName() + " : " + forceOnB);
 		}
 	}
 
@@ -226,35 +227,50 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	 */
 	private void applyForcesToPhysicsObjects(Set<GameObject> gameObjects, float deltaTime) {
 		gameObjects.forEach(gameObject -> {
-			applyDrag(gameObject, deltaTime);
+			applyDrag(gameObject);
 			detectCollisions(gameObject, deltaTime);
 		});
 		applyCollisions(deltaTime);
 	}
 
 	/**
-	 * Updates the velocities and positions of all physics bodies in the scene.
-	 * This method calculates the new velocity based on applied forces and updates
-	 * the position of each GameObject accordingly.
+   * Updates the velocities of all physics bodies based on the applied forces.
 	 *
 	 * @param physicsBodies The set of GameObjects with PhysicsBody components to update.
-	 * @param deltaTime The time step for the physics update, used to calculate position changes.
+	 * @param deltaTime The time step for the physics update, used to calculate velocity changes.
 	 */
-	private void updateVelocitiesAndPositions(Set<GameObject> physicsBodies, float deltaTime) {
+	private void updateVelocities(Set<GameObject> physicsBodies, float deltaTime) {
 		physicsBodies.forEach(gameObject -> {
 			PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
-			Vector2f before = new Vector2f(physicsBody.getVelocity());
 			physicsBody.addVelocity(convertForceToVelocity(physicsBody, deltaTime));
-			Vector2f change = new Vector2f(before).sub(physicsBody.getVelocity());
-			if (before.lengthSquared() > 0 && change.lengthSquared() > 0) {
-				Game.LOGGER.info("change in velocity for " + gameObject.getName() + " : " + before + "-" + physicsBody.getVelocity() + " = " + change);
-			}
-			Transform transform = gameObject.getComponent(Transform.class);
-			transform.move(new Vector2f(physicsBody.getVelocity()).mul(deltaTime));
 			physicsBody.emptyAppliedForces();
 		});
 	}
 
+	/**
+	 * Updates the positions of all physics bodies based on their velocities.
+	 *
+	 * @param physicsBodies The set of GameObjects with PhysicsBody components to update.
+	 * @param deltaTime The time step for the physics update, used to calculate position changes.
+	 */
+	private void updatePositions(Set<GameObject> physicsBodies, float deltaTime) {
+		physicsBodies.forEach(gameObject -> {
+			PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
+			Transform transform = gameObject.getComponent(Transform.class);
+			transform.move(physicsBody.getVelocity().mul(deltaTime));
+			Collider2D collider = gameObject.getComponent(Collider2D.class);
+			collider.updateCollider2D();
+		});
+	}
+
+	/**
+	 * Computes the physics simulation for the game.
+	 * This method applies forces, updates velocities, and positions of all GameObjects
+	 * with PhysicsBody and Collider2D components in both left and right scenes.
+	 *
+	 * @param context The LifeCycleContext for the game, expected to be a Game instance.
+	 * @param deltaTime The time step for the physics update.
+	 */
 	@Override
 	public void compute(LifeCycleContext context, float deltaTime) {
 		if (!(context instanceof Game game)){
@@ -268,12 +284,14 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		colliders = leftScene.getGOsByComponent(Collider2D.class);
 		physicsBodies = leftScene.getGOsByComponent(PhysicsBody.class);
 		applyForcesToPhysicsObjects(physicsBodies, deltaTime);
-		updateVelocitiesAndPositions(physicsBodies, deltaTime);
+		updateVelocities(physicsBodies, deltaTime);
+		updatePositions(physicsBodies, deltaTime);
 
 		colliders = rightScene.getGOsByComponent(Collider2D.class);
 		physicsBodies = rightScene.getGOsByComponent(PhysicsBody.class);
 		applyForcesToPhysicsObjects(physicsBodies, deltaTime);
-		updateVelocitiesAndPositions(physicsBodies, deltaTime);
+		updateVelocities(physicsBodies, deltaTime);
+		updatePositions(physicsBodies, deltaTime);
 	}
 
 	@Override
