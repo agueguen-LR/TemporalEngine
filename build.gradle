@@ -87,6 +87,15 @@ project(":game"){
 		mainClass = "games.temporalstudio.timecapsule.Launcher"
 	}
 
+	task runEngine(type: JavaExec){
+		group = "application"
+		description = "Runs engine test part this project as a JVM application."
+
+		mainClass = application.mainClass
+    	classpath = sourceSets.main.runtimeClasspath
+		args = ["engine"]
+	}
+
 	distributions{
 		main{
 			distributionBaseName = appName
