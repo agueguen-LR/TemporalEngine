@@ -11,6 +11,7 @@ import games.temporalstudio.temporalengine.rendering.Renderer;
 import games.temporalstudio.temporalengine.window.Window;
 import games.temporalstudio.temporalengine.window.WindowInfo;
 
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.Version;
 
 public abstract class Game extends App implements LifeCycleContext{
@@ -29,8 +30,8 @@ public abstract class Game extends App implements LifeCycleContext{
 	private boolean transitioning = false;
 	private float transitionTime = 0.5f; // Time in seconds for transitions
 
-	public Game(String title){
-		this.window = new Window(this::update, title);
+	public Game(String title, @Nullable String iconPath){
+		this.window = new Window(this::update, title, iconPath);
 		this.windowInfo = new WindowInfo(window);
 		this.renderer = new Renderer();
 		this.physicsEngine = new PhysicsEngine();
@@ -38,7 +39,7 @@ public abstract class Game extends App implements LifeCycleContext{
 		LOGGER = this.getLogger();
 	}
 	public Game(){
-		this(null);
+		this(null, null);
 	}
 
 	// GETTERS
@@ -53,6 +54,9 @@ public abstract class Game extends App implements LifeCycleContext{
 	// SETTERS
 	public void setTitle(String title){
 		this.window.setTitle(title);
+	}
+	public void setIcon(String iconPath){
+		this.window.setIcon(iconPath);
 	}
 
 	// FUNCTIONS

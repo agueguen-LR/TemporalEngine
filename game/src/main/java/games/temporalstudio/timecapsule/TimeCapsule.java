@@ -27,13 +27,13 @@ public class TimeCapsule extends Game{
 	private static final String IDENTIFIER = "timecapsule";
 
 	public TimeCapsule(){
-		super();
+		super(null, "icon.png");
 
 		setTitle(getI18n().getSentence("game.title", getVersion()));
 
 		setMainMenu(createMainMenu());
-		setFirstLeftScene(createPastScenes());
-		setFirstRightScene(createFutureScenes());
+		setFirstLeftScene(this.createPastScenes());
+		setFirstRightScene(this.createFutureScenes());
 	}
 
 	// GETTERS
@@ -59,7 +59,7 @@ public class TimeCapsule extends Game{
 
 		GameObject player = createPlayer(new int[]{
 			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
-			GLFW_KEY_A
+			GLFW_KEY_Q
 		});
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
