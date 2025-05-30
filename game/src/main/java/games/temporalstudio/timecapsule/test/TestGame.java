@@ -61,24 +61,34 @@ public class TestGame extends Game{
 			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
 			GLFW_KEY_Q
 		});
+		GameObject rulietta = new GameObject("Rulietta");
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
 		// Components
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
 
-		compulsiveMerger.addComponent(new Transform(new Vector2f(1, 2)));
+		rulietta.addComponent(new Transform(
+		 	new Vector2f(1, 2), new Vector2f(.85f, .85f)
+		));
+		rulietta.addComponent(new ColorRender(
+			new Vector4f(1, 0, 1, 1)
+		));
+
+		Vector4f lowPurple = new Vector4f(64f/255, 0, 1, 1);
+		Vector4f highPurple = new Vector4f(192f/255, 0, 1, 1);
+		compulsiveMerger.addComponent(new Transform(
+			new Vector2f(1, 3), new Vector2f(.5f, .5f)
+		));
 		compulsiveMerger.addComponent(new ColorRender(List.of(
-			new Vector4f(1, .6f, 0, 1),
-			new Vector4f(.75f, .45f, .15f, 1),
-			new Vector4f(1, .6f, 0, 1),
-			new Vector4f(1, .6f, 0, 1)
+			lowPurple, lowPurple, lowPurple, highPurple
 		)));
 
 		// Scene
 		past.addGameObject(camera);
 		past.addGameObject(player);
 		past.addGameObject(compulsiveMerger);
+		past.addGameObject(rulietta);
 
 		return past;
 	}
