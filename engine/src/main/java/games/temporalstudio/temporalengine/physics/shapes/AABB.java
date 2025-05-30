@@ -19,6 +19,13 @@ public class AABB implements Shape {
 		updateShape();
 	}
 
+	public Shape copy() {
+		AABB aabb = new AABB(transform);
+		aabb.setOffset(new Vector2f(offset));
+		aabb.setMagnitude(new Vector2f(magnitude));
+		return aabb;
+	}
+
 	private enum AABBRelation {
 		LEFT, RIGHT, UP, DOWN, OVERLAPPING
 	}
@@ -50,13 +57,13 @@ public class AABB implements Shape {
 		return (max.x - min.x) * (max.y - min.y);
 	}
 
-	public void setOffset(float x, float y) {
-		this.offset = new Vector2f(x, y);
+	public void setOffset(Vector2f offset) {
+		this.offset = offset;
 		updateShape();
 	}
 
-	public void setMagnitude(float x, float y) {
-		this.magnitude = new Vector2f(x, y);
+	public void setMagnitude(Vector2f magnitude) {
+		this.magnitude = magnitude;
 		updateShape();
 	}
 
@@ -68,14 +75,6 @@ public class AABB implements Shape {
 		}
 		AABBRelation relation = getRelation(this, aabb);
 		return relation.equals(AABBRelation.OVERLAPPING);
-	}
-
-	@Override
-	public AABB cast(Vector2f translation) {
-		AABB aabb = new AABB(transform);
-		aabb.setOffset(offset.x + translation.x, offset.y + translation.y);
-		aabb.setMagnitude(magnitude.x, magnitude.y);
-		return aabb;
 	}
 
 	@Override
