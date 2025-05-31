@@ -16,7 +16,7 @@ public class Player extends Entity {
     private Inventory<GameObject> inventory;
 
     public Player(String name, Vector2f position, int[] keyCodes, Vector4f color) {
-        super(name, position, new Vector2f(), color);
+        super(name, new Vector2f(1.0f, 2.0f),position, color);
         if (keyCodes.length !=5){
             throw new IllegalArgumentException("keyCodes.length must be 5");
         }

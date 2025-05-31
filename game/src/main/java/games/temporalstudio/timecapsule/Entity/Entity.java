@@ -4,6 +4,7 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
+import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import org.joml.Vector2f;
@@ -22,7 +23,7 @@ public abstract class Entity extends GameObject {
         super(name);
         transform = new Transform(scale, position);
         collider=new Collider2D(transform);
-        //collider.setShape(new AABB(transform));
+        collider.setShape(new AABB(transform));
         physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
         render=new ColorRender(color);
         this.addComponent(transform);
