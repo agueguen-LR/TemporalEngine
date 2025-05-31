@@ -23,8 +23,21 @@ public class TimeCapsule extends Game{
 
 		mainMenu.addGameObject(camera);
 		setMainMenu(mainMenu);
-		setFirstLeftScene(mainMenu);
-		setFirstRightScene(mainMenu);
+
+		Scene leftScene = new Scene("LeftScene");
+		GameObject camera1 = new GameObject("camera1");
+		camera1.addComponent(new Transform());
+		camera1.addComponent(new View(.1f));
+		leftScene.addGameObject(camera1);
+
+		Scene rightScene = new Scene("RightScene");
+		GameObject camera2 = new GameObject("camera2");
+		camera2.addComponent(new Transform());
+		camera2.addComponent(new View(.1f));
+		rightScene.addGameObject(camera2);
+
+		setFirstLeftScene(leftScene);
+		setFirstRightScene(rightScene);
 	}
 
 	// GETTERS
