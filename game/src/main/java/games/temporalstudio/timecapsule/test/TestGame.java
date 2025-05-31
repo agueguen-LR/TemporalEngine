@@ -157,6 +157,7 @@ public class TestGame extends Game{
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
 		collider2D.setRestitution(1f);
+		collider2D.setRigid(true);
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
@@ -191,6 +192,7 @@ public class TestGame extends Game{
 		Collider2D collider2D = new Collider2D(transform);
 		collider2D.setShape(new AABB(transform));
 		collider2D.setRestitution(.5f);
+		collider2D.setRigid(true);
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
@@ -288,6 +290,7 @@ public class TestGame extends Game{
 		collider2D.setShape(new AABB(transform));
 		PhysicsBody physicsBody = new PhysicsBody(0.5f, 1000f, .1f, 0f);
 		collider2D.setRestitution(2f);
+		collider2D.setRigid(true);
 
 
 		ice.addComponent(transform);
