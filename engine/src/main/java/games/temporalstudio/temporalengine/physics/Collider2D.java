@@ -32,15 +32,12 @@ public class Collider2D implements Component {
 	private float restitution;
 
 	/**
-	 * Constructs a Collider2D with the given transform.
+	 * Constructs a Collider2D with a specified shape.
 	 *
-	 * @param transform the transform associated with this collider
+	 * @param shape the shape to use for collision detection
 	 */
-	public Collider2D(Transform transform) {
-		if (transform == null) {
-			Game.LOGGER.severe("Collider2D cannot be created with null Transform.");
-			return;
-		}
+	public Collider2D(Shape shape) {
+		this.shape = shape;
 		this.intersecting = new HashSet<>();
 		this.colliding = new HashSet<>();
 		this.onCollide = (object, other) -> {};

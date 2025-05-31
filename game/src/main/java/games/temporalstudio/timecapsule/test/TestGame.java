@@ -134,8 +134,7 @@ public class TestGame extends Game{
 		AtomicBoolean triggerActivated = new AtomicBoolean(false);
 		Trigger trigger = new Trigger(1 , triggerActivated::get);
 
-		Collider2D collider2D = new Collider2D(transform);
-		collider2D.setShape(new AABB(transform));
+		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setOnIntersects(
 				(context, other) -> triggerActivated.set(true)
 		);
@@ -154,9 +153,9 @@ public class TestGame extends Game{
 		Transform transform = new Transform(new Vector2f(1, 4.25f));
 		PhysicsBody physicsBody = new PhysicsBody(
 				1, 10, .1f, 20f);
-		Collider2D collider2D = new Collider2D(transform);
-		collider2D.setShape(new AABB(transform));
+		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRestitution(1f);
+		collider2D.setRigid(true);
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
@@ -188,9 +187,9 @@ public class TestGame extends Game{
 		Render render = new ColorRender(new Vector4f(0.56f, 0.93f, 0.56f, 1));
 		Transform transform = new Transform(new Vector2f(5, 6.5f));
 		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
-		Collider2D collider2D = new Collider2D(transform);
-		collider2D.setShape(new AABB(transform));
+		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRestitution(.5f);
+		collider2D.setRigid(true);
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
@@ -222,8 +221,7 @@ public class TestGame extends Game{
 		Render render = new ColorRender(new Vector4f(1, 0, 0, 1));
 		Transform transform = new Transform(new Vector2f(1, 2));
 
-		Collider2D collider2D = new Collider2D(transform);
-		collider2D.setShape(new AABB(transform));
+		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRigid(true);
 
 		Trigger trigger = button.getComponent(Trigger.class);
@@ -256,8 +254,7 @@ public class TestGame extends Game{
 				new Vector4f(.5f, .25f, .1f, 1)
 		);
 		Transform transform = new Transform(new Vector2f(1, 5.5f));
-		Collider2D collider2D = new Collider2D(transform);
-		collider2D.setShape(new AABB(transform));
+		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRigid(true);
 		collider2D.setOnCollide((context, other) -> {
 			if (context instanceof GameObject rockObject
@@ -284,10 +281,10 @@ public class TestGame extends Game{
 
 		Render render = new ColorRender(new Vector4f(0.68f, 0.85f, 0.9f, 1));
 		Transform transform = new Transform(new Vector2f(5, 4f));
-		Collider2D collider2D = new Collider2D(transform);
-		collider2D.setShape(new AABB(transform));
+		Collider2D collider2D = new Collider2D(new AABB(transform));
 		PhysicsBody physicsBody = new PhysicsBody(0.5f, 1000f, .1f, 0f);
 		collider2D.setRestitution(2f);
+		collider2D.setRigid(true);
 
 
 		ice.addComponent(transform);
@@ -303,9 +300,8 @@ public class TestGame extends Game{
 
 		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1));
 		Transform transform = new Transform(new Vector2f(5, 1));
-		Collider2D collider2D = new Collider2D(transform);
+		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRigid(true);
-		collider2D.setShape(new AABB(transform));
 		collider2D.setRestitution(5f);
 
 		spring.addComponent(transform);
