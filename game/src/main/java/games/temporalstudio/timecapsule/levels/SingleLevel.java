@@ -8,5 +8,5 @@ public interface SingleLevel extends Level{
 	 *
 	 * @return The scene for the single level.
 	 */
-	public Scene getScene();
+	public abstract Scene getScene();
 }

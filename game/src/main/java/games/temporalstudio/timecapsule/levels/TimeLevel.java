@@ -7,10 +7,10 @@ public interface TimeLevel extends Level{
 	 * Returns the scene for the past time period of the level.
 	 * @return The scene for the past time period of the level.
 	 */
-	public Scene getPastScene();
+	public abstract Scene getPastScene();
 	/**
 	 * Returns the scene for the future time period of the level.
 	 * @return The scene for the future time period of the level.
 	 */
-	public Scene getFuturScene();
+	public abstract Scene getFuturScene();
 }
