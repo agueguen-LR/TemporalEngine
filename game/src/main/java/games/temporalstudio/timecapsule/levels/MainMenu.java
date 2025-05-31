@@ -5,7 +5,7 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.View;
 
-public class MainMenu{
+public class MainMenu implements SingleLevel{
 	private Scene scene;
 
 	public MainMenu(){

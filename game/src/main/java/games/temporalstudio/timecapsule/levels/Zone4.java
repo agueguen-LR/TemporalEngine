@@ -2,25 +2,16 @@ package games.temporalstudio.timecapsule.levels;
 
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.physics.Transform;
-import games.temporalstudio.temporalengine.rendering.component.View;
 
-public class Zone4 implements Level{
+public class Zone4 implements TimeLevel{
 	private Scene pastScene;
 	private Scene futurScene;
 
-	public Zone4(){
+	public Zone4(GameObject pastCamera, GameObject futurCamera){
 		this.pastScene = new Scene("Zone4_Past");
 		this.futurScene = new Scene("Zone4_Futur");
 
-		GameObject pastCamera = new GameObject("pastCamera");
-		pastCamera.addComponent(new Transform());
-		pastCamera.addComponent(new View(.1f));
 		this.pastScene.addGameObject(pastCamera);
-
-		GameObject futurCamera = new GameObject("futurCamera");
-		futurCamera.addComponent(new Transform());
-		futurCamera.addComponent(new View(.1f));
 		this.futurScene.addGameObject(futurCamera);
 	}
 
