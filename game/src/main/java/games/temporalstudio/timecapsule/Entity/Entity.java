@@ -65,7 +65,6 @@ public abstract class Entity extends GameObject {
         else this.moveUp();
     }
     public void moveUp(){
-        System.out.print("UP !");
         physicsBody.applyForce(new Vector2f(0, 100));}
 
     public void moveDown(float gauge){
@@ -73,7 +72,6 @@ public abstract class Entity extends GameObject {
             else this.moveDown();
     }
     public void moveDown(){
-        System.out.print("DOWN");
         physicsBody.applyForce(new Vector2f(0, -100));}
 
     public void moveLeft (float gauge){
@@ -81,7 +79,6 @@ public abstract class Entity extends GameObject {
         else this.moveLeft();
     }
     public void moveLeft(){
-        System.out.print("LEFT");
         physicsBody.applyForce(new Vector2f(-100, 0));}
 
     public void moveRight (float gauge){
@@ -89,7 +86,6 @@ public abstract class Entity extends GameObject {
         else this.moveRight();
     }
     public void moveRight (){
-        System.out.print("RIGHT");
         physicsBody.applyForce(new Vector2f(100, 0));}
 
     public void jump (){

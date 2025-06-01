@@ -27,9 +27,7 @@ public class Enemy extends PNJ {
         if ((int)this.transform.getPosition().x == (int)this.loopPoints[direction].x
                 && (int)this.transform.getPosition().y == (int)this.loopPoints[direction].y) {
             direction++;
-            if (loopPoints.length <= direction) {
-                direction = 0;
-                System.out.println("ouiiii");}
+            if (loopPoints.length <= direction) direction = 0;
             }
 
         if (haveToGoUp()) this.moveUp();
@@ -50,7 +48,6 @@ public class Enemy extends PNJ {
     @Override
     public void update(LifeCycleContext context, float delta){
         finalMovement();
-        System.out.println(transform.getPosition().x+" "+transform.getPosition().y);
     }
 }
 
