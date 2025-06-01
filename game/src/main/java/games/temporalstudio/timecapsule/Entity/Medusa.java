@@ -7,11 +7,13 @@ import org.joml.Vector4f;
 public class Medusa extends Entity{
 
     private Player player;
-    private static double MAX_DISTANCE=2;
+    private static double MAX_DISTANCE=1.5f;
 
     public Medusa(String name, Vector2f scale, Vector2f position, Vector4f color, Player player) {
         super(name, scale, position, color);
         this.player = player;
+
+        this.addComponent(collider);
     }
 
     @Override

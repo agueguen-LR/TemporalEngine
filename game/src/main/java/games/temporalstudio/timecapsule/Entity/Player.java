@@ -29,7 +29,8 @@ public class Player extends Entity {
         this.keyControllDefinition(keyCodes);
         inventory= new Inventory();
 
-        this.addComponent(input)
+        this.addComponent(input);
+        this.addComponent(collider);
     }
 
     /*public Player(String name, Vector2f scale, Vector2f position, int[] keyCodes, Vector4f color) {
@@ -60,7 +61,7 @@ public class Player extends Entity {
 
     public void keyControllDefinition(int[] keyCodes) {
         input.addControl(keyCodes[0], (context) -> {
-            System.out.println("Key: "+keyCodes[0]);
+            System.out.println(transform.getPosition());
             this.moveUp(gauge);
         });
         input.addControl(keyCodes[1], (context) -> {

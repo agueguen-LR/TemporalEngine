@@ -13,6 +13,19 @@ public class Enemy extends Entity {
 
     public Enemy(String name, Vector2f scale, Vector2f position, Vector4f color, Vector2f[] coords, Scene scene) {
         super(name, scale, position, color);
+        collider.setOnIntersects((context, other) -> {
+            System.out.println("rlrihgzmfih");
+                /*if (context instanceof Enemy enemy
+                        && other instanceof Player player
+                ) {
+                    Game.LOGGER.info("Player killed by dracula!");
+                    player.transform.setPosition(new Vector2f());
+                }*/
+        });
+        this.addComponent(collider);
+        this.removeComponent(physicsBody);
+
+
         if(coords.length <= 1){
             throw new IllegalArgumentException("Not enough coordinate points");
         }
@@ -20,17 +33,6 @@ public class Enemy extends Entity {
             direction=0;
             loopPoints=coords;
 
-            collider.setOnIntersects((context, other) -> {
-                System.out.println("rlrihgzmfih");
-                /*if (context instanceof Enemy enemy
-                        && other instanceof Player player
-                ) {*/
-                    System.out.println("icciiiii");
-                    Game.LOGGER.info("Player killed by dracula!");
-                    //player.transform.setPosition(new Vector2f());
-                //}
-            });
-            this.addComponent(collider);
         }
     }
 

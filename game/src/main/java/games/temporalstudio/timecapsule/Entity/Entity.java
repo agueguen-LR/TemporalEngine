@@ -39,7 +39,7 @@ public abstract class Entity extends GameObject {
         transform = new Transform(position, scale);
         collider=new Collider2D(transform);
         collider.setShape(new AABB(transform));
-        physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
+        physicsBody = new PhysicsBody(1, 1, 0.1f, 1);
         render=new ColorRender(color);
         this.addComponent(transform);
         this.addComponent(physicsBody);
@@ -73,24 +73,24 @@ public abstract class Entity extends GameObject {
             else this.moveDown();
     }
     public void moveDown(){
-        physicsBody.applyForce(new Vector2f(0, -100));}
+        physicsBody.applyForce(new Vector2f(0, -150));}
 
     public void moveLeft (float gauge){
         if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(-100*MALUSSLOWDOWN, 0));}
         else this.moveLeft();
     }
     public void moveLeft(){
-        physicsBody.applyForce(new Vector2f(-100, 0));}
+        physicsBody.applyForce(new Vector2f(-150, 0));}
 
     public void moveRight (float gauge){
         if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(100*MALUSSLOWDOWN, 0));}
         else this.moveRight();
     }
     public void moveRight (){
-        physicsBody.applyForce(new Vector2f(100, 0));}
+        physicsBody.applyForce(new Vector2f(150, 0));}
 
     public void jump (){
-        physicsBody.applyForce(new Vector2f(0, 100));
+        physicsBody.applyForce(new Vector2f(0, 150));
     }
 
     public void XmoveCloser(Entity letruc, double distance){
