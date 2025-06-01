@@ -100,6 +100,5 @@ public class Player implements TimeObject {
 		}
 		InventoryObject selectedObject = inventory.get(this.selectedObject);
 		selectedObject.getTriggerable().trigger(selectedObject.getGameObject());
-		removeFromInventory(selectedObject);
 	}
 }
