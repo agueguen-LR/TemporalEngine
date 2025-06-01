@@ -61,7 +61,6 @@ public class Player extends Entity {
 
     public void keyControllDefinition(int[] keyCodes) {
         input.addControl(keyCodes[0], (context) -> {
-            System.out.println(transform.getPosition());
             this.moveUp(gauge);
         });
         input.addControl(keyCodes[1], (context) -> {

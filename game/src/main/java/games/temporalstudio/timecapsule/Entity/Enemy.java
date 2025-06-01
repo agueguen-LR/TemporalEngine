@@ -11,8 +11,9 @@ public class Enemy extends Entity {
     private Vector2f[] loopPoints;
     private int direction;
 
-    public Enemy(String name, Vector2f scale, Vector2f position, Vector4f color, Vector2f[] coords, Scene scene) {
+    public Enemy(String name, Vector2f scale, Vector2f position, Vector4f color, Vector2f[] coords) {
         super(name, scale, position, color);
+
         collider.setOnIntersects((context, other) -> {
             System.out.println("rlrihgzmfih");
                 /*if (context instanceof Enemy enemy

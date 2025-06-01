@@ -61,8 +61,8 @@ public class TestGame extends Game{
 		GameObject camera = new GameObject("PastCamera");
 
 		Player player = new Player("gabriela",new Vector2f(5,2),new int[]{
-				GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, GLFW_KEY_E
-		},	new Vector4f(0,0,1,1));
+				GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, GLFW_KEY_E},
+				new Vector4f(0,0,1,1));
 
 		Medusa medusa=new Medusa("djkh", new Vector2f(0.5f, 0.5f), new Vector2f(4, 2),
 				new Vector4f(0.25f,0,0.75f,1), player);
@@ -72,11 +72,11 @@ public class TestGame extends Game{
 		Vector2f[] coords={
 				new Vector2f(1,5),
 				new Vector2f(1,3),
-				new Vector2f(3,2),
+				new Vector2f(3,4),
 				new Vector2f(4,2),
 		};
 		Enemy chauvesouris= new Enemy("Dracula", new Vector2f(1, 2), new Vector2f(1,1),
-				new Vector4f(0, .50f, .50f, 1),coords , past);
+				new Vector4f(0, .50f, .50f, 1),coords);
 
 		// Components
 		camera.addComponent(new Transform());
