@@ -37,8 +37,7 @@ public abstract class Entity extends GameObject {
     public Entity(String name, Vector2f scale, Vector2f position, Vector4f color) {
         super(name);
         transform = new Transform(position, scale);
-        collider=new Collider2D(transform);
-        collider.setShape(new AABB(transform));
+        collider=new Collider2D((new AABB(transform)));
         physicsBody = new PhysicsBody(1, 1, 0.1f, 1);
         render=new ColorRender(color);
         this.addComponent(transform);
