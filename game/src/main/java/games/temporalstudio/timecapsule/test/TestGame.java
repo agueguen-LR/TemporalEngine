@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.Game;
@@ -66,10 +65,11 @@ public class TestGame extends Game{
 		GameObject rulietta = new GameObject("Rulietta");
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
-		GameObject wall = new GameObject("Wall");
-		GameObject wall1 = new GameObject("Wall1");
-		GameObject wall2 = new GameObject("Wall2");
-		GameObject wall3 = new GameObject("Wall3");
+		GameObject ground = new GameObject("Ground");
+		GameObject ground1 = new GameObject("Ground1");
+		GameObject ground2 = new GameObject("Ground2");
+		GameObject ground3 = new GameObject("Ground3");
+		GameObject ground4 = new GameObject("Ground4");
 
 		// Components
 		camera.addComponent(new Transform());
@@ -77,7 +77,7 @@ public class TestGame extends Game{
 
 		rulietta.addComponent(new Transform(new Vector2f(1, 2)));
 		rulietta.addComponent(new TextureRender(
-			"rulietta", new Vector2i()
+			"rulietta", "test"
 		));
 
 		Vector4f lowPurple = new Vector4f(64f/255, 0, 1, 1);
@@ -89,21 +89,25 @@ public class TestGame extends Game{
 			lowPurple, lowPurple, lowPurple, highPurple
 		)));
 
-		wall.addComponent(new Transform(new Vector2f(3, 3)));
-		wall.addComponent(new TextureRender(
-			"terrain", new Vector2i()
+		ground.addComponent(new Transform(new Vector2f(3, 3)));
+		ground.addComponent(new TextureRender(
+			"future", "soil_and_left_river"
 		));
-		wall1.addComponent(new Transform(new Vector2f(4, 3)));
-		wall1.addComponent(new TextureRender(
-			"terrain", new Vector2i(1, 0)
+		ground1.addComponent(new Transform(new Vector2f(4, 3)));
+		ground1.addComponent(new TextureRender(
+			"future", "full_soil"
 		));
-		wall2.addComponent(new Transform(new Vector2f(5, 3)));
-		wall2.addComponent(new TextureRender(
-			"terrain", new Vector2i(1, 0)
+		ground2.addComponent(new Transform(new Vector2f(5, 3)));
+		ground2.addComponent(new TextureRender(
+			"future", "soil_and_right_river"
 		));
-		wall3.addComponent(new Transform(new Vector2f(6, 3)));
-		wall3.addComponent(new TextureRender(
-			"terrain", new Vector2i(2, 0)
+		ground3.addComponent(new Transform(new Vector2f(6, 3)));
+		ground3.addComponent(new TextureRender(
+			"future", "full_water"
+		));
+		ground4.addComponent(new Transform(new Vector2f(6, 2)));
+		ground4.addComponent(new TextureRender(
+			"future", "soil_and_top_river"
 		));
 
 		// Scene
@@ -111,10 +115,12 @@ public class TestGame extends Game{
 		past.addGameObject(player);
 		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
-		past.addGameObject(wall);
-		past.addGameObject(wall1);
-		past.addGameObject(wall2);
-		past.addGameObject(wall3);
+
+		past.addGameObject(ground);
+		past.addGameObject(ground1);
+		past.addGameObject(ground2);
+		past.addGameObject(ground3);
+		past.addGameObject(ground4);
 
 		return past;
 	}

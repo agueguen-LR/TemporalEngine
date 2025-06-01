@@ -16,7 +16,6 @@ import java.util.stream.IntStream;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -32,6 +31,7 @@ import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.TextureRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 import games.temporalstudio.temporalengine.rendering.texture.Texture;
+import games.temporalstudio.temporalengine.rendering.texture.Texture.Tile;
 
 public class RenderBatch implements RenderLifeCycle{
 
@@ -153,9 +153,10 @@ public class RenderBatch implements RenderLifeCycle{
 			}
 			case TextureRender tr -> {
 				texIndex = sampler.get(tr.getTexture());
-				texCoords = tr.getTexture().getCoords(
-					tr.getPosition(), tr.getScale()
-				);
+
+				Tile tile = tr.getTile();
+				if(tile != null)
+					texCoords = tr.getTexture().getCoords(tile);
 			}
 		}
 
