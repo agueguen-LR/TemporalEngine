@@ -31,8 +31,8 @@ public class Window implements WindowLifeCycle{
 
 	private static Window instance = null;
 
-	private final int width = 640;
-	private final int height = 360;
+	private final int width = 640*2;
+	private final int height = 360*2;
 	private String title;
 	private String iconPath;
 	private final Consumer<Float> handler;

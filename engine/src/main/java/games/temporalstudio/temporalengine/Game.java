@@ -14,7 +14,8 @@ import games.temporalstudio.temporalengine.window.WindowInfo;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.Version;
 
-public abstract class Game extends App implements LifeCycleContext{
+public abstract class Game extends App implements LifeCycleContext, LifeCycle{
+
 	public static Logger LOGGER;
 
 	private final Window window;
@@ -64,23 +65,31 @@ public abstract class Game extends App implements LifeCycleContext{
 	public void run(String[] args){
 		getLogger().info("LWJGL version: %s.".formatted(Version.getVersion()));
 
-		window.init(this);
-		window.start(this);
-
-		physicsEngine.init(this);
-		renderer.init(this);
-
-		physicsEngine.start(this);
-		renderer.start(this);
-
-		window.run(this);
+		init(null);
+		start(null);
+		destroy(null);
 	}
 	@Override
 	public void run(Console console, String[] args){
 		throw new RuntimeException();
 	}
 
-	public void update(float deltaTime){
+	@Override
+	public void init(LifeCycleContext context){
+		window.init(this);
+		window.start(this);
+
+		physicsEngine.init(this);
+		renderer.init(this);
+	}
+	@Override
+	public void start(LifeCycleContext context){
+		physicsEngine.start(this);
+		renderer.start(this);
+
+		window.run(this);
+	}
+	public final void update(float deltaTime){
 		if(deltaTime >= 0){
 			if(transitioning){
 				transitionTime -= deltaTime;
@@ -117,6 +126,8 @@ public abstract class Game extends App implements LifeCycleContext{
 			renderer.render(this);
 		}
 	}
+	@Override
+	public void destroy(LifeCycleContext context){}
 
 	public void changeLeftScene(String name){
 		if (this.leftScene == null) {
