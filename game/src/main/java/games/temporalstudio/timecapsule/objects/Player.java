@@ -43,6 +43,9 @@ public class Player implements TimeObject {
 		input.addControl(keys[4], (context) -> {
 			useSelectedObject();
 		});
+		input.addControl(keys[5], (context) -> {
+			switchSelectedObject(1);
+		});
 
 		this.gameObject.addComponent(transform);
 		this.gameObject.addComponent(collider);
@@ -80,8 +83,12 @@ public class Player implements TimeObject {
 	 * @param direction 1 to switch to the next object, -1 to switch to the previous object.
 	 */
 	public void switchSelectedObject(int direction) {
-		if (inventory.isEmpty()) return;
+		if (inventory.isEmpty()) {
+			Game.LOGGER.warning(this.gameObject.getName() + " tried to switch selected object, but inventory is empty.");
+			return;
+		}
 		selectedObject = (selectedObject + direction + inventory.size()) % inventory.size();
+		Game.LOGGER.info(this.gameObject.getName() + "'s selected object changed to: " + inventory.get(selectedObject).getGameObject().getName());
 	}
 
 	/**
