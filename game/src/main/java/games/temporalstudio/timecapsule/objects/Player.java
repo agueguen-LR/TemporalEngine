@@ -1,5 +1,6 @@
 package games.temporalstudio.timecapsule.objects;
 
+import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
@@ -11,8 +12,12 @@ import games.temporalstudio.temporalengine.rendering.component.Render;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
+
 public class Player implements TimeObject {
 	private final GameObject gameObject;
+	private ArrayList<InventoryObject> inventory = new ArrayList<>();
+	private int selectedObject = 0;
 
 	public Player(String name, float x, float y, int[] keys) {
 		this.gameObject = new GameObject(name);
@@ -35,6 +40,9 @@ public class Player implements TimeObject {
 		input.addControl(keys[3], (context) -> {
 			physicsBody.applyForce(new Vector2f(10, 0));
 		});
+		input.addControl(keys[4], (context) -> {
+			useSelectedObject();
+		});
 
 		this.gameObject.addComponent(transform);
 		this.gameObject.addComponent(collider);
@@ -46,5 +54,45 @@ public class Player implements TimeObject {
 	@Override
 	public GameObject getGameObject() {
 		return gameObject;
+	}
+
+	/**
+	 * Adds an object to the player's inventory.
+	 *
+	 * @param object The InventoryObject to be added.
+	 */
+	public void addToInventory(InventoryObject object) {
+		Game.LOGGER.info("Adding object to inventory: " + object.getGameObject().getName());
+		inventory.add(object);
+	}
+
+	public void removeFromInventory(InventoryObject object) {
+		Game.LOGGER.info("Removing object from inventory: " + object.getGameObject().getName());
+		inventory.remove(object);
+		if (selectedObject >= inventory.size()) {
+			selectedObject = 0; // Reset selected object if it exceeds the new inventory size
+		}
+	}
+
+	/**
+	 * Switches the selected object in the inventory.
+	 *
+	 * @param direction 1 to switch to the next object, -1 to switch to the previous object.
+	 */
+	public void switchSelectedObject(int direction) {
+		if (inventory.isEmpty()) return;
+		selectedObject = (selectedObject + direction + inventory.size()) % inventory.size();
+	}
+
+	/**
+	 * Uses the currently selected object in the inventory.
+	 */
+	public void useSelectedObject() {
+		if (inventory.isEmpty()) {
+			return;
+		}
+		InventoryObject selectedObject = inventory.get(this.selectedObject);
+		selectedObject.getTriggerable().trigger(selectedObject.getGameObject());
+		removeFromInventory(selectedObject);
 	}
 }
