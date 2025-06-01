@@ -9,7 +9,7 @@ import games.temporalstudio.temporalengine.LifeCycleContext;
 public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 
 	private String name;
-	private Set<Component> components;
+	private Set<Component> components = new HashSet<>();
 	private Set<Component> componentsToRemove = new HashSet<>();
 	private Set<Component> componentsToAdd = new HashSet<>();
 
@@ -76,7 +76,7 @@ public class GameObject implements UpdateLifeCycle, LifeCycleContext{
 	public void start(LifeCycleContext context){
 		if (componentsToAdd != null){
 		componentsToAdd.forEach(c -> c.start(this));
-		components = new HashSet<>(componentsToAdd);
+		components.addAll(componentsToAdd);
 		componentsToAdd.clear();
 		}
 	}
