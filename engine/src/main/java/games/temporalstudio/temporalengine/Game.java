@@ -82,18 +82,22 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 		physicsEngine.init(this);
 		renderer.init(this);
 
-		mainMenu.init(this);
-		leftScene.init(this);
-		rightScene.init(this);
+		if(mainMenu != null) mainMenu.init(this);
+		else throw new RuntimeException("No main menu scene defined;");
+
+		if(leftScene != null) leftScene.init(this);
+		if(rightScene != null) rightScene.init(this);
 	}
 	@Override
 	public void start(LifeCycleContext context){
 		physicsEngine.start(this);
 		renderer.start(this);
 
-		mainMenu.start(this);
-		leftScene.start(this);
-		rightScene.start(this);
+		if(mainMenu != null) mainMenu.start(this);
+		else throw new RuntimeException("No main menu scene defined;");
+
+		if(leftScene != null) leftScene.start(this);
+		if(rightScene != null) rightScene.start(this);
 
 		window.run(this);
 	}
