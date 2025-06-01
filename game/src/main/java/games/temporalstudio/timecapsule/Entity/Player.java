@@ -14,7 +14,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
 public class Player extends Entity {
 
-    private float gauge;
     private Input input;
     private Inventory inventory;
 
@@ -23,7 +22,6 @@ public class Player extends Entity {
         if (keyCodes.length !=5){
             throw new IllegalArgumentException("keyCodes.length must be 5");
         }
-        gauge=0.0f;
         input=new Input();
         System.out.println("Player: "+name);
         this.keyControllDefinition(keyCodes);
@@ -38,16 +36,12 @@ public class Player extends Entity {
         if (keyCodes.length !=5){
             throw new IllegalArgumentException("keyCodes.length must be 5");
         }
-        gauge = 0.0f;
         input = new Input();
         this.keyControllDefinition(keyCodes);
         inventory = new Inventory();
         this.addComponent(input);
     }*/
 
-    public void fedding(){
-        gauge = 1.0f;
-    }
 
     public Inventory getInventory() {return inventory;}
     public void emptyInventory(){inventory.removeAll();}
@@ -61,16 +55,16 @@ public class Player extends Entity {
 
     public void keyControllDefinition(int[] keyCodes) {
         input.addControl(keyCodes[0], (context) -> {
-            this.moveUp(gauge);
+            this.moveUp();
         });
         input.addControl(keyCodes[1], (context) -> {
-            this.moveDown(gauge);
+            this.moveDown();
         });
         input.addControl(keyCodes[2], (context) -> {
-            this.moveLeft(gauge);
+            this.moveLeft();
         });
         input.addControl(keyCodes[3], (context) -> {
-            this.moveRight(gauge);
+            this.moveRight();
         });
         input.addControl(keyCodes[4], (context) -> {
             this.jump();

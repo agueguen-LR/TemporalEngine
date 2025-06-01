@@ -19,8 +19,6 @@ public abstract class Entity extends GameObject {
     protected Collider2D collider;
     protected PhysicsBody physicsBody;
     protected Render render;
-    private static final float MALUSSLOWDOWN=0.5f;
-    private static final float LIMITEGAUGE=0.4f;
 
     /*public Entity(String name, Vector2f position, Vector4f color) {
         super(name);
@@ -60,31 +58,15 @@ public abstract class Entity extends GameObject {
     public void setTransform(Transform transform) {this.transform = transform;}
     public void setPhysicsBody(PhysicsBody physicsBody) {this.physicsBody = physicsBody;}
 
-    public void moveUp (float gauge) {
-        if (gauge <= LIMITEGAUGE) {physicsBody.applyForce(new Vector2f(0.0f, 100.0f * MALUSSLOWDOWN));}
-        else this.moveUp();
-    }
     public void moveUp(){
         physicsBody.applyForce(new Vector2f(0, 100));}
 
-    public void moveDown(float gauge){
-            if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(0, -100*MALUSSLOWDOWN));}
-            else this.moveDown();
-    }
     public void moveDown(){
         physicsBody.applyForce(new Vector2f(0, -150));}
 
-    public void moveLeft (float gauge){
-        if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(-100*MALUSSLOWDOWN, 0));}
-        else this.moveLeft();
-    }
     public void moveLeft(){
         physicsBody.applyForce(new Vector2f(-150, 0));}
 
-    public void moveRight (float gauge){
-        if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(100*MALUSSLOWDOWN, 0));}
-        else this.moveRight();
-    }
     public void moveRight (){
         physicsBody.applyForce(new Vector2f(150, 0));}
 
