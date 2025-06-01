@@ -19,10 +19,8 @@ public class Exit implements TimeObject {
 		Render render = new ColorRender(new Vector4f(1, 0, 0, 1));
 		Transform transform = new Transform(new Vector2f(x, y));
 		Collider2D collider = new Collider2D(new AABB(transform));
-		collider.setRigid(true);
-		collider.setOnCollide((thisExit, other) -> {
+		collider.setOnIntersects((thisExit, other) -> {
 			if (other == player) {
-
 				changeSceneFunction.accept(targetSceneName);
 			}
 		});
