@@ -19,6 +19,19 @@ public abstract class Entity extends GameObject {
     private static final float MALUSSLOWDOWN=0.5f;
     private static final float LIMITEGAUGE=0.4f;
 
+    public Entity(String name, Vector2f position, Vector4f color) {
+        super(name);
+        transform = new Transform(new Vector2f(1,1), position);
+        collider=new Collider2D(transform);
+        collider.setShape(new AABB(transform));
+        physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
+        render=new ColorRender(color);
+        this.addComponent(transform);
+        this.addComponent(collider);
+        this.addComponent(physicsBody);
+        this.addComponent(render);
+    }
+
     public Entity(String name, Vector2f scale, Vector2f position, Vector4f color) {
         super(name);
         transform = new Transform(scale, position);
@@ -52,29 +65,35 @@ public abstract class Entity extends GameObject {
         else this.moveUp();
     }
     public void moveUp(){
-        System.out.println("move UP !");
-        physicsBody.applyForce(new Vector2f(0.0f, 100.0f));}
+        System.out.print("UP !");
+        physicsBody.applyForce(new Vector2f(0, 100));}
 
     public void moveDown(float gauge){
-            if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(0.0f, -100.0f*MALUSSLOWDOWN));}
+            if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(0, -100*MALUSSLOWDOWN));}
             else this.moveDown();
     }
-    public void moveDown(){physicsBody.applyForce(new Vector2f(0.0f, -100.0f));}
+    public void moveDown(){
+        System.out.print("DOWN");
+        physicsBody.applyForce(new Vector2f(0, -100));}
 
     public void moveLeft (float gauge){
-        if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(-100.0f*MALUSSLOWDOWN, 0.0f));}
+        if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(-100*MALUSSLOWDOWN, 0));}
         else this.moveLeft();
     }
-    public void moveLeft(){physicsBody.applyForce(new Vector2f(-100.0f, 0.0f));}
+    public void moveLeft(){
+        System.out.print("LEFT");
+        physicsBody.applyForce(new Vector2f(-100, 0));}
 
     public void moveRight (float gauge){
-        if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(100.0f*MALUSSLOWDOWN, 0.0f));}
+        if (gauge<=LIMITEGAUGE){physicsBody.applyForce(new Vector2f(100*MALUSSLOWDOWN, 0));}
         else this.moveRight();
     }
-    public void moveRight (){physicsBody.applyForce(new Vector2f(100.0f, 0.0f));}
+    public void moveRight (){
+        System.out.print("RIGHT");
+        physicsBody.applyForce(new Vector2f(100, 0));}
 
     public void jump (){
-        physicsBody.applyForce(new Vector2f(0.0f, 100.0f));
+        physicsBody.applyForce(new Vector2f(0, 100));
     }
 
 
