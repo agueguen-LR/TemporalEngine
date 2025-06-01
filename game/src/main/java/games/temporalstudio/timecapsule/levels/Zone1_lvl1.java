@@ -19,6 +19,8 @@ public class Zone1_lvl1 implements TimeLevel{
 		this.futurScene.addGameObject(futurCamera);
 		this.pastScene.addGameObject(pastCamera);
 
+		ThrowableBottle throwableBottle = new ThrowableBottle("ThrowableBottle", pastPlayer);
+
 		pastTimeObjects = Set.of(
 				new Wall("Zone1_lvl1_Wall1", 1f, 6.0f),
 				new Wall("Zone1_lvl1_Wall2", 2f, 7.0f),
@@ -33,6 +35,8 @@ public class Zone1_lvl1 implements TimeLevel{
 						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer.getGameObject(),
 						"Zone1_lvl2_Past", game::changeLeftScene
 				),
+				new Pickupable("Bottle", 5.0f, 5.0f, pastPlayer, throwableBottle),
+				throwableBottle,
 				pastPlayer
 		);
 

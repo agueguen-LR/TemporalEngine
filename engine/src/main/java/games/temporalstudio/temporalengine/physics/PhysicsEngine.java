@@ -173,7 +173,6 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 			return new Vector2f(); // Other object is not a physics body or rigid collider, no physical collision response needed
 		}
 
-		Game.LOGGER.info("Collision detected between " + gameObject.getName() + " and " + other.getName());
 		Vector2f collisionNormal = thisCollider.getCollisionNormal(otherCollider);
 		if (collisionNormal.lengthSquared() == 0) {
 			return new Vector2f(); // No valid collision normal, skip collision handling
