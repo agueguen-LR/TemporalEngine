@@ -32,11 +32,11 @@ public class Zone1_lvl1 implements TimeLevel{
 				new Wall("Zone1_lvl1_Wall4", 4f, 9.0f),
 				new Wall("Zone1_lvl1_Wall5", 5f, 10.0f),
 				new Exit(
-						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer.getGameObject(),
+						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer,
 						"Zone1_pastCapsule", game::changeLeftScene
 				),
 				new Exit(
-						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer.getGameObject(),
+						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer,
 						"Zone1_lvl2_Past", game::changeLeftScene
 				),
 				new Pickupable("Bottle", 5.0f, 5.0f, pastPlayer, throwableBottle),
@@ -60,7 +60,7 @@ public class Zone1_lvl1 implements TimeLevel{
 				new Wall("Zone1_lvl1_Wall4", 4f, 9.0f),
 				new Wall("Zone1_lvl1_Wall5", 4f, 10.0f),
 				new Exit(
-						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer.getGameObject(),
+						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer,
 						"Zone1_lvl2_Futur", game::changeRightScene
 				),
 				futurPlayer,

@@ -22,7 +22,7 @@ public class Zone1_pastCapsule implements SingleLevel{
 				new Wall("Zone1_pastCapsule_Wall4", 4f, 5.0f),
 				new Wall("Zone1_pastCapsule_Wall5", 5f, 5.0f),
 				new Exit(
-						"Zone1_pastCapsule_Exit", 1.0f, 1.0f, pastPlayer.getGameObject(),
+						"Zone1_pastCapsule_Exit", 1.0f, 1.0f, pastPlayer,
 						"Zone1_lvl1_Past", game::changeLeftScene
 				),
 				pastPlayer,

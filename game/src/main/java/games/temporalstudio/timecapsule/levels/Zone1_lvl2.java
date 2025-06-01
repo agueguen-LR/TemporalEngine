@@ -25,7 +25,7 @@ public class Zone1_lvl2 implements TimeLevel{
 				new Wall("Zone1_lvl2_Wall4", 4f, 4.0f),
 				new Wall("Zone1_lvl2_Wall5", 5f, 3.0f),
 				new Exit(
-						"Zone1_lvl2_Exit", 3.0f, 6.0f, pastPlayer.getGameObject(),
+						"Zone1_lvl2_Exit", 3.0f, 6.0f, pastPlayer,
 						"Zone2_Past", game::changeLeftScene),
 				pastPlayer
 		);
@@ -38,7 +38,7 @@ public class Zone1_lvl2 implements TimeLevel{
 				new Wall("Zone1_lvl2_Wall4", 4f, 4.0f),
 				new Wall("Zone1_lvl2_Wall5", 5f, 3.0f),
 				new Exit(
-						"Zone1_lvl2_Exit", 3.0f, 6.0f, futurPlayer.getGameObject(),
+						"Zone1_lvl2_Exit", 3.0f, 6.0f, futurPlayer,
 						"Zone2_Futur", game::changeRightScene),
 				futurPlayer
 		);
