@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.Game;
@@ -20,6 +21,7 @@ import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.TextureRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 
 public class TestGame extends Game{
@@ -64,15 +66,18 @@ public class TestGame extends Game{
 		GameObject rulietta = new GameObject("Rulietta");
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
+		GameObject wall = new GameObject("Wall");
+		GameObject wall1 = new GameObject("Wall1");
+		GameObject wall2 = new GameObject("Wall2");
+		GameObject wall3 = new GameObject("Wall3");
+
 		// Components
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
 
-		rulietta.addComponent(new Transform(
-		 	new Vector2f(1, 2), new Vector2f(.85f, .85f)
-		));
-		rulietta.addComponent(new ColorRender(
-			new Vector4f(1, 0, 1, 1)
+		rulietta.addComponent(new Transform(new Vector2f(1, 2)));
+		rulietta.addComponent(new TextureRender(
+			"rulietta", new Vector2i()
 		));
 
 		Vector4f lowPurple = new Vector4f(64f/255, 0, 1, 1);
@@ -84,11 +89,32 @@ public class TestGame extends Game{
 			lowPurple, lowPurple, lowPurple, highPurple
 		)));
 
+		wall.addComponent(new Transform(new Vector2f(3, 3)));
+		wall.addComponent(new TextureRender(
+			"terrain", new Vector2i()
+		));
+		wall1.addComponent(new Transform(new Vector2f(4, 3)));
+		wall1.addComponent(new TextureRender(
+			"terrain", new Vector2i(1, 0)
+		));
+		wall2.addComponent(new Transform(new Vector2f(5, 3)));
+		wall2.addComponent(new TextureRender(
+			"terrain", new Vector2i(1, 0)
+		));
+		wall3.addComponent(new Transform(new Vector2f(6, 3)));
+		wall3.addComponent(new TextureRender(
+			"terrain", new Vector2i(2, 0)
+		));
+
 		// Scene
 		past.addGameObject(camera);
 		past.addGameObject(player);
 		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
+		past.addGameObject(wall);
+		past.addGameObject(wall1);
+		past.addGameObject(wall2);
+		past.addGameObject(wall3);
 
 		return past;
 	}

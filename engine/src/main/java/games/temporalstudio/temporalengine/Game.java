@@ -14,7 +14,8 @@ import games.temporalstudio.temporalengine.window.WindowInfo;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.Version;
 
-public abstract class Game extends App implements LifeCycleContext{
+public abstract class Game extends App implements LifeCycleContext, LifeCycle{
+
 	public static Logger LOGGER;
 
 	private final Window window;
@@ -64,23 +65,43 @@ public abstract class Game extends App implements LifeCycleContext{
 	public void run(String[] args){
 		getLogger().info("LWJGL version: %s.".formatted(Version.getVersion()));
 
-		window.init(this);
-		window.start(this);
-
-		physicsEngine.init(this);
-		renderer.init(this);
-
-		physicsEngine.start(this);
-		renderer.start(this);
-
-		window.run(this);
+		init(null);
+		start(null);
+		destroy(null);
 	}
 	@Override
 	public void run(Console console, String[] args){
 		throw new RuntimeException();
 	}
 
-	public void update(float deltaTime){
+	@Override
+	public void init(LifeCycleContext context){
+		window.init(this);
+		window.start(this);
+
+		physicsEngine.init(this);
+		renderer.init(this);
+
+		if(mainMenu != null) mainMenu.init(this);
+		else throw new RuntimeException("No main menu scene defined;");
+
+		if(leftScene != null) leftScene.init(this);
+		if(rightScene != null) rightScene.init(this);
+	}
+	@Override
+	public void start(LifeCycleContext context){
+		physicsEngine.start(this);
+		renderer.start(this);
+
+		if(mainMenu != null) mainMenu.start(this);
+		else throw new RuntimeException("No main menu scene defined;");
+
+		if(leftScene != null) leftScene.start(this);
+		if(rightScene != null) rightScene.start(this);
+
+		window.run(this);
+	}
+	public final void update(float deltaTime){
 		if(deltaTime >= 0){
 			if(transitioning){
 				transitionTime -= deltaTime;
@@ -117,6 +138,8 @@ public abstract class Game extends App implements LifeCycleContext{
 			renderer.render(this);
 		}
 	}
+	@Override
+	public void destroy(LifeCycleContext context){}
 
 	public void changeLeftScene(String name){
 		if (this.leftScene == null) {
@@ -161,8 +184,6 @@ public abstract class Game extends App implements LifeCycleContext{
 			throw new RuntimeException("Main menu already set. Cannot set to: " + mainMenu.getName());
 		}
 		this.mainMenu = mainMenu;
-		this.mainMenu.init(this);
-		this.mainMenu.start(this);
 	}
 
 	protected void setFirstLeftScene(Scene leftScene) {
@@ -170,8 +191,6 @@ public abstract class Game extends App implements LifeCycleContext{
 			throw new RuntimeException("Left scene already set. Cannot set to: " + leftScene.getName());
 		}
 		this.leftScene = leftScene;
-		this.leftScene.init(this);
-		this.leftScene.start(this);
 	}
 
 	protected void setFirstRightScene(Scene rightScene) {
@@ -179,7 +198,5 @@ public abstract class Game extends App implements LifeCycleContext{
 			throw new RuntimeException("Right scene already set. Cannot set to: " + rightScene.getName());
 		}
 		this.rightScene = rightScene;
-		this.rightScene.init(this);
-		this.rightScene.start(this);
 	}
 }
