@@ -11,7 +11,7 @@ public class Zone1_pastCapsule implements SingleLevel{
 	private Scene scene;
 	private Set<TimeObject> timeObjects;
 
-	public Zone1_pastCapsule(GameObject pastCamera, Game game, Player pastPlayer) {
+	public Zone1_pastCapsule(GameObject pastCamera, Game game, Player pastPlayer, CapsuleReceiver zone1_pastCapsuleReceiver) {
 		this.scene = new Scene("Zone1_pastCapsule");
 		this.scene.addGameObject(pastCamera);
 
@@ -25,7 +25,8 @@ public class Zone1_pastCapsule implements SingleLevel{
 						"Zone1_pastCapsule_Exit", 1.0f, 1.0f, pastPlayer.getGameObject(),
 						"Zone1_lvl1_Past", game::changeLeftScene
 				),
-				pastPlayer
+				pastPlayer,
+				zone1_pastCapsuleReceiver
 		);
 
 		timeObjects.forEach((timeObject) -> this.scene.addGameObject(timeObject.getGameObject()));
