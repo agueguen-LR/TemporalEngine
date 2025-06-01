@@ -148,7 +148,7 @@ public class Window implements WindowLifeCycle{
 				"Unable to create the GLFW window;"
 			);
 
-		if(!glfwPlatformSupported(glfwGetPlatform())){
+		if(glfwPlatformSupported(glfwGetPlatform())){
 			loadIcon();
 		}else
 			game.getLogger().warning(
