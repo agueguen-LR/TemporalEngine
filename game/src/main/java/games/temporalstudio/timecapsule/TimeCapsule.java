@@ -1,11 +1,14 @@
 package games.temporalstudio.timecapsule;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.View;
 import games.temporalstudio.timecapsule.levels.*;
+import games.temporalstudio.timecapsule.objects.Player;
 
 import java.util.Map;
 
@@ -29,10 +32,17 @@ public class TimeCapsule extends Game{
 		futureCamera.addComponent(new Transform());
 		futureCamera.addComponent(new View(.1f));
 
+		Player pastPlayer = new Player("pastPlayer", 1, 1, new int[]{
+				GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D
+		});
+		Player futurePlayer = new Player("futurePlayer", 1, 1, new int[]{
+				GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT
+		});
+
 		Map<String, Level> levels = Map.of(
-				"cave1", new Zone1_lvl1(pastCamera, futureCamera),
-				"cave2", new Zone1_lvl2(pastCamera, futureCamera),
-				"caveCapsulePast", new Zone1_pastCapsule(pastCamera),
+				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
+				"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
+				"caveCapsulePast", new Zone1_pastCapsule(pastCamera, this, pastPlayer),
 				"factory", new Zone2(pastCamera, futureCamera),
 				"boat", new Zone3(pastCamera, futureCamera),
 				"finale", new Zone4(pastCamera, futureCamera)
@@ -48,28 +58,35 @@ public class TimeCapsule extends Game{
 
 	private Scene createPastScenes(Map<String, Level> levels){
 
-		Scene start = ((TimeLevel)levels.get("cave1")).getPastScene();
-		start.addChild(((SingleLevel)levels.get("caveCapsulePast")).getScene());
-		start.addChild(((TimeLevel)levels.get("cave2")).getPastScene());
-		Scene area2 = ((TimeLevel)levels.get("factory")).getPastScene();
-		start.addChild(area2);
-		Scene area3 = ((TimeLevel)levels.get("boat")).getPastScene();
-		area2.addChild(area3);
-		area3.addChild(((TimeLevel)levels.get("finale")).getPastScene());
+		Scene cave1 = ((TimeLevel)levels.get("cave1")).getPastScene();
+		Scene cave2 = ((TimeLevel)levels.get("cave2")).getPastScene();
+		Scene caveCapsulePast = ((SingleLevel)levels.get("caveCapsulePast")).getScene();
+		Scene factory = ((TimeLevel)levels.get("factory")).getPastScene();
+		Scene boat = ((TimeLevel)levels.get("boat")).getPastScene();
+		Scene finale = ((TimeLevel)levels.get("finale")).getPastScene();
 
-		return start;
+		cave1.addChild(cave2);
+		cave1.addChild(caveCapsulePast);
+		cave2.addChild(factory);
+		factory.addChild(boat);
+		boat.addChild(finale);
+
+		return cave1;
 	}
 
 	private Scene createFutureScenes(Map<String, Level> levels){
 
-		Scene start = ((TimeLevel)levels.get("cave1")).getFuturScene();
-		start.addChild(((TimeLevel)levels.get("cave2")).getFuturScene());
-		Scene area2 = ((TimeLevel)levels.get("factory")).getFuturScene();
-		start.addChild(area2);
-		Scene area3 = ((TimeLevel)levels.get("boat")).getFuturScene();
-		area2.addChild(area3);
-		area3.addChild(((TimeLevel)levels.get("finale")).getFuturScene());
+		Scene cave1 = ((TimeLevel)levels.get("cave1")).getFuturScene();
+		Scene cave2 = ((TimeLevel)levels.get("cave2")).getFuturScene();
+		Scene factory = ((TimeLevel)levels.get("factory")).getFuturScene();
+		Scene boat = ((TimeLevel)levels.get("boat")).getFuturScene();
+		Scene finale = ((TimeLevel)levels.get("finale")).getFuturScene();
 
-		return start;
+		cave1.addChild(cave2);
+		cave2.addChild(factory);
+		factory.addChild(boat);
+		boat.addChild(finale);
+
+		return cave1;
 	}
 }
