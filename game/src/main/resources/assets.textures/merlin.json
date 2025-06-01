@@ -1,0 +1,43 @@
+[
+	{
+		"name" : "homme_devant_marche",
+		"coords" : [[0,0],[1,0],[2,0],[3,0]],
+		"size" : [2, 1]
+	},
+	{
+		"name" : "homme_devant_saut",
+		"coords" : [[0,2],[1,2],[2,2],[3,2]],
+		"size" : [2, 1]
+	},
+	{
+		"name" : "homme_derriere",
+		"coords" : [[0,4],[1,4],[2,4],[3,4]],
+		"size" : [2, 1]
+	},
+	{
+		"name" : "homme_derriere_saut",
+		"coords" : [[0,6],[1,6],[2,6],[3,6]],
+		"size" : [1, 2]
+	},
+	{
+		"name" : "homme_droite_marche",
+		"coords" : [[0,8],[1,8],[2,8],[3,8]],
+		"size" : [1, 2]
+	},
+	{
+		"name" : "homme_droite_saut",
+		"coords" : [[0,10],[1,10],[2,10],[3,10]],
+		"size" : [1,2]
+	},
+	{
+		"name" : "homme_gauche_marche",
+		"coords" : [[0,12],[1,12],[2,12],[3,12]],
+		"size" : [1, 2]
+	},
+	{
+		"name" : "homme_gauche_saut",
+		"coords" : [[0,14],[1,14],[2,14],[3,14]],
+		"size" : [1, 2]
+	}
+	
+]
