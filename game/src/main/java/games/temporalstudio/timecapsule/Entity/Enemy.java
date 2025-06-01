@@ -3,13 +3,10 @@ package games.temporalstudio.timecapsule.Entity;
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.Scene;
-import games.temporalstudio.temporalengine.component.Trigger;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-public class Enemy extends PNJ {
+public class Enemy extends Entity {
 
     private Vector2f[] loopPoints;
     private int direction;
@@ -32,13 +29,13 @@ public class Enemy extends PNJ {
                 ) {
                     System.out.println("icciiiii");
                     Game.LOGGER.info("Player killed by dracula!");
-                    scene.removeGameObject(player);
-                    player.destroy(scene);
+                    player.transform.setPosition(new Vector2f());
                 }
             });
             this.addComponent(collider);
         }
     }
+
 
     public Vector2f[] getLoopPoints() {return this.loopPoints;}
     public void setLoopPoints(Vector2f[] loopPoints) {this.loopPoints = loopPoints;}
