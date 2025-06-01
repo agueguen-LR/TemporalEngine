@@ -125,7 +125,10 @@ public class TestGame extends Game{
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
 
-		GameObject button = createButton();
+		AtomicBoolean triggerActivated = new AtomicBoolean(false);
+		Trigger trigger = new Trigger(1 , triggerActivated::get);
+
+		GameObject button = createButton(trigger, triggerActivated);
 		GameObject player = createPlayer(new int[]{
 				GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
 				GLFW_KEY_SLASH
@@ -134,7 +137,7 @@ public class TestGame extends Game{
 				GLFW_KEY_I, GLFW_KEY_K, GLFW_KEY_J, GLFW_KEY_L,
 				GLFW_KEY_SLASH
 		});
-		GameObject door = createDoor(button);
+		GameObject door = createDoor(button, trigger);
 		GameObject rock1 = createBreakableRock(GLFW_KEY_SLASH, future);
 		GameObject ice = createBouncyIce();
 		GameObject spring = createSpring();
@@ -151,14 +154,12 @@ public class TestGame extends Game{
 		return future;
 	}
 
-	private GameObject createButton(){
+	private GameObject createButton(Trigger trigger, AtomicBoolean triggerActivated){
 		GameObject button = new GameObject("button");
 
 		Render render = new ColorRender(new Vector4f(0, 1, 0, 1));
 		Transform transform = new Transform(new Vector2f(1f, .5f));
 
-		AtomicBoolean triggerActivated = new AtomicBoolean(false);
-		Trigger trigger = new Trigger(1 , triggerActivated::get);
 
 		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setOnIntersects(
@@ -241,7 +242,7 @@ public class TestGame extends Game{
 		return player;
 	}
 
-	private GameObject createDoor(GameObject button){
+	private GameObject createDoor(GameObject button, Trigger trigger){
 		GameObject door = new GameObject("door");
 
 		Render render = new ColorRender(new Vector4f(1, 0, 0, 1));
@@ -250,7 +251,6 @@ public class TestGame extends Game{
 		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRigid(true);
 
-		Trigger trigger = button.getComponent(Trigger.class);
 		var ref = new Object() {
 			Triggerable triggerable = null;
 		};
