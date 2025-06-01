@@ -10,8 +10,9 @@ public class Seed implements InventoryObject {
 
 	public Seed(String name, Player player) {
 		this.gameObject = new GameObject(name);
-		Triggerable triggerable = new Triggerable((thisBottle) -> {
-			if (!(thisBottle instanceof GameObject seed)) {
+		Triggerable triggerable = new Triggerable((thisSeed) -> {
+			Game.LOGGER.info("Seed triggerable called with context: " + thisSeed);
+			if (!(thisSeed instanceof GameObject seed)) {
 				Game.LOGGER.severe("Seed triggerable called without Seed gameObject context.");
 				return;
 			}
