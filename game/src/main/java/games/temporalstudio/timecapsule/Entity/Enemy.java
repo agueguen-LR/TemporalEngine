@@ -14,23 +14,21 @@ public class Enemy extends Entity {
     public Enemy(String name, Vector2f scale, Vector2f position, Vector4f color, Vector2f[] coords, Scene scene) {
         super(name, scale, position, color);
         if(coords.length <= 1){
-            System.out.println("Not enough coordinates !");
+            throw new IllegalArgumentException("Not enough coordinate points");
         }
         else {
             direction=0;
             loopPoints=coords;
-            /*AtomicBoolean triggerActivated = new AtomicBoolean(false);
-            Trigger trigger = new Trigger(1 , triggerActivated::get);*/
-            this.removeComponent(collider);
+
             collider.setOnIntersects((context, other) -> {
                 System.out.println("rlrihgzmfih");
-                if (context instanceof Enemy enemy
+                /*if (context instanceof Enemy enemy
                         && other instanceof Player player
-                ) {
+                ) {*/
                     System.out.println("icciiiii");
                     Game.LOGGER.info("Player killed by dracula!");
-                    player.transform.setPosition(new Vector2f());
-                }
+                    //player.transform.setPosition(new Vector2f());
+                //}
             });
             this.addComponent(collider);
         }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import games.temporalstudio.timecapsule.Entity.Enemy;
+import games.temporalstudio.timecapsule.Entity.Medusa;
+import games.temporalstudio.timecapsule.Entity.Player;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -58,10 +60,13 @@ public class TestGame extends Game{
 		// Game objects
 		GameObject camera = new GameObject("PastCamera");
 
-		GameObject player = createPlayer(new int[]{
-			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
-			GLFW_KEY_Q
-		});
+		Player player = new Player("gabriela",new Vector2f(5,2),new int[]{
+				GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, GLFW_KEY_E
+		},	new Vector4f(0,0,1,1));
+
+		Medusa medusa=new Medusa("djkh", new Vector2f(0.5f, 0.5f), new Vector2f(4, 2),
+				new Vector4f(0.25f,0,0.75f,1), player);
+
 		GameObject rulietta = new GameObject("Rulietta");
 		GameObject compulsiveMerger = new GameObject("Adrien");
 		Vector2f[] coords={
@@ -96,9 +101,10 @@ public class TestGame extends Game{
 		// Scene
 		past.addGameObject(camera);
 		past.addGameObject(player);
-		past.addGameObject(compulsiveMerger);
-		past.addGameObject(rulietta);
+		//past.addGameObject(compulsiveMerger);
+		//past.addGameObject(rulietta);
 		past.addGameObject(chauvesouris);
+		past.addGameObject(medusa);
 
 		return past;
 	}

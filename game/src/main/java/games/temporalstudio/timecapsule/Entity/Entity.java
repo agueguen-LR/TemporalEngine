@@ -22,29 +22,26 @@ public abstract class Entity extends GameObject {
     private static final float MALUSSLOWDOWN=0.5f;
     private static final float LIMITEGAUGE=0.4f;
 
-    public Entity(String name, Vector2f position, Vector4f color) {
+    /*public Entity(String name, Vector2f position, Vector4f color) {
         super(name);
-        transform = new Transform(new Vector2f(1,1), position);
+        transform = new Transform(position);
         collider=new Collider2D(transform);
         collider.setShape(new AABB(transform));
-        //collider.setRigid(true);
         physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
         render=new ColorRender(color);
         this.addComponent(transform);
-        this.addComponent(collider);
         this.addComponent(physicsBody);
         this.addComponent(render);
-    }
+    }*/
 
     public Entity(String name, Vector2f scale, Vector2f position, Vector4f color) {
         super(name);
-        transform = new Transform(scale, position);
+        transform = new Transform(position, scale);
         collider=new Collider2D(transform);
         collider.setShape(new AABB(transform));
         physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
         render=new ColorRender(color);
         this.addComponent(transform);
-        this.addComponent(collider);
         this.addComponent(physicsBody);
         this.addComponent(render);
     }
@@ -94,6 +91,27 @@ public abstract class Entity extends GameObject {
 
     public void jump (){
         physicsBody.applyForce(new Vector2f(0, 100));
+    }
+
+    public void XmoveCloser(Entity letruc, double distance){
+        double dist=this.transform.getPosition().x - letruc.getTransform().getPosition().x;
+        if (Math.abs(dist) >= distance){
+            if (dist < 0) this.moveRight();
+            else this.moveLeft();
+        }
+    }
+    public void YmoveCloser(Entity letruc, double distance){
+        double dist= this.transform.getPosition().y - letruc.getTransform().getPosition().y;
+        if (Math.abs(dist) >= distance){
+            if (dist < 0) this.moveUp();
+            else moveDown();
+        }
+    }
+
+    public double distance(Entity letruc){
+        double xdist=this.transform.getPosition().x - letruc.getTransform().getPosition().x;
+        double ydist=this.transform.getPosition().y - letruc.getTransform().getPosition().y;
+        return Math.sqrt(xdist*xdist+ydist*ydist);
     }
 
 
