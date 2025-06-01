@@ -10,7 +10,6 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.Game;
-import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
@@ -24,7 +23,6 @@ import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.TextureRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
-import games.temporalstudio.temporalengine.rendering.texture.Texture;
 
 public class TestGame extends Game{
 
@@ -34,6 +32,10 @@ public class TestGame extends Game{
 		super(null, null);
 
 		setTitle(getI18n().getSentence("game.title", getVersion()));
+
+		setMainMenu(createMainMenu());
+		setFirstLeftScene(this.createPastScenes());
+		setFirstRightScene(this.createFutureScenes());
 	}
 
 	// GETTERS
@@ -73,10 +75,9 @@ public class TestGame extends Game{
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
 
-		Texture tex = new Texture("rulietta");
 		rulietta.addComponent(new Transform(new Vector2f(1, 2)));
 		rulietta.addComponent(new TextureRender(
-			tex, new Vector2i()
+			"rulietta", new Vector2i()
 		));
 
 		Vector4f lowPurple = new Vector4f(64f/255, 0, 1, 1);
@@ -88,15 +89,22 @@ public class TestGame extends Game{
 			lowPurple, lowPurple, lowPurple, highPurple
 		)));
 
-		tex = new Texture("terrain");
 		wall.addComponent(new Transform(new Vector2f(3, 3)));
-		wall.addComponent(new TextureRender(tex, new Vector2i()));
+		wall.addComponent(new TextureRender(
+			"terrain", new Vector2i()
+		));
 		wall1.addComponent(new Transform(new Vector2f(4, 3)));
-		wall1.addComponent(new TextureRender(tex, new Vector2i(1, 0)));
+		wall1.addComponent(new TextureRender(
+			"terrain", new Vector2i(1, 0)
+		));
 		wall2.addComponent(new Transform(new Vector2f(5, 3)));
-		wall2.addComponent(new TextureRender(tex, new Vector2i(1, 0)));
+		wall2.addComponent(new TextureRender(
+			"terrain", new Vector2i(1, 0)
+		));
 		wall3.addComponent(new Transform(new Vector2f(6, 3)));
-		wall3.addComponent(new TextureRender(tex, new Vector2i(2, 0)));
+		wall3.addComponent(new TextureRender(
+			"terrain", new Vector2i(2, 0)
+		));
 
 		// Scene
 		past.addGameObject(camera);
@@ -331,15 +339,5 @@ public class TestGame extends Game{
 		spring.addComponent(collider2D);
 
 		return spring;
-	}
-
-	// LIFECYCLE FUNCTIONS
-	@Override
-	public void init(LifeCycleContext context){
-		super.init(context);
-
-		setMainMenu(createMainMenu());
-		setFirstLeftScene(this.createPastScenes());
-		setFirstRightScene(this.createFutureScenes());
 	}
 }

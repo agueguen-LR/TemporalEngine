@@ -81,11 +81,19 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 
 		physicsEngine.init(this);
 		renderer.init(this);
+
+		mainMenu.init(this);
+		leftScene.init(this);
+		rightScene.init(this);
 	}
 	@Override
 	public void start(LifeCycleContext context){
 		physicsEngine.start(this);
 		renderer.start(this);
+
+		mainMenu.start(this);
+		leftScene.start(this);
+		rightScene.start(this);
 
 		window.run(this);
 	}
@@ -172,8 +180,6 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 			throw new RuntimeException("Main menu already set. Cannot set to: " + mainMenu.getName());
 		}
 		this.mainMenu = mainMenu;
-		this.mainMenu.init(this);
-		this.mainMenu.start(this);
 	}
 
 	protected void setFirstLeftScene(Scene leftScene) {
@@ -181,8 +187,6 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 			throw new RuntimeException("Left scene already set. Cannot set to: " + leftScene.getName());
 		}
 		this.leftScene = leftScene;
-		this.leftScene.init(this);
-		this.leftScene.start(this);
 	}
 
 	protected void setFirstRightScene(Scene rightScene) {
@@ -190,7 +194,5 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 			throw new RuntimeException("Right scene already set. Cannot set to: " + rightScene.getName());
 		}
 		this.rightScene = rightScene;
-		this.rightScene.init(this);
-		this.rightScene.start(this);
 	}
 }

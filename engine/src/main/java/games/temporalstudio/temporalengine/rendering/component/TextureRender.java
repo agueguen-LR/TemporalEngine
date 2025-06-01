@@ -7,25 +7,25 @@ import games.temporalstudio.temporalengine.rendering.texture.Texture;
 
 public final class TextureRender implements Render{
 
-	private Texture texture;
+	private String textureName;
 	private Vector2i position;
 	private Vector2i scale;
 
-	public TextureRender(Texture texture, Vector2i position){
-		this.texture = texture;
+	public TextureRender(String textureName, Vector2i position){
+		this.textureName = textureName;
 		this.position = position;
 		this.scale = new Vector2i(1, 1);
 	}
 
 	// GETTERS
-	public Texture getTexture(){ return texture; }
+	public Texture getTexture(){ return Texture.get(textureName); }
 	public Vector2i getPosition(){ return position; }
 	public Vector2i getScale(){ return scale; }
 
 	// LIFECYCLE FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){
-		getTexture().load();
+		Texture.get(textureName).load();
 	}
 	@Override
 	public void start(LifeCycleContext context){}

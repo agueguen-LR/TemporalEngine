@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,9 +18,11 @@ import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.temporalengine.utils.AssetPool;
+import games.temporalstudio.temporalengine.utils.AssetPoolObject;
 import games.temporalstudio.temporalengine.utils.NIOUtils;
 
-public class Texture{
+public class Texture implements AssetPoolObject{
 
 	private static final int TILE_SIZE = 64;
 
@@ -35,7 +38,7 @@ public class Texture{
 
 	private int id;
 
-	public Texture(String name){
+	private Texture(String name){
 		this.name = name;
 		this.id = glGenTextures();
 
@@ -48,6 +51,15 @@ public class Texture{
 	}
 
 	// GETTERS
+	public static Texture get(String name){
+		try{
+			return AssetPool.getObject(name, Texture.class);
+		}catch(NoSuchElementException e){
+			Texture tex = new Texture(name);
+			AssetPool.addObject(name, tex);
+			return tex;
+		}
+	}
     private static Path getImagePath(String name){
         return Path.of(TEXTURES_FOLDER, TEXTURE_FILE_FORMAT.formatted(name));
     }
