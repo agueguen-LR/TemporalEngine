@@ -1,6 +1,9 @@
 package games.temporalstudio.timecapsule.Entity;
 
+import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
+import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
@@ -24,6 +27,7 @@ public abstract class Entity extends GameObject {
         transform = new Transform(new Vector2f(1,1), position);
         collider=new Collider2D(transform);
         collider.setShape(new AABB(transform));
+        //collider.setRigid(true);
         physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
         render=new ColorRender(color);
         this.addComponent(transform);

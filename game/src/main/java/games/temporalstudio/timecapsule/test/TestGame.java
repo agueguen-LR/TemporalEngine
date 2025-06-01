@@ -71,7 +71,7 @@ public class TestGame extends Game{
 				new Vector2f(4,2),
 		};
 		Enemy chauvesouris= new Enemy("Dracula", new Vector2f(1, 2), new Vector2f(1,1),
-				new Vector4f(0, .50f, .50f, 1),coords );
+				new Vector4f(0, .50f, .50f, 1),coords , past);
 
 		// Components
 		camera.addComponent(new Transform());
@@ -112,10 +112,10 @@ public class TestGame extends Game{
 		GameObject button = createButton();
 		GameObject player = createPlayer(new int[]{
 			GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
-			GLFW_KEY_SLASH
+			GLFW_KEY_RIGHT_SHIFT
 		});
 		GameObject door = createDoor(button);
-		GameObject rock = createBreakableRock(GLFW_KEY_SLASH, future);
+		GameObject rock = createBreakableRock(GLFW_KEY_RIGHT_SHIFT, future);
 
 		future.addGameObject(camera);
 		future.addGameObject(player);

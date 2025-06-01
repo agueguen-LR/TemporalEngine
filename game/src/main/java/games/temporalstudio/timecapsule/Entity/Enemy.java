@@ -1,15 +1,20 @@
 package games.temporalstudio.timecapsule.Entity;
 
+import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
+import games.temporalstudio.temporalengine.Scene;
+import games.temporalstudio.temporalengine.component.Trigger;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Enemy extends PNJ {
 
     private Vector2f[] loopPoints;
     private int direction;
 
-    public Enemy(String name, Vector2f scale, Vector2f position, Vector4f color, Vector2f[] coords) {
+    public Enemy(String name, Vector2f scale, Vector2f position, Vector4f color, Vector2f[] coords, Scene scene) {
         super(name, scale, position, color);
         if(coords.length <= 1){
             System.out.println("Not enough coordinates !");
@@ -17,6 +22,22 @@ public class Enemy extends PNJ {
         else {
             direction=0;
             loopPoints=coords;
+            AtomicBoolean triggerActivated = new AtomicBoolean(false);
+            Trigger trigger = new Trigger(1 , triggerActivated::get);
+            this.removeComponent(collider);
+            collider.setOnIntersects((context, other) -> {
+
+                triggerActivated.set(true);
+                if (context instanceof Enemy enemy
+                        && other instanceof Player player
+                ) {
+                    System.out.println("icciiiii");
+                    Game.LOGGER.info("Player killed by dracula!");
+                    scene.removeGameObject(player);
+                    player.destroy(scene);
+                }
+            });
+            this.addComponent(collider);
         }
     }
 
