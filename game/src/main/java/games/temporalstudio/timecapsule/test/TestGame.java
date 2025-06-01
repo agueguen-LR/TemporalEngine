@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import games.temporalstudio.timecapsule.Entity.Enemy;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -63,6 +64,14 @@ public class TestGame extends Game{
 		});
 		GameObject rulietta = new GameObject("Rulietta");
 		GameObject compulsiveMerger = new GameObject("Adrien");
+		Vector2f[] coords={
+				new Vector2f(1,5),
+				new Vector2f(1,3),
+				new Vector2f(3,2),
+				new Vector2f(4,2),
+		};
+		Enemy chauvesouris= new Enemy("Dracula", new Vector2f(1, 2), new Vector2f(1,1),
+				new Vector4f(0, .50f, .50f, 1),coords );
 
 		// Components
 		camera.addComponent(new Transform());
@@ -89,6 +98,7 @@ public class TestGame extends Game{
 		past.addGameObject(player);
 		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
+		past.addGameObject(chauvesouris);
 
 		return past;
 	}
