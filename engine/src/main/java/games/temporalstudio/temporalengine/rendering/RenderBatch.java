@@ -7,11 +7,16 @@ import static org.lwjgl.opengl.GL30C.*;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -24,7 +29,9 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.TextureRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
+import games.temporalstudio.temporalengine.rendering.texture.Texture;
 
 public class RenderBatch implements RenderLifeCycle{
 
@@ -34,13 +41,34 @@ public class RenderBatch implements RenderLifeCycle{
 
 	private static final int POS_SIZE = 2;
     private static final int COLOR_SIZE = 4;
-	private static final int VERTEX_SIZE = POS_SIZE + COLOR_SIZE;
+    private static final int TEX_INDEX_SIZE = 1;
+    private static final int TEX_COORDS_SIZE = 2;
+	private static final int VERTEX_SIZE = POS_SIZE + COLOR_SIZE
+		+ TEX_INDEX_SIZE + TEX_COORDS_SIZE;
 
     private static final int POS_OFFSET = 0;
     private static final int COLOR_OFFSET = POS_OFFSET + POS_SIZE*Float.BYTES;
+    private static final int TEX_INDEX_OFFSET = COLOR_OFFSET
+		+ COLOR_SIZE*Float.BYTES;
+    private static final int TEX_COORDS_OFFSET = TEX_INDEX_OFFSET
+		+ TEX_INDEX_SIZE*Float.BYTES;
+	private static final int VERTEX_STRIDE = TEX_COORDS_OFFSET
+		+ TEX_COORDS_SIZE*Float.BYTES;
+
+	private static final int[] activeTextures = {
+		GL_TEXTURE0,
+		GL_TEXTURE1,
+		GL_TEXTURE2,
+		GL_TEXTURE3,
+		GL_TEXTURE4,
+		GL_TEXTURE5,
+		GL_TEXTURE6,
+		GL_TEXTURE7
+	};
 
 	private static final String PROJECTION_UNIFORM_NAME = "uProjection";
 	private static final String VIEW_UNIFORM_NAME = "uView";
+	private static final String TEXTURES_UNIFORM_NAME = "uTextures";
 
 	private final Renderer renderer;
 	private final int size;
@@ -80,7 +108,9 @@ public class RenderBatch implements RenderLifeCycle{
 
 		return ib;
 	}
-	private boolean updateVerticesAt(int index, GameObject renderable){
+	private boolean updateVerticesAt(
+		int index, GameObject renderable, Map<Texture, Integer> sampler
+	){
 		int offset = index*SHAPE_VERTEX_COUNT*VERTEX_SIZE;
 
 		if(renderable.getComponents(Render.class).size() > 1)
@@ -109,13 +139,27 @@ public class RenderBatch implements RenderLifeCycle{
 			new Vector4f(1, 1, 1, 1),
 			new Vector4f(1, 1, 1, 1)
 		);
+		float texIndex = -1;
+		List<Vector2f> texCoords = List.of(
+			new Vector2f(0, 0),
+			new Vector2f(1, 0),
+			new Vector2f(1, 1),
+			new Vector2f(0, 1)
+		);
 
 		switch(renderable.getComponent(Render.class)){
 			case ColorRender cr -> {
 				colors = cr.getColors();
 			}
+			case TextureRender tr -> {
+				texIndex = sampler.get(tr.getTexture());
+				texCoords = tr.getTexture().getCoords(
+					tr.getPosition(), tr.getScale()
+				);
+			}
 		}
 
+		// Vertices data
 		int vertexOffset;
 		Vector4f vertexPos;
 		for(int vertex = 0; vertex < SHAPE_VERTEX_COUNT; vertex++){
@@ -140,6 +184,16 @@ public class RenderBatch implements RenderLifeCycle{
 				colors.get(vertex).z,
 				colors.get(vertex).w
 			});
+
+			// Vertex texture index
+			vertices.put(vertexOffset + POS_SIZE + COLOR_SIZE, texIndex);
+
+			// Vertex texture coordinates
+			vertices.put(vertexOffset + POS_SIZE + COLOR_SIZE + TEX_INDEX_SIZE,
+				new float[]{
+					texCoords.get(vertex).x(), texCoords.get(vertex).y()
+				}
+			);
 		}
 
 		return true;
@@ -162,11 +216,22 @@ public class RenderBatch implements RenderLifeCycle{
 			vertices.capacity()*Float.BYTES, GL_DYNAMIC_DRAW
 		);
 
-		glVertexAttribPointer(0, POS_SIZE, GL_FLOAT, false,
-			VERTEX_SIZE*Float.BYTES, POS_OFFSET
+		glVertexAttribPointer(0,
+			POS_SIZE, GL_FLOAT, false,
+			VERTEX_STRIDE, POS_OFFSET
 		);
-		glVertexAttribPointer(1, COLOR_SIZE, GL_FLOAT, false,
-			VERTEX_SIZE*Float.BYTES, COLOR_OFFSET
+		glVertexAttribPointer(1,
+			COLOR_SIZE, GL_FLOAT, false,
+			VERTEX_STRIDE, COLOR_OFFSET
+		);
+
+		glVertexAttribPointer(2,
+			TEX_INDEX_SIZE, GL_FLOAT, false,
+			VERTEX_STRIDE, TEX_INDEX_OFFSET
+		);
+		glVertexAttribPointer(3,
+			TEX_COORDS_SIZE, GL_FLOAT, false,
+			VERTEX_STRIDE, TEX_COORDS_OFFSET
 		);
 
 		glBindBuffer(GL_ARRAY_BUFFER, (int) MemoryUtil.NULL);
@@ -188,6 +253,8 @@ public class RenderBatch implements RenderLifeCycle{
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 	}
 	@Override
 	public void render(LifeCycleContext context){
@@ -222,26 +289,64 @@ public class RenderBatch implements RenderLifeCycle{
 
 		// Updates VBO
 		AtomicInteger aInt = new AtomicInteger(0);
+		AtomicInteger samplerIdx = new AtomicInteger(0);
+		Map<Texture, Integer> sampler = new HashMap<>();
+
 		boolean shouldBeUpdated = scene.getGOsByComponent(
 				Render.class
-			).stream().reduce(false,
-				(updated, go) -> updateVerticesAt(aInt.getAndIncrement(), go),
-				(a, b) -> a || b
-			);
+			).stream()
+				.peek(go -> {
+					if(go.hasComponent(TextureRender.class)){
+						TextureRender tr = go.getComponent(
+							TextureRender.class
+						);
+
+						if(!sampler.containsKey(tr.getTexture()))
+							sampler.put(tr.getTexture(),
+								samplerIdx.getAndIncrement()
+							);
+					}
+				})
+				.reduce(false,
+					(updated, go) ->
+						updateVerticesAt(aInt.getAndIncrement(), go, sampler),
+					(a, b) -> a || b
+				);
 
 		if(shouldBeUpdated)
 			glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.rewind());
 
+		if(sampler.size() > activeTextures.length){
+			Game.LOGGER.severe(
+				"Too many textures; Not rendering anything."
+			);
+			return;
+		}
+
+		renderer.getShader().uploadIntArray(TEXTURES_UNIFORM_NAME,
+			IntStream.range(0, activeTextures.length)
+				.toArray()
+		);
+
 		// Draws
+		sampler.forEach((t, i) -> {
+			glActiveTexture(activeTextures[i]);
+			t.bind();
+		});
+
 		glDrawElements(GL_TRIANGLES,
 			aInt.get()*SHAPE_PER_OBJECT*SHAPE_SIZE,
 			GL_UNSIGNED_INT, 0
 		);
+
+		sampler.forEach((t, i) -> t.unbind());
 	}
 	@Override
 	public void destroy(LifeCycleContext context){
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(3);
 
 		glBindVertexArray((int) MemoryUtil.NULL);
 		glBindBuffer(GL_ARRAY_BUFFER, (int) MemoryUtil.NULL);

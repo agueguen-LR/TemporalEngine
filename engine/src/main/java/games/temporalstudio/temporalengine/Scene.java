@@ -16,7 +16,7 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 	private Scene parent;
 	private Map<String, Scene> children = new HashMap<>();
 
-	private Set<GameObject> gameObjects;
+	private Set<GameObject> gameObjects = new HashSet<>();
 	private Set<GameObject> gameObjectsToAdd = new HashSet<>();
 	private Set<GameObject> gameObjectsToRemove = new HashSet<>();
 
@@ -82,7 +82,7 @@ public class Scene implements UpdateLifeCycle, LifeCycleContext{
 		game.getLogger().info("Starting scene: " + name);
 
 		gameObjectsToAdd.forEach(o -> o.start(this));
-		gameObjects = new HashSet<>(gameObjectsToAdd);
+		gameObjects.addAll(gameObjectsToAdd);
 		gameObjectsToAdd.clear();
 	}
 	@Override

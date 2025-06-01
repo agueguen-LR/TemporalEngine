@@ -1,7 +1,7 @@
 package games.temporalstudio.temporalengine.rendering.shader;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL20C.*;
 
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
-public class Shader {
+public class Shader{
 
     private static final String SHADERS_FOLDER = "shaders";
     private static final String SHADER_FILE_FORMAT = "%s.glsl";
@@ -133,5 +133,8 @@ public class Shader {
         glUniformMatrix4fv(glGetUniformLocation(id, name),
 			false, data.get(BufferUtils.createFloatBuffer(4*4))
         );
+    }
+    public void uploadIntArray(String name, int[] data){
+		glUniform1iv(glGetUniformLocation(id, name), data);
     }
 }

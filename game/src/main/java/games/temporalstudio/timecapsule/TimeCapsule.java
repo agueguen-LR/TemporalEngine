@@ -1,10 +1,16 @@
 package games.temporalstudio.timecapsule;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.View;
+import games.temporalstudio.timecapsule.levels.*;
+import games.temporalstudio.timecapsule.objects.Player;
+
+import java.util.Map;
 
 public class TimeCapsule extends Game{
 
@@ -15,32 +21,72 @@ public class TimeCapsule extends Game{
 
 		getLogger().info("Hello! There is nothing here for now...");
 
-		Scene mainMenu = new Scene("MainMenu");
+		MainMenu mainMenu = new MainMenu();
+		setMainMenu(mainMenu.getScene());
 
-		GameObject camera = new GameObject("camera");
-		camera.addComponent(new Transform());
-		camera.addComponent(new View(.1f));
+		GameObject pastCamera = new GameObject("pastCamera");
+		pastCamera.addComponent(new Transform());
+		pastCamera.addComponent(new View(.1f));
 
-		mainMenu.addGameObject(camera);
-		setMainMenu(mainMenu);
+		GameObject futureCamera = new GameObject("futureCamera");
+		futureCamera.addComponent(new Transform());
+		futureCamera.addComponent(new View(.1f));
 
-		Scene leftScene = new Scene("LeftScene");
-		GameObject camera1 = new GameObject("camera1");
-		camera1.addComponent(new Transform());
-		camera1.addComponent(new View(.1f));
-		leftScene.addGameObject(camera1);
+		Player pastPlayer = new Player("pastPlayer", 1, 1, new int[]{
+				GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_E
+		});
+		Player futurePlayer = new Player("futurePlayer", 1, 1, new int[]{
+				GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT, GLFW_KEY_ENTER
+		});
 
-		Scene rightScene = new Scene("RightScene");
-		GameObject camera2 = new GameObject("camera2");
-		camera2.addComponent(new Transform());
-		camera2.addComponent(new View(.1f));
-		rightScene.addGameObject(camera2);
+		Map<String, Level> levels = Map.of(
+				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
+				"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
+				"caveCapsulePast", new Zone1_pastCapsule(pastCamera, this, pastPlayer),
+				"factory", new Zone2(pastCamera, futureCamera),
+				"boat", new Zone3(pastCamera, futureCamera),
+				"finale", new Zone4(pastCamera, futureCamera)
+		);
 
-		setFirstLeftScene(leftScene);
-		setFirstRightScene(rightScene);
+		setFirstLeftScene(createPastScenes(levels));
+		setFirstRightScene(createFutureScenes(levels));
 	}
 
 	// GETTERS
 	@Override
 	public String getIdentifier(){ return IDENTIFIER; }
+
+	private Scene createPastScenes(Map<String, Level> levels){
+
+		Scene cave1 = ((TimeLevel)levels.get("cave1")).getPastScene();
+		Scene cave2 = ((TimeLevel)levels.get("cave2")).getPastScene();
+		Scene caveCapsulePast = ((SingleLevel)levels.get("caveCapsulePast")).getScene();
+		Scene factory = ((TimeLevel)levels.get("factory")).getPastScene();
+		Scene boat = ((TimeLevel)levels.get("boat")).getPastScene();
+		Scene finale = ((TimeLevel)levels.get("finale")).getPastScene();
+
+		cave1.addChild(cave2);
+		cave1.addChild(caveCapsulePast);
+		cave2.addChild(factory);
+		factory.addChild(boat);
+		boat.addChild(finale);
+
+		return cave1;
+	}
+
+	private Scene createFutureScenes(Map<String, Level> levels){
+
+		Scene cave1 = ((TimeLevel)levels.get("cave1")).getFuturScene();
+		Scene cave2 = ((TimeLevel)levels.get("cave2")).getFuturScene();
+		Scene factory = ((TimeLevel)levels.get("factory")).getFuturScene();
+		Scene boat = ((TimeLevel)levels.get("boat")).getFuturScene();
+		Scene finale = ((TimeLevel)levels.get("finale")).getFuturScene();
+
+		cave1.addChild(cave2);
+		cave2.addChild(factory);
+		factory.addChild(boat);
+		boat.addChild(finale);
+
+		return cave1;
+	}
 }
