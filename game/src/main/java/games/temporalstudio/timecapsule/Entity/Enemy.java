@@ -22,12 +22,11 @@ public class Enemy extends PNJ {
         else {
             direction=0;
             loopPoints=coords;
-            AtomicBoolean triggerActivated = new AtomicBoolean(false);
-            Trigger trigger = new Trigger(1 , triggerActivated::get);
+            /*AtomicBoolean triggerActivated = new AtomicBoolean(false);
+            Trigger trigger = new Trigger(1 , triggerActivated::get);*/
             this.removeComponent(collider);
             collider.setOnIntersects((context, other) -> {
-
-                triggerActivated.set(true);
+                System.out.println("rlrihgzmfih");
                 if (context instanceof Enemy enemy
                         && other instanceof Player player
                 ) {
