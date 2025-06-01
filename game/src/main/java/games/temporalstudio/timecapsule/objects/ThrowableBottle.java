@@ -50,6 +50,7 @@ public class ThrowableBottle implements InventoryObject {
 	 *
 	 * @return The Triggerable component that defines the behavior when the bottle is thrown.
 	 */
+	@Override
 	public Triggerable getTriggerable() {
 		return triggerable;
 	}
