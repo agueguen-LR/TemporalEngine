@@ -13,7 +13,11 @@ public class Zone1_lvl1 implements TimeLevel{
 	private Set<TimeObject> pastTimeObjects;
 	private Set<TimeObject> futurTimeObjects;
 
-	public Zone1_lvl1(GameObject pastCamera, GameObject futurCamera, Game game, Player pastPlayer, Player futurPlayer) {
+	public Zone1_lvl1(
+			GameObject pastCamera, GameObject futurCamera,
+			Game game, Player pastPlayer, Player futurPlayer,
+			CapsuleReceiver zone1_pastCapsuleReceiver
+	) {
 		this.pastScene = new Scene("Zone1_lvl1_Past");
 		this.futurScene = new Scene("Zone1_lvl1_Futur");
 		this.futurScene.addGameObject(futurCamera);
@@ -28,11 +32,11 @@ public class Zone1_lvl1 implements TimeLevel{
 				new Wall("Zone1_lvl1_Wall4", 4f, 9.0f),
 				new Wall("Zone1_lvl1_Wall5", 5f, 10.0f),
 				new Exit(
-						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer.getGameObject(),
+						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer,
 						"Zone1_pastCapsule", game::changeLeftScene
 				),
 				new Exit(
-						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer.getGameObject(),
+						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer,
 						"Zone1_lvl2_Past", game::changeLeftScene
 				),
 				new Pickupable("Bottle", 5.0f, 5.0f, pastPlayer, throwableBottle),
@@ -42,6 +46,13 @@ public class Zone1_lvl1 implements TimeLevel{
 
 		pastTimeObjects.forEach((timeObject) -> this.pastScene.addGameObject(timeObject.getGameObject()));
 
+		CapsuleSender sender = new CapsuleSender(
+				"capsuleSender", futurPlayer,
+				new Pickupable("seedPickup", 3, 3, pastPlayer, new Seed("seed", pastPlayer)),
+				zone1_pastCapsuleReceiver
+		);
+		futurPlayer.addToInventory(sender);
+
 		futurTimeObjects = Set.of(
 				new Wall("Zone1_lvl1_Wall1", 1f, 6.0f),
 				new Wall("Zone1_lvl1_Wall2", 2f, 7.0f),
@@ -49,10 +60,11 @@ public class Zone1_lvl1 implements TimeLevel{
 				new Wall("Zone1_lvl1_Wall4", 4f, 9.0f),
 				new Wall("Zone1_lvl1_Wall5", 4f, 10.0f),
 				new Exit(
-						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer.getGameObject(),
+						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer,
 						"Zone1_lvl2_Futur", game::changeRightScene
 				),
-				futurPlayer
+				futurPlayer,
+				sender
 		);
 
 
