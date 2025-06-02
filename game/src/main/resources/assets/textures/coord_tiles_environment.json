@@ -1,0 +1,129 @@
+[
+  {
+    "name": "full_soil",
+    "coords": [0, 0],
+    "size": [1,1]
+  },{
+    "name": "soil_and_right_river",
+    "coords": [1, 0],
+    "size": [1,1]
+  },{
+    "name": "soil_and_left_river",
+    "coords": [2,0],
+    "size": [1,1]
+  },{
+    "name": "soil_and_bottom_river",
+    "coords": [3,0],
+    "size": [1,1]
+  },{
+    "name": "soil_and_top_river",
+    "coords": [4, 0],
+    "size": [1,1]
+  },{
+    "name": "little_angle_top_right",
+    "coords": [5, 0],
+    "size": [1,1]
+  },{
+    "name": "little_angle_top_left",
+    "coords": [6, 0],
+    "size": [1,1]
+  },{
+    "name": "little_angle_botton_right",
+    "coords": [7, 0],
+    "size": [1,1]
+  },{
+    "name": "little_angle_bottom_left",
+    "coords": [8, 0],
+    "size": [1,1]
+  },{
+    "name": "big_angle_top_right",
+    "coords": [9, 0],
+    "size": [1,1]
+  },{
+    "name": "big_angle_top_left",
+    "coords": [10, 0],
+    "size": [1,1]
+  },{
+    "name": "big_angle_bottom_left",
+    "coords": [11, 0],
+    "size": [1,1]
+  },{
+    "name": "big_angle_bottom_right",
+    "coords": [12, 0],
+    "size": [1,1]
+  },{
+    "name": "full_water",
+    "coords": [13, 0],
+    "size": [1,1]
+  },
+  
+  
+  {
+    "name": "full_wall1",
+    "coords": [0, 1],
+    "size": [1,3]
+  },{
+    "name": "full_wall2",
+    "coords": [1, 1],
+    "size": [1,3]
+  },{
+    "name": "end_right",
+    "coords": [2, 1],
+    "size": [1,3]
+  },{
+    "name": "end_left",
+    "coords": [3, 1],
+    "size": [1,3]
+  },{
+    "name": "back_wall",
+    "coords": [4, 1],
+    "size": [1,3]
+  },{
+    "name": "left_wall",
+    "coords": [5, 1],
+    "size": [1,3]
+  },{
+    "name": "right_wall",
+    "coords": [6, 1],
+    "size": [1,3]
+  },{
+    "name": "bottom_left_coin_wall",
+    "coords": [7, 1],
+    "size": [1,3]
+  },{
+    "name": "bottom_right_coin_wall",
+    "coords": [8, 1],
+    "size": [1,3]
+  },{
+    "name": "top_left_coin_wall",
+    "coords": [9, 1],
+    "size": [1,3]
+  },{
+    "name": "top_right_coin_wall",
+    "coords": [10, 1],
+    "size": [1,3]
+  },{
+    "name": "wall_junction_right",
+    "coords": [11, 1],
+    "size": [1,3]
+  },{
+    "name": "wall_junction_left",
+    "coords": [12, 1],
+    "size": [1,3]
+  },{
+    "name": "wall_junction_top",
+    "coords": [13, 1],
+    "size": [1,13]
+  },{
+    "name": "wall_junction_bottom",
+    "coords": [14, 1],
+    "size": [1,3]
+  }
+
+
+
+
+
+
+
+]

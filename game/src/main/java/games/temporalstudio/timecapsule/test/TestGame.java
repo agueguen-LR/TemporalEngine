@@ -20,6 +20,7 @@ import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.TextureRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 
 public class TestGame extends Game{
@@ -64,15 +65,19 @@ public class TestGame extends Game{
 		GameObject rulietta = new GameObject("Rulietta");
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
+		GameObject ground = new GameObject("Ground");
+		GameObject ground1 = new GameObject("Ground1");
+		GameObject ground2 = new GameObject("Ground2");
+		GameObject ground3 = new GameObject("Ground3");
+		GameObject ground4 = new GameObject("Ground4");
+
 		// Components
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
 
-		rulietta.addComponent(new Transform(
-		 	new Vector2f(1, 2), new Vector2f(.85f, .85f)
-		));
-		rulietta.addComponent(new ColorRender(
-			new Vector4f(1, 0, 1, 1)
+		rulietta.addComponent(new Transform(new Vector2f(1, 2)));
+		rulietta.addComponent(new TextureRender(
+			"rulietta", "test"
 		));
 
 		Vector4f lowPurple = new Vector4f(64f/255, 0, 1, 1);
@@ -84,11 +89,38 @@ public class TestGame extends Game{
 			lowPurple, lowPurple, lowPurple, highPurple
 		)));
 
+		ground.addComponent(new Transform(new Vector2f(3, 3)));
+		ground.addComponent(new TextureRender(
+			"future", "soil_and_left_river"
+		));
+		ground1.addComponent(new Transform(new Vector2f(4, 3)));
+		ground1.addComponent(new TextureRender(
+			"future", "full_soil"
+		));
+		ground2.addComponent(new Transform(new Vector2f(5, 3)));
+		ground2.addComponent(new TextureRender(
+			"future", "soil_and_right_river"
+		));
+		ground3.addComponent(new Transform(new Vector2f(6, 3)));
+		ground3.addComponent(new TextureRender(
+			"future", "full_water"
+		));
+		ground4.addComponent(new Transform(new Vector2f(6, 2)));
+		ground4.addComponent(new TextureRender(
+			"future", "soil_and_top_river"
+		));
+
 		// Scene
 		past.addGameObject(camera);
 		past.addGameObject(player);
 		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
+
+		past.addGameObject(ground);
+		past.addGameObject(ground1);
+		past.addGameObject(ground2);
+		past.addGameObject(ground3);
+		past.addGameObject(ground4);
 
 		return past;
 	}
@@ -99,7 +131,10 @@ public class TestGame extends Game{
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
 
-		GameObject button = createButton();
+		AtomicBoolean triggerActivated = new AtomicBoolean(false);
+		Trigger trigger = new Trigger(1 , triggerActivated::get);
+
+		GameObject button = createButton(trigger, triggerActivated);
 		GameObject player = createPlayer(new int[]{
 				GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
 				GLFW_KEY_SLASH
@@ -108,7 +143,7 @@ public class TestGame extends Game{
 				GLFW_KEY_I, GLFW_KEY_K, GLFW_KEY_J, GLFW_KEY_L,
 				GLFW_KEY_SLASH
 		});
-		GameObject door = createDoor(button);
+		GameObject door = createDoor(button, trigger);
 		GameObject rock1 = createBreakableRock(GLFW_KEY_SLASH, future);
 		GameObject ice = createBouncyIce();
 		GameObject spring = createSpring();
@@ -125,14 +160,12 @@ public class TestGame extends Game{
 		return future;
 	}
 
-	private GameObject createButton(){
+	private GameObject createButton(Trigger trigger, AtomicBoolean triggerActivated){
 		GameObject button = new GameObject("button");
 
 		Render render = new ColorRender(new Vector4f(0, 1, 0, 1));
 		Transform transform = new Transform(new Vector2f(1f, .5f));
 
-		AtomicBoolean triggerActivated = new AtomicBoolean(false);
-		Trigger trigger = new Trigger(1 , triggerActivated::get);
 
 		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setOnIntersects(
@@ -215,7 +248,7 @@ public class TestGame extends Game{
 		return player;
 	}
 
-	private GameObject createDoor(GameObject button){
+	private GameObject createDoor(GameObject button, Trigger trigger){
 		GameObject door = new GameObject("door");
 
 		Render render = new ColorRender(new Vector4f(1, 0, 0, 1));
@@ -224,7 +257,6 @@ public class TestGame extends Game{
 		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRigid(true);
 
-		Trigger trigger = button.getComponent(Trigger.class);
 		var ref = new Object() {
 			Triggerable triggerable = null;
 		};

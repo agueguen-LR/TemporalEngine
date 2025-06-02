@@ -2,6 +2,7 @@ package games.temporalstudio.temporalengine.rendering.component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.joml.Vector4f;
@@ -24,7 +25,9 @@ public final class ColorRender implements Render{
 	}
 
 	// GETTERS
-	public List<Vector4f> getColors(){ return colors; }
+	public List<Vector4f> getColors(){
+		return Collections.unmodifiableList(colors);
+	}
 
 	// LIFECYCLE FUNCTIONS
 	@Override
