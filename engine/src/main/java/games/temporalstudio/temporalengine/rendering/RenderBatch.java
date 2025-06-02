@@ -286,7 +286,9 @@ public class RenderBatch implements RenderLifeCycle{
 		renderer.getShader().uploadMatrix4f(
 			PROJECTION_UNIFORM_NAME, view.getProjection(size[2], size[3])
 		);
-		renderer.getShader().uploadMatrix4f(VIEW_UNIFORM_NAME, view.getView());
+		renderer.getShader().uploadMatrix4f(VIEW_UNIFORM_NAME,
+			view.getView(size[2], size[3])
+		);
 
 		// Updates VBO
 		AtomicInteger aInt = new AtomicInteger(0);
