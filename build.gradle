@@ -56,7 +56,8 @@ project(":engine"){
 		implementation "org.lwjgl:lwjgl-opengl"
 		implementation "org.lwjgl:lwjgl-stb"
 
-		implementation 'com.electronwill.night-config:toml:3.8.2'
+		implementation "com.electronwill.night-config:toml:3.8.2"
+		implementation "com.electronwill.night-config:json:3.8.2"
 		api "org.joml:joml:${jomlVersion}"
 
 		runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"

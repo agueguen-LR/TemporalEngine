@@ -1,31 +1,27 @@
 package games.temporalstudio.temporalengine.rendering.component;
 
-import org.joml.Vector2i;
-
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.rendering.texture.Texture;
+import games.temporalstudio.temporalengine.rendering.texture.Texture.Tile;
 
 public final class TextureRender implements Render{
 
 	private String textureName;
-	private Vector2i position;
-	private Vector2i scale;
+	private String tileName;
 
-	public TextureRender(String textureName, Vector2i position){
+	public TextureRender(String textureName, String tileName){
 		this.textureName = textureName;
-		this.position = position;
-		this.scale = new Vector2i(1, 1);
+		this.tileName = tileName;
 	}
 
 	// GETTERS
 	public Texture getTexture(){ return Texture.get(textureName); }
-	public Vector2i getPosition(){ return position; }
-	public Vector2i getScale(){ return scale; }
+	public Tile getTile(){ return getTexture().getTile(tileName); }
 
 	// LIFECYCLE FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){
-		Texture.get(textureName).load();
+		getTexture().load();
 	}
 	@Override
 	public void start(LifeCycleContext context){}
