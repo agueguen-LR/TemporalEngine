@@ -49,6 +49,9 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 		shader.load();
 		shader.compile();
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		mainMenuBatches.forEach(b -> b.init(game.getMainMenu()));
 		leftSceneBatches.forEach(b -> b.init(game.getLeftScene()));
 		rightSceneBatches.forEach(b -> b.init(game.getRightScene()));
@@ -101,6 +104,8 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 			);
 			return;
 		}
+
+		glDisable(GL_BLEND);
 
 		mainMenuBatches.forEach(b -> b.destroy(game.getMainMenu()));
 		leftSceneBatches.forEach(b -> b.destroy(game.getLeftScene()));
