@@ -15,7 +15,7 @@ public class Enemy extends Entity {
         super(name, scale, position, color);
 
         collider.setOnIntersects((context, other) -> {
-            if (context != other) System.out.println("rlrihgzmfih");
+           System.out.println("rlrihgzmfih");
                 /*if (context instanceof Enemy enemy
                         && other instanceof Player player
                 ) {
