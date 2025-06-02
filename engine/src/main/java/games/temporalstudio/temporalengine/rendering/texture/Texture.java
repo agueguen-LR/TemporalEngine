@@ -91,10 +91,10 @@ public class Texture implements AssetPoolObject{
 		Vector2f scalef = new Vector2f(tile.scale());
 
 		return List.of(
-			new Vector2f(0, 0).add(positionf).mul(scalef).mul(offset),
-			new Vector2f(1, 0).add(positionf).mul(scalef).mul(offset),
-			new Vector2f(1, 1).add(positionf).mul(scalef).mul(offset),
-			new Vector2f(0, 1).add(positionf).mul(scalef).mul(offset)
+			new Vector2f(0, 0).mul(scalef).add(positionf).mul(offset),
+			new Vector2f(1, 0).mul(scalef).add(positionf).mul(offset),
+			new Vector2f(1, 1).mul(scalef).add(positionf).mul(offset),
+			new Vector2f(0, 1).mul(scalef).add(positionf).mul(offset)
 		);
 	}
 	public boolean wasLoaded(){ return loaded; }
