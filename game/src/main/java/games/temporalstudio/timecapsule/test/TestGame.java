@@ -10,6 +10,7 @@ import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
+import games.temporalstudio.temporalengine.component.Follow;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.component.Trigger;
@@ -77,6 +78,7 @@ public class TestGame extends Game{
 		// Components
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
+		camera.addComponent(new Follow(player));
 
 		rulietta.addComponent(new Transform(new Vector2f(1, 2)));
 		rulietta.addComponent(new TextureRender(
@@ -166,6 +168,8 @@ public class TestGame extends Game{
 		GameObject rock1 = createBreakableRock(GLFW_KEY_SLASH, future);
 		GameObject ice = createBouncyIce();
 		GameObject spring = createSpring();
+
+		camera.addComponent(new Follow(player));
 
 		future.addGameObject(camera);
 		future.addGameObject(player);
