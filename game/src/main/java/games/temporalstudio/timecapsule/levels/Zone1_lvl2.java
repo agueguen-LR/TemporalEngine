@@ -27,7 +27,8 @@ public class Zone1_lvl2 implements TimeLevel{
 				new Exit(
 						"Zone1_lvl2_Exit", 3.0f, 5.0f, pastPlayer.getGameObject(),
 						"Zone2_Past", game::changeLeftScene),
-				pastPlayer
+				pastPlayer,
+				new KeyFragment("frag1", 1.0f, 1.0f, pastPlayer.getGameObject())
 		);
 
 		this.pastTimeObjects.forEach((timeObject) -> this.pastScene.addGameObject(timeObject.getGameObject()));
