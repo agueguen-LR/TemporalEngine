@@ -1,17 +1,23 @@
 package games.temporalstudio.temporalengine.rendering.component;
 
 import games.temporalstudio.temporalengine.LifeCycleContext;
+import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.texture.Texture;
 import games.temporalstudio.temporalengine.rendering.texture.Texture.Tile;
 
-public final class TextureRender implements Render{
+public final class TextureRender extends Render{
 
 	private String textureName;
 	private String tileName;
 
-	public TextureRender(String textureName, String tileName){
+	public TextureRender(String textureName, String tileName, Layer layer){
+		super(layer);
+
 		this.textureName = textureName;
 		this.tileName = tileName;
+	}
+	public TextureRender(String textureName, String tileName){
+		this(textureName, tileName, Render.DEFAULT_LAYER);
 	}
 
 	// GETTERS

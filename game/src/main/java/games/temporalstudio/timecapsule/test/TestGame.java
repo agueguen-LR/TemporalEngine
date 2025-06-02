@@ -19,6 +19,7 @@ import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
+import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.TextureRender;
@@ -66,14 +67,14 @@ public class TestGame extends Game{
 		GameObject rulietta = new GameObject("Rulietta");
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
-		GameObject ground = new GameObject("Ground");
 		GameObject ground1 = new GameObject("Ground1");
 		GameObject ground2 = new GameObject("Ground2");
 		GameObject ground3 = new GameObject("Ground3");
 		GameObject ground4 = new GameObject("Ground4");
+		GameObject ground5 = new GameObject("Ground5");
 
-		GameObject wall = new GameObject("Wall");
 		GameObject wall1 = new GameObject("Wall1");
+		GameObject wall2 = new GameObject("Wall2");
 
 		// Components
 		camera.addComponent(new Transform());
@@ -82,50 +83,58 @@ public class TestGame extends Game{
 
 		rulietta.addComponent(new Transform(new Vector2f(1, 2)));
 		rulietta.addComponent(new TextureRender(
-			"rulietta", "test"
+			"rulietta", "test", Layer.UI
 		));
 
 		Vector4f lowPurple = new Vector4f(64f/255, 0, 1, 1);
 		Vector4f highPurple = new Vector4f(192f/255, 0, 1, 1);
 		compulsiveMerger.addComponent(new Transform(
-			new Vector2f(1, 3), new Vector2f(.5f, .5f)
+			new Vector2f(1.5f, 2.5f), new Vector2f(.5f, .5f)
 		));
-		compulsiveMerger.addComponent(new ColorRender(List.of(
-			lowPurple, lowPurple, lowPurple, highPurple
-		)));
+		compulsiveMerger.addComponent(new ColorRender(
+			List.of(lowPurple, lowPurple, lowPurple, highPurple),
+			Layer.EFFECT
+		));
 
-		ground.addComponent(new Transform(new Vector2f(3, 3)));
-		ground.addComponent(new TextureRender(
-			"past", "soil_and_left_river"
-		));
-		ground1.addComponent(new Transform(new Vector2f(4, 3)));
+		ground1.addComponent(new Transform(new Vector2f(3, 3)));
 		ground1.addComponent(new TextureRender(
-			"past", "full_soil"
+			"past", "soil_and_left_river",
+			Layer.BACKGROUND
 		));
-		ground2.addComponent(new Transform(new Vector2f(5, 3)));
+		ground2.addComponent(new Transform(new Vector2f(4, 3)));
 		ground2.addComponent(new TextureRender(
-			"past", "soil_and_right_river"
+			"past", "full_soil",
+			Layer.BACKGROUND
 		));
-		ground3.addComponent(new Transform(new Vector2f(6, 3)));
+		ground3.addComponent(new Transform(new Vector2f(5, 3)));
 		ground3.addComponent(new TextureRender(
-			"past", "full_water"
+			"past", "soil_and_right_river",
+			Layer.BACKGROUND
 		));
-		ground4.addComponent(new Transform(new Vector2f(6, 2)));
+		ground4.addComponent(new Transform(new Vector2f(6, 3)));
 		ground4.addComponent(new TextureRender(
-			"past", "soil_and_top_river"
+			"past", "full_water",
+			Layer.BACKGROUND
+		));
+		ground5.addComponent(new Transform(new Vector2f(6, 2)));
+		ground5.addComponent(new TextureRender(
+			"past", "soil_and_top_river",
+			Layer.BACKGROUND
 		));
 
-		wall.addComponent(new Transform(
+		wall1.addComponent(new Transform(
 			new Vector2f(3, 6), new Vector2f(1, 3)
 		));
-		wall.addComponent(new TextureRender(
-			"past", "full_wall1"
+		wall1.addComponent(new TextureRender(
+			"past", "top_right_coin_wall",
+			Layer.FOREGROUND
 		));
-		wall1.addComponent(new Transform(
+		wall2.addComponent(new Transform(
 			new Vector2f(5, 6), new Vector2f(1, 3)
 		));
-		wall1.addComponent(new TextureRender(
-			"past", "back_wall"
+		wall2.addComponent(new TextureRender(
+			"past", "wall_junction_bottom",
+			Layer.FOREGROUND
 		));
 
 		// Scene
@@ -134,14 +143,14 @@ public class TestGame extends Game{
 		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
 
-		past.addGameObject(ground);
 		past.addGameObject(ground1);
 		past.addGameObject(ground2);
 		past.addGameObject(ground3);
 		past.addGameObject(ground4);
+		past.addGameObject(ground5);
 
-		past.addGameObject(wall);
 		past.addGameObject(wall1);
+		past.addGameObject(wall2);
 
 		return past;
 	}

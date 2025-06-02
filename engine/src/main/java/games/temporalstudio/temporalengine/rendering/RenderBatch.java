@@ -72,14 +72,16 @@ public class RenderBatch implements RenderLifeCycle{
 
 	private final Renderer renderer;
 	private final int size;
+	private final Layer layer;
 	private FloatBuffer vertices = null;
 	private IntBuffer indices = null;
 
 	private int vao, vbo, ebo;
 
-	public RenderBatch(Renderer renderer, int size){
+	public RenderBatch(Renderer renderer, int size, Layer layer){
 		this.renderer = renderer;
 		this.size = size;
+		this.layer = layer;
 	}
 
 	// FUNCTIONS
@@ -298,6 +300,10 @@ public class RenderBatch implements RenderLifeCycle{
 		boolean shouldBeUpdated = scene.getGOsByComponent(
 				Render.class
 			).stream()
+				.filter(go -> {
+					Render r = go.getComponent(Render.class);
+					return r.getLayer().equals(layer);
+				})
 				.peek(go -> {
 					if(go.hasComponent(TextureRender.class)){
 						TextureRender tr = go.getComponent(
