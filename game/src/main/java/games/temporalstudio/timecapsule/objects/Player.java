@@ -3,6 +3,7 @@ package games.temporalstudio.timecapsule.objects;
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
+import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
@@ -26,6 +27,8 @@ public class Player implements TimeObject {
 		Collider2D collider = new Collider2D(new AABB(transform));
 		collider.setRigid(true);
 		PhysicsBody physicsBody = new PhysicsBody(1, 10, .1f, 20f);
+		Triggerable useSelectedObjectTriggerable = new Triggerable(context -> useSelectedObject(), 0.5f);
+		Triggerable switchItemTriggerable = new Triggerable(context -> switchSelectedObject(1), 0.5f);
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
@@ -41,10 +44,10 @@ public class Player implements TimeObject {
 			physicsBody.applyForce(new Vector2f(10, 0));
 		});
 		input.addControl(keys[4], (context) -> {
-			useSelectedObject();
+			useSelectedObjectTriggerable.trigger((this.gameObject));
 		});
 		input.addControl(keys[5], (context) -> {
-			switchSelectedObject(1);
+			switchItemTriggerable.trigger(this.gameObject);
 		});
 
 		this.gameObject.addComponent(transform);
@@ -52,6 +55,8 @@ public class Player implements TimeObject {
 		this.gameObject.addComponent(render);
 		this.gameObject.addComponent(physicsBody);
 		this.gameObject.addComponent(input);
+		this.gameObject.addComponent(useSelectedObjectTriggerable);
+		this.gameObject.addComponent(switchItemTriggerable);
 	}
 
 	@Override
@@ -96,6 +101,7 @@ public class Player implements TimeObject {
 	 */
 	public void useSelectedObject() {
 		if (inventory.isEmpty()) {
+			Game.LOGGER.warning(this.gameObject.getName() + " tried to use selected object, but inventory is empty.");
 			return;
 		}
 		InventoryObject selectedObject = inventory.get(this.selectedObject);
