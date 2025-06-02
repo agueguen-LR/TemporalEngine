@@ -54,5 +54,67 @@
 	"full_water": {
 		"position": [13, 0],
 		"scale": [1, 1]
+	},
+
+
+	"full_wall1": {
+		"position": [0, 1],
+		"scale": [1, 3]
+	},
+	"full_wall2": {
+		"position": [1, 1],
+		"scale": [1, 3]
+	},
+	"end_right": {
+		"position": [2, 1],
+		"scale": [1, 3]
+	},
+	"end_left": {
+		"position": [3, 1],
+		"scale": [1, 3]
+	},
+	"back_wall": {
+		"position": [4, 1],
+		"scale": [1, 3]
+	},
+	"left_wall": {
+		"position": [5, 1],
+		"scale": [1, 3]
+	},
+	"right_wall": {
+		"position": [6, 1],
+		"scale": [1, 3]
+	},
+	"bottom_left_coin_wall": {
+		"position": [7, 1],
+		"scale": [1, 3]
+	},
+	"bottom_right_coin_wall": {
+		"position": [8, 1],
+		"scale": [1, 3]
+	},
+	"top_left_coin_wall": {
+		"position": [9, 1],
+		"scale": [1, 4]
+	},
+	"top_right_coin_wall": {
+		"position": [10, 1],
+		"scale": [1, 4]
+	},
+	"wall_junction_right": {
+		"position": [11, 1],
+		"scale": [1, 3]
+	},
+	"wall_junction_left": {
+		"position": [12, 1],
+		"scale": [1, 3]
+	},
+	"wall_junction_top": {
+		"position": [13, 1],
+		"scale": [1, 3]
+	},
+	"wall_junction_bottom": {
+		"position": [14, 1],
+		"scale": [1, 4]
 	}
 }

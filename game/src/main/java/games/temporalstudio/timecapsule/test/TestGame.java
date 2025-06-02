@@ -71,6 +71,9 @@ public class TestGame extends Game{
 		GameObject ground3 = new GameObject("Ground3");
 		GameObject ground4 = new GameObject("Ground4");
 
+		GameObject wall = new GameObject("Wall");
+		GameObject wall1 = new GameObject("Wall1");
+
 		// Components
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
@@ -91,23 +94,36 @@ public class TestGame extends Game{
 
 		ground.addComponent(new Transform(new Vector2f(3, 3)));
 		ground.addComponent(new TextureRender(
-			"future", "soil_and_left_river"
+			"past", "soil_and_left_river"
 		));
 		ground1.addComponent(new Transform(new Vector2f(4, 3)));
 		ground1.addComponent(new TextureRender(
-			"future", "full_soil"
+			"past", "full_soil"
 		));
 		ground2.addComponent(new Transform(new Vector2f(5, 3)));
 		ground2.addComponent(new TextureRender(
-			"future", "soil_and_right_river"
+			"past", "soil_and_right_river"
 		));
 		ground3.addComponent(new Transform(new Vector2f(6, 3)));
 		ground3.addComponent(new TextureRender(
-			"future", "full_water"
+			"past", "full_water"
 		));
 		ground4.addComponent(new Transform(new Vector2f(6, 2)));
 		ground4.addComponent(new TextureRender(
-			"future", "soil_and_top_river"
+			"past", "soil_and_top_river"
+		));
+
+		wall.addComponent(new Transform(
+			new Vector2f(3, 6), new Vector2f(1, 3)
+		));
+		wall.addComponent(new TextureRender(
+			"past", "full_wall1"
+		));
+		wall1.addComponent(new Transform(
+			new Vector2f(5, 6), new Vector2f(1, 3)
+		));
+		wall1.addComponent(new TextureRender(
+			"past", "back_wall"
 		));
 
 		// Scene
@@ -121,6 +137,9 @@ public class TestGame extends Game{
 		past.addGameObject(ground2);
 		past.addGameObject(ground3);
 		past.addGameObject(ground4);
+
+		past.addGameObject(wall);
+		past.addGameObject(wall1);
 
 		return past;
 	}
