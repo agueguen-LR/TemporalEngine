@@ -15,6 +15,9 @@ public class Triggerable implements Component {
 
 	/** Indicates whether this Triggerable has been triggered. */
 	private boolean triggered = false;
+	private float cooldown;
+	private float workingCooldown;
+	private boolean isOnCooldown;
 
 	/** The action to perform when this Triggerable is triggered. */
 	private Consumer<LifeCycleContext> action;
@@ -32,12 +35,16 @@ public class Triggerable implements Component {
 	}
 
 	/**
-	 * Sets the triggered state of this Triggerable.
+	 * Constructs a Triggerable with the specified action.
 	 *
-	 * @param triggered True to mark as triggered, false otherwise.
+	 * @param action The action to perform when triggered. Must not be null.
 	 */
-	public void setTriggered(boolean triggered) {
-		this.triggered = triggered;
+	public Triggerable(Consumer<LifeCycleContext> action, float cooldown) {
+		if (action == null) {
+			Game.LOGGER.severe("Triggerable action cannot be null.");
+		}
+		this.action = action;
+		this.cooldown = cooldown;
 	}
 
 	/**
@@ -52,10 +59,7 @@ public class Triggerable implements Component {
 			return;
 		}
 		if (!triggered) {
-			Game.LOGGER.info("Triggerable " + object.getName() + " triggered!");
 			this.triggered = true;
-		} else {
-			Game.LOGGER.warning("Triggerable already triggered, ignoring.");
 		}
 	}
 
@@ -67,14 +71,20 @@ public class Triggerable implements Component {
 	 */
 	@Override
 	public void update(LifeCycleContext context, float delta) {
-		if (triggered) {
+		if (isOnCooldown) {
+			workingCooldown -= delta;
+			if (workingCooldown <= 0) {
+				isOnCooldown = false;
+				this.triggered = false; // Reset triggered state after cooldown
+			}
+		} else if (triggered) {
 			if (!(context instanceof GameObject object)) {
 				Game.LOGGER.severe("Triggerable can only be used with GameObject context.");
 				return;
 			}
-			Game.LOGGER.info("Triggerable " + object.getName() + " has been triggered, performing action.");
+			workingCooldown = cooldown; // Reset cooldown timer
+			this.isOnCooldown = true;
 			action.accept(context);
-			triggered = false;
 		}
 	}
 
