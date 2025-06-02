@@ -21,7 +21,8 @@ public final class TextureRender implements Render{
 	// LIFECYCLE FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){
-		getTexture().load();
+		if(!getTexture().wasLoaded())
+			getTexture().load();
 	}
 	@Override
 	public void start(LifeCycleContext context){}
