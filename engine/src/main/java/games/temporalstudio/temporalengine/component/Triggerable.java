@@ -5,11 +5,25 @@ import games.temporalstudio.temporalengine.LifeCycleContext;
 
 import java.util.function.Consumer;
 
-public class Triggerable implements Component{
+/**
+ * Represents a component that can be triggered to perform a specific action.
+ * Used to define custom behaviors that are executed when triggered by a {@link Trigger} or other game logic.
+ *
+ * @author agueguen-LR
+ */
+public class Triggerable implements Component {
 
+	/** Indicates whether this Triggerable has been triggered. */
 	private boolean triggered = false;
+
+	/** The action to perform when this Triggerable is triggered. */
 	private Consumer<LifeCycleContext> action;
 
+	/**
+	 * Constructs a Triggerable with the specified action.
+	 *
+	 * @param action The action to perform when triggered. Must not be null.
+	 */
 	public Triggerable(Consumer<LifeCycleContext> action) {
 		if (action == null) {
 			Game.LOGGER.severe("Triggerable action cannot be null.");
@@ -17,22 +31,44 @@ public class Triggerable implements Component{
 		this.action = action;
 	}
 
+	/**
+	 * Sets the triggered state of this Triggerable.
+	 *
+	 * @param triggered True to mark as triggered, false otherwise.
+	 */
+	public void setTriggered(boolean triggered) {
+		this.triggered = triggered;
+	}
+
+	/**
+	 * Triggers this component, marking it as triggered if not already triggered.
+	 * The action will be performed on the next update.
+	 *
+	 * @param context The context in which the trigger occurs (should be a GameObject).
+	 */
 	public void trigger(LifeCycleContext context) {
-		if (!(context instanceof GameObject object)){
+		if (!(context instanceof GameObject object)) {
 			Game.LOGGER.warning("Trigger can only be used with GameObject context.");
 			return;
 		}
-		if (!triggered){
+		if (!triggered) {
+			Game.LOGGER.info("Triggerable " + object.getName() + " triggered!");
 			this.triggered = true;
 		} else {
 			Game.LOGGER.warning("Triggerable already triggered, ignoring.");
 		}
 	}
 
+	/**
+	 * Updates the Triggerable, performing the action if it has been triggered.
+	 *
+	 * @param context The context in which the update occurs.
+	 * @param delta   The time delta since the last update.
+	 */
 	@Override
 	public void update(LifeCycleContext context, float delta) {
-		if (triggered){
-			if (!(context instanceof GameObject object)){
+		if (triggered) {
+			if (!(context instanceof GameObject object)) {
 				Game.LOGGER.severe("Triggerable can only be used with GameObject context.");
 				return;
 			}
@@ -42,18 +78,30 @@ public class Triggerable implements Component{
 		}
 	}
 
+	/**
+	 * Initializes the component. No-op by default.
+	 *
+	 * @param context The life cycle context.
+	 */
 	@Override
 	public void init(LifeCycleContext context) {
-
 	}
 
+	/**
+	 * Starts the component. No-op by default.
+	 *
+	 * @param context The life cycle context.
+	 */
 	@Override
 	public void start(LifeCycleContext context) {
-
 	}
 
+	/**
+	 * Destroys the component. No-op by default.
+	 *
+	 * @param context The life cycle context.
+	 */
 	@Override
 	public void destroy(LifeCycleContext context) {
-
 	}
 }
