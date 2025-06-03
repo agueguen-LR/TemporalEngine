@@ -15,6 +15,7 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.util.Set;
+import java.util.Vector;
 
 public class Enemy extends Entity{
 
@@ -26,14 +27,14 @@ public class Enemy extends Entity{
             throw new IllegalArgumentException("Not enough coordinate points");
         }
         Collider2D collider=new Collider2D((new AABB(transform)));
-        /*collider.setOnIntersects((context, other) -> {
+        collider.setOnIntersects((context, other) -> {
                 if (other instanceof Player player
                 ) {
                     System.out.println("ludfhemruih");
                     Game.LOGGER.info("Player killed by dracula!");
                     player.transform.setPosition(new Vector2f());
                 }
-        });*/
+        });
         p.addComponent(collider);
 
 
@@ -50,19 +51,20 @@ public class Enemy extends Entity{
             Collider2D collider2=new Collider2D((new AABB(transform1)));
             collider2.setOnIntersects((context, other) -> {
                 {
-                    //if (other instanceof Enemy enemy) {
+                    if (context instanceof Enemy enemy) {
                         Game.LOGGER.info("Enemy change direction");
                         float XDistance = coords[nextIndex].x - coords[ii].x;
                         float YDistance = coords[nextIndex].y - coords[ii].y;
-                        Set<Vector2f> forces=this.physicsBody.getAppliedForces();
-                        float sumX=0;
-                        float sumY=0;
-                        forces.forEach(force->{sumX +=force.x;
-                        sumY+= force.y;});
-                        this.physicsBody.applyForce(-sumX,-sumY);
-
-                        //this.physicsBody.applyForce(XDistance*5, YDistance*5);
-                    //}
+                        Vector2f vitesse= enemy.physicsBody.getVelocity();
+                        enemy.physicsBody.applyForce(-vitesse.x,-vitesse.y);
+                        enemy.physicsBody.applyForce(XDistance*2, YDistance*2);
+                    }/*
+                    Game.LOGGER.info("Enemy change direction");
+                    float XDistance = coords[nextIndex].x - coords[ii].x;
+                    float YDistance = coords[nextIndex].y - coords[ii].y;
+                    Vector2f vitesse= this.physicsBody.getVelocity();
+                    this.physicsBody.applyForce(-vitesse.x,-vitesse.y);
+                    this.physicsBody.applyForce(XDistance*2, YDistance*2);*/
                 }
             });
             gameCollider.addComponent(collider2);
@@ -72,7 +74,7 @@ public class Enemy extends Entity{
 
             float XDistance = coords[1].x - coords[0].x;
             float YDistance = coords[1].y - coords[0].y;
-            this.physicsBody.applyForce(XDistance,YDistance);
+            //this.physicsBody.applyForce(XDistance,YDistance);
 
             }
     }
