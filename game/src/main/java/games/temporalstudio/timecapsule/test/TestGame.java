@@ -207,6 +207,11 @@ public class TestGame extends Game{
 		future.addGameObject(rock1);
 		future.addGameObject(ice);
 		future.addGameObject(spring);
+		future.addGameObject(createWall("leftWall", 1, 7, 1, 1));
+		future.addGameObject(createWall("rightWall", 2, 8, 1, 1));
+		future.addGameObject(createFlyingPlayer(new int[]{
+				GLFW_KEY_KP_8, GLFW_KEY_KP_5, GLFW_KEY_KP_4, GLFW_KEY_KP_6,
+		}));
 
 		return future;
 	}
@@ -392,5 +397,49 @@ public class TestGame extends Game{
 		spring.addComponent(collider2D);
 
 		return spring;
+	}
+
+	private GameObject createWall(String name, float x, float y, float width, float height){
+		GameObject wall = new GameObject(name);
+		Transform transform = new Transform(new Vector2f(x, y), new Vector2f(width, height));
+		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1));
+		Collider2D collider2D = new Collider2D(new AABB(transform));
+		collider2D.setRigid(true);
+
+		wall.addComponent(transform);
+		wall.addComponent(render);
+		wall.addComponent(collider2D);
+		return wall;
+	}
+
+	private GameObject createFlyingPlayer(int[] keys){
+		GameObject player = new GameObject("flyingPlayer");
+
+		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 1, 1));
+		Transform transform = new Transform(new Vector2f(3, 3));
+		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
+		Collider2D collider2D = new Collider2D(new AABB(transform));
+
+		Input input = new Input();
+		input.addControl(keys[0], (context) -> {
+			physicsBody.applyForce(new Vector2f(0, 10));
+		});
+		input.addControl(keys[1], (context) -> {
+			physicsBody.applyForce(new Vector2f(0, -10));
+		});
+		input.addControl(keys[2], (context) -> {
+			physicsBody.applyForce(new Vector2f(-10, 0));
+		});
+		input.addControl(keys[3], (context) -> {
+			physicsBody.applyForce(new Vector2f(10, 0));
+		});
+
+		player.addComponent(transform);
+		player.addComponent(render);
+		player.addComponent(physicsBody);
+		player.addComponent(input);
+		player.addComponent(collider2D);
+
+		return player;
 	}
 }
