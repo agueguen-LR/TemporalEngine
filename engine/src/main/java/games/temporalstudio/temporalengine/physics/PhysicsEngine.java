@@ -22,16 +22,19 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	private Set<Map.Entry<GameObject, GameObject>> collidingObjects;
 	private Map<PhysicsBody, Vector2f> impulses;
 
-	// Helper to add rigid colliders without PhysicsBody to a positions map
-	private BiConsumer<Set<GameObject>, Map<GameObject, Collider2D>> addStaticColliders = (
-			rigidCollidersSet, positionsMap
-	) -> {
+	/**
+	 * Adds rigid colliders without PhysicsBody to a positions map.
+	 *
+	 * @param rigidCollidersSet Set of rigid collider GameObjects.
+	 * @param positionsMap Map to add static colliders to.
+	 */
+	private static void addStaticColliders(Set<GameObject> rigidCollidersSet, Map<GameObject, Collider2D> positionsMap) {
 		for (GameObject go : rigidCollidersSet) {
 			if (!go.hasComponent(PhysicsBody.class)) {
 				positionsMap.put(go, go.getComponent(Collider2D.class));
 			}
 		}
-	};
+	}
 
 	public PhysicsEngine() {
 		this.collidingObjects = new HashSet<>();
@@ -316,7 +319,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 
 		// Get next positions of physics bodies
 		Map<GameObject, Collider2D> nextPositions = predictNextPositions(rigidPhysicsBodies, deltaTime);
-		addStaticColliders.accept(rigidColliders, nextPositions);
+		addStaticColliders(rigidColliders, nextPositions);
 		// Detect collisions
 		detectCollisions(rigidPhysicsBodies, rigidColliders, nextPositions);
 
@@ -327,7 +330,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 				applyCollisions(deltaTime);
 				// Get next positions of physics bodies
 				Map<GameObject, Collider2D> nextLoopPositions = predictNextPositions(rigidPhysicsBodies, deltaTime);
-				addStaticColliders.accept(rigidColliders, nextLoopPositions);
+				addStaticColliders(rigidColliders, nextLoopPositions);
 				// Detect collisions
 				detectCollisions(rigidPhysicsBodies, rigidColliders, nextLoopPositions);
 				loopCount++;
