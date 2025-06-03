@@ -18,6 +18,8 @@ public class Player implements TimeObject {
 	private final GameObject gameObject;
 	private ArrayList<InventoryObject> inventory = new ArrayList<>();
 	private int selectedObject = 0;
+	ArrayList<KeyFragment> fragments = new ArrayList<KeyFragment>();
+
 
 	public Player(String name, float x, float y, int[] keys) {
 		this.gameObject = new GameObject(name);
@@ -52,7 +54,26 @@ public class Player implements TimeObject {
 		this.gameObject.addComponent(render);
 		this.gameObject.addComponent(physicsBody);
 		this.gameObject.addComponent(input);
+
 	}
+
+	public void allFragmentKey(){
+		for (InventoryObject object : inventory){
+			if (object instanceof KeyFragment){
+				fragments.add((KeyFragment) object);
+			}
+		}
+	}
+
+	public void buildCompleteKey(Chest chest){
+		for (KeyFragment fragment : fragments){
+            inventory.removeIf(object -> object.equals(fragment));
+		}
+		fragments.clear();
+		this.addToInventory(new CompleteKey("Key", 100.0f, 100.0f, this.getGameObject(), this, chest));
+		System.out.println("Cle reconstitue !!");
+	}
+
 
 	@Override
 	public GameObject getGameObject() {

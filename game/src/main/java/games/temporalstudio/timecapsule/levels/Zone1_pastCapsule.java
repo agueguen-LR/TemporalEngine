@@ -15,6 +15,7 @@ public class Zone1_pastCapsule implements SingleLevel{
 		this.scene = new Scene("Zone1_pastCapsule");
 		this.scene.addGameObject(pastCamera);
 
+		Chest coffre;
 		timeObjects = Set.of(
 				new Wall("Zone1_pastCapsule_Wall1", 1f, 5.0f),
 				new Wall("Zone1_pastCapsule_Wall2", 2f, 5.0f),
@@ -25,7 +26,9 @@ public class Zone1_pastCapsule implements SingleLevel{
 						"Zone1_pastCapsule_Exit", 1.0f, 1.0f, pastPlayer,
 						"Zone1_lvl1_Past", game::changeLeftScene
 				),
-				new KeyFragment("Fragment_cle1",6.0f,3.0f,pastPlayer.getGameObject()),
+				coffre = new Chest("coffre", 1.0f, 2.0f, pastPlayer),
+				new KeyFragment("key2a", 3.0f, 4.0f, pastPlayer.getGameObject(), pastPlayer, coffre),
+				new KeyFragment("Fragment_cle1",6.0f,3.0f,pastPlayer.getGameObject(), pastPlayer, coffre),
 				pastPlayer,
 				zone1_pastCapsuleReceiver
 		);
