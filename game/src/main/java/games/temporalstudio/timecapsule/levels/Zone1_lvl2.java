@@ -28,10 +28,8 @@ public class Zone1_lvl2 implements TimeLevel{
 				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
 						new Vector2f[]{new Vector2f(2,6), new Vector2f(5,1),new Vector2f(0,3)},
 						pastScene),
-				new Wall("Zone1_lvl2_Wall2", 2f, 6.0f),
-				new Wall("Zone1_lvl2_Wall3", 3f, 5.0f),
-				new Wall("Zone1_lvl2_Wall4", 4f, 4.0f),
-				new Wall("Zone1_lvl2_Wall5", 5f, 3.0f),
+				new Wall(new Vector2f(1, 5), new Vector2f(6, 6)),
+
 				new Exit(
 						"Zone1_lvl2_Exit", 3.0f, 6.0f, pastPlayer,
 						"Zone2_Past", game::changeLeftScene),
@@ -47,10 +45,7 @@ public class Zone1_lvl2 implements TimeLevel{
 				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
 						new Vector2f[]{new Vector2f(2,6), new Vector2f(5,1),new Vector2f(0,3)},
 						futurScene),
-				new Wall("Zone1_lvl2_Wall2", 2f, 6.0f),
-				new Wall("Zone1_lvl2_Wall3", 3f, 5.0f),
-				new Wall("Zone1_lvl2_Wall4", 4f, 4.0f),
-				new Wall("Zone1_lvl2_Wall5", 5f, 3.0f),
+				new Wall(new Vector2f(1, 5), new Vector2f(6, 6)),
 				new Exit(
 						"Zone1_lvl2_Exit", 3.0f, 6.0f, futurPlayer,
 						"Zone2_Futur", game::changeRightScene),
