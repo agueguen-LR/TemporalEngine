@@ -14,7 +14,7 @@ import java.util.List;
 
 public class KeyFragment extends Key implements TimeObject{
     private final GameObject keyfragment;
-    private static List<KeyFragment> fragments = new ArrayList<>(); // Static list to hold all key fragments
+    private static int count;
 
     public KeyFragment(String name, float x, float y, GameObject collectableBy){
         this.keyfragment = new GameObject(name); // Create a new GameObject for the key
@@ -32,13 +32,12 @@ public class KeyFragment extends Key implements TimeObject{
             if (collector == collectableBy) { // Check if the colliding object is the collectableBy object
 // Logic for when the key collides with the player
                 System.out.println("Fragment key collected by player!");
-                fragments.add(this);
-                if (fragments.size() == 2){
-                    for (KeyFragment fragment : fragments){
-                        this.keyfragment.removeComponent(collider);
-                        this.keyfragment.removeComponent(render);
-                        this.keyfragment.removeComponent(transform);
-                    }
+                this.keyfragment.removeComponent(collider);
+                this.keyfragment.removeComponent(render);
+                this.keyfragment.removeComponent(transform);
+                count++;
+                if (count == 2) {
+                    new CompleteKey("Key", new Chest() ,collectableBy);
                 }
 // You can add more logic here, like increasing score or removing the key
             }

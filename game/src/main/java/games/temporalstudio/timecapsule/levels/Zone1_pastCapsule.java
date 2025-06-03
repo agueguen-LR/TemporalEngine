@@ -25,6 +25,7 @@ public class Zone1_pastCapsule implements SingleLevel{
 						"Zone1_pastCapsule_Exit", 1.0f, 1.0f, pastPlayer,
 						"Zone1_lvl1_Past", game::changeLeftScene
 				),
+				new KeyFragment("Fragment_cle1",6.0f,3.0f,pastPlayer.getGameObject()),
 				pastPlayer,
 				zone1_pastCapsuleReceiver
 		);
