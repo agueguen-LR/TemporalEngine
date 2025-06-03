@@ -12,6 +12,9 @@ import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.levels.*;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
+import games.temporalstudio.timecapsule.objects.CapsuleReceiver;
+import games.temporalstudio.timecapsule.objects.Player;
+import games.temporalstudio.timecapsule.objects.Seed;
 
 import java.util.Map;
 
@@ -35,7 +38,7 @@ public class TimeCapsule extends Game{
 		futureCamera.addComponent(new Transform());
 		futureCamera.addComponent(new View(.1f));
 
-		Player pastPlayer= new Player("pastplayer", 8,8,
+		Player pastPlayer= new Player("pastplayer", 1,1,
 				new int[]{GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE},
 				new Vector4f(0,0,1,1));
 		Player futurePlayer = new Player("futurePlayer", 1, 1, new int[]{
@@ -43,15 +46,18 @@ public class TimeCapsule extends Game{
 		}, new Vector4f(0,0,1,1));
 
 
+        CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver("zone1_pastCapsuleReceiver", 3.0f, 3.0f);
 
 		Map<String, Level> levels = Map.of(
-				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
+				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, zone1_pastCapsuleReceiver),
 				"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
-				"caveCapsulePast", new Zone1_pastCapsule(pastCamera, this, pastPlayer),
+				"caveCapsulePast", new Zone1_pastCapsule(pastCamera, this, pastPlayer, zone1_pastCapsuleReceiver),
 				"factory", new Zone2(pastCamera, futureCamera),
 				"boat", new Zone3(pastCamera, futureCamera),
 				"finale", new Zone4(pastCamera, futureCamera)
 		);
+
+		zone1_pastCapsuleReceiver.setScene(((SingleLevel)levels.get("caveCapsulePast")).getScene());
 
 		setFirstLeftScene(createPastScenes(levels));
 		setFirstRightScene(createFutureScenes(levels));

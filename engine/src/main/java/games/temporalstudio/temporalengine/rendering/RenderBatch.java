@@ -72,14 +72,16 @@ public class RenderBatch implements RenderLifeCycle{
 
 	private final Renderer renderer;
 	private final int size;
+	private final Layer layer;
 	private FloatBuffer vertices = null;
 	private IntBuffer indices = null;
 
 	private int vao, vbo, ebo;
 
-	public RenderBatch(Renderer renderer, int size){
+	public RenderBatch(Renderer renderer, int size, Layer layer){
 		this.renderer = renderer;
 		this.size = size;
+		this.layer = layer;
 	}
 
 	// FUNCTIONS
@@ -286,7 +288,9 @@ public class RenderBatch implements RenderLifeCycle{
 		renderer.getShader().uploadMatrix4f(
 			PROJECTION_UNIFORM_NAME, view.getProjection(size[2], size[3])
 		);
-		renderer.getShader().uploadMatrix4f(VIEW_UNIFORM_NAME, view.getView());
+		renderer.getShader().uploadMatrix4f(VIEW_UNIFORM_NAME,
+			view.getView(size[2], size[3])
+		);
 
 		// Updates VBO
 		AtomicInteger aInt = new AtomicInteger(0);
@@ -296,6 +300,10 @@ public class RenderBatch implements RenderLifeCycle{
 		boolean shouldBeUpdated = scene.getGOsByComponent(
 				Render.class
 			).stream()
+				.filter(go -> {
+					Render r = go.getComponent(Render.class);
+					return r.getLayer().equals(layer);
+				})
 				.peek(go -> {
 					if(go.hasComponent(TextureRender.class)){
 						TextureRender tr = go.getComponent(

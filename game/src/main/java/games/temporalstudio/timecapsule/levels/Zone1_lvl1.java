@@ -18,7 +18,11 @@ public class Zone1_lvl1 implements TimeLevel{
 	private Set<TimeObject> pastTimeObjects;
 	private Set<TimeObject> futurTimeObjects;
 
-	public Zone1_lvl1(GameObject pastCamera, GameObject futurCamera, Game game, Player pastPlayer, Player futurPlayer) {
+	public Zone1_lvl1(
+			GameObject pastCamera, GameObject futurCamera,
+			Game game, Player pastPlayer, Player futurPlayer,
+			CapsuleReceiver zone1_pastCapsuleReceiver
+	) {
 		this.pastScene = new Scene("Zone1_lvl1_Past");
 		this.futurScene = new Scene("Zone1_lvl1_Futur");
 		this.futurScene.addGameObject(futurCamera);
@@ -36,11 +40,11 @@ public class Zone1_lvl1 implements TimeLevel{
 				new Wall("Zone1_lvl1_Wall4", 4f, 9.0f),
 				new Wall("Zone1_lvl1_Wall5", 5f, 10.0f),
 				new Exit(
-						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer.getGameObject(),
+						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer,
 						"Zone1_pastCapsule", game::changeLeftScene
 				),
 				new Exit(
-						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer.getGameObject(),
+						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer,
 						"Zone1_lvl2_Past", game::changeLeftScene
 				),
 				new Pickupable("Bottle", 5.0f, 5.0f, pastPlayer, throwableBottle),
@@ -53,6 +57,13 @@ public class Zone1_lvl1 implements TimeLevel{
 
 		pastTimeObjects.forEach((timeObject) -> this.pastScene.addGameObject(timeObject.getGameObject()));
 
+		CapsuleSender sender = new CapsuleSender(
+				"capsuleSender", futurPlayer,
+				new Pickupable("seedPickup", 3, 3, pastPlayer, new Seed("seed", pastPlayer)),
+				zone1_pastCapsuleReceiver
+		);
+		futurPlayer.addToInventory(sender);
+
 		futurTimeObjects = Set.of(
 				new Enemy("dracula",new Vector4f(0,0.5f, 0.75f, 1),
 						new Vector2f[]{new Vector2f(2,6), new Vector2f(5,1),new Vector2f(0,3)},
@@ -63,13 +74,14 @@ public class Zone1_lvl1 implements TimeLevel{
 				new Wall("Zone1_lvl1_Wall4", 4f, 9.0f),
 				new Wall("Zone1_lvl1_Wall5", 4f, 10.0f),
 				new Exit(
-						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer.getGameObject(),
+						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer,
 						"Zone1_lvl2_Futur", game::changeRightScene
 				),
 				new Medusa("pastMedusa",
 						new Vector2f(0.5f, 0.5f),
 						new Vector4f(0.25f,0,0.75f,1), futurPlayer),
-				futurPlayer
+				futurPlayer,
+                sender
 		);
 
 

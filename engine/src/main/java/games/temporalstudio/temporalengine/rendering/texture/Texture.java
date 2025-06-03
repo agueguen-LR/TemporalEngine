@@ -43,6 +43,7 @@ public class Texture implements AssetPoolObject{
 	private Map<String, Tile> tiles = new HashMap<>();
 
 	private int id;
+	private boolean loaded = false;
 
 	private Texture(String name){
 		this.name = name;
@@ -90,12 +91,13 @@ public class Texture implements AssetPoolObject{
 		Vector2f scalef = new Vector2f(tile.scale());
 
 		return List.of(
-			new Vector2f(0, 0).add(positionf).mul(scalef).mul(offset),
-			new Vector2f(1, 0).add(positionf).mul(scalef).mul(offset),
-			new Vector2f(1, 1).add(positionf).mul(scalef).mul(offset),
-			new Vector2f(0, 1).add(positionf).mul(scalef).mul(offset)
+			new Vector2f(0, 0).mul(scalef).add(positionf).mul(offset),
+			new Vector2f(1, 0).mul(scalef).add(positionf).mul(offset),
+			new Vector2f(1, 1).mul(scalef).add(positionf).mul(offset),
+			new Vector2f(0, 1).mul(scalef).add(positionf).mul(offset)
 		);
 	}
+	public boolean wasLoaded(){ return loaded; }
 
 	// SETTERS
 	private ByteBuffer loadImageBuffer() throws IOException{
@@ -173,12 +175,12 @@ public class Texture implements AssetPoolObject{
 				"Failed to load and parse tileset;", e
 			);
 		}
-
-		System.out.println("test");
 	}
 	public void load(){
 		loadImage();
 		loadTileset();
+
+		loaded = true;
     }
 
 	// FUNCTIONS

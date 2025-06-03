@@ -14,13 +14,13 @@ import java.util.function.Consumer;
 public class Exit implements TimeObject {
 	private final GameObject gameObject;
 
-	public Exit(String name, float x, float y, GameObject player, String targetSceneName, Consumer<String> changeSceneFunction) {
+	public Exit(String name, float x, float y, Player player, String targetSceneName, Consumer<String> changeSceneFunction) {
 		this.gameObject = new GameObject(name);
 		Render render = new ColorRender(new Vector4f(1, 0, 0, 1));
 		Transform transform = new Transform(new Vector2f(x, y));
 		Collider2D collider = new Collider2D(new AABB(transform));
 		collider.setOnIntersects((thisExit, other) -> {
-			if (other == player) {
+			if (other == player.getGameObject()) {
 				changeSceneFunction.accept(targetSceneName);
 			}
 		});

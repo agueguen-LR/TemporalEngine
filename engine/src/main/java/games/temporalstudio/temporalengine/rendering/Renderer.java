@@ -3,33 +3,50 @@ package games.temporalstudio.temporalengine.rendering;
 import static org.lwjgl.opengl.GL11C.*;
 
 import java.util.ArrayList;
-import java.util.SequencedCollection;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.joml.Vector2i;
 
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
+import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.rendering.shader.Shader;
 
 public class Renderer implements RenderLifeCycle, LifeCycleContext{
-	
+
 	private static final int MAX_BATCH_SIZE = 1000;
-	private SequencedCollection<RenderBatch> mainMenuBatches
-		= new ArrayList<>();
-	private SequencedCollection<RenderBatch> leftSceneBatches
-		= new ArrayList<>();
-	private SequencedCollection<RenderBatch> rightSceneBatches
-		= new ArrayList<>();
+
+	private List<RenderBatch> mainMenuBatches = new ArrayList<>();
+	private List<RenderBatch> leftSceneBatches = new ArrayList<>();
+	private List<RenderBatch> rightSceneBatches = new ArrayList<>();
+	private Collection<List<RenderBatch>> sceneBatches;
 	private static Shader shader;
 
 	public Renderer(){
-		mainMenuBatches.add(new RenderBatch(this, MAX_BATCH_SIZE));
-		leftSceneBatches.add(new RenderBatch(this, MAX_BATCH_SIZE));
-		rightSceneBatches.add(new RenderBatch(this, MAX_BATCH_SIZE));
+		sceneBatches = Collections.unmodifiableCollection(List.of(
+			mainMenuBatches, leftSceneBatches, rightSceneBatches
+		));
+
+		sceneBatches.forEach(batches ->
+			batches.addAll(
+				Arrays.stream(Layer.values())
+					.map(l -> new RenderBatch(this, MAX_BATCH_SIZE, l))
+					.toList()
+			)
+		);
 	}
 
 	// GETTERS
 	public Shader getShader(){ return shader; }
+
+	public Scene getAssociatedScene(Game game, List<RenderBatch> batches){
+		if(batches == leftSceneBatches) return game.getLeftScene();
+		else if(batches == rightSceneBatches) return game.getRightScene();
+		else return game.getMainMenu();
+	}
 
 	// LIFECYCLE FUNCTIONS
 	@Override
@@ -48,10 +65,12 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 		shader = new Shader("default");
 		shader.load();
 		shader.compile();
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		mainMenuBatches.forEach(b -> b.init(game.getMainMenu()));
-		leftSceneBatches.forEach(b -> b.init(game.getLeftScene()));
-		rightSceneBatches.forEach(b -> b.init(game.getRightScene()));
+		sceneBatches.forEach(batches -> {
+			Scene s = getAssociatedScene(game, batches);
+			batches.forEach(rb -> rb.init(s));
+		});
 	}
 	@Override
 	public void start(LifeCycleContext context){
@@ -64,9 +83,10 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 
 		shader.link();
 
-		mainMenuBatches.forEach(b -> b.start(game.getMainMenu()));
-		leftSceneBatches.forEach(b -> b.start(game.getLeftScene()));
-		rightSceneBatches.forEach(b -> b.start(game.getRightScene()));
+		sceneBatches.forEach(batches -> {
+			Scene s = getAssociatedScene(game, batches);
+			batches.forEach(rb -> rb.start(s));
+		});
 	}
 	@Override
 	public void render(LifeCycleContext context){
@@ -79,6 +99,8 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 		Vector2i winSize = game.getWindowInfo().getSize();
 
 		shader.use();
+
+		glEnable(GL_BLEND);
 
 		if(game.isPaused()){
 			glViewport(0, 0, winSize.x(), winSize.y());
@@ -102,8 +124,11 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 			return;
 		}
 
-		mainMenuBatches.forEach(b -> b.destroy(game.getMainMenu()));
-		leftSceneBatches.forEach(b -> b.destroy(game.getLeftScene()));
-		rightSceneBatches.forEach(b -> b.destroy(game.getRightScene()));
+		glDisable(GL_BLEND);
+
+		sceneBatches.forEach(batches -> {
+			Scene s = getAssociatedScene(game, batches);
+			batches.forEach(rb -> rb.destroy(s));
+		});
 	}
 }
