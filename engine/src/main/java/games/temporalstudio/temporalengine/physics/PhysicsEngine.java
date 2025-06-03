@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  * @author agueguen-LR
  */
 public class PhysicsEngine implements PhysicsEngineLifeCycle{
+	private static final int maxCollisionLoops = 10; // Maximum number of loops to resolve collisions
 	private Set<Map.Entry<GameObject, GameObject>> collidingObjects;
 	private Map<PhysicsBody, Vector2f> impulses;
 
@@ -319,6 +320,7 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		// Detect collisions
 		detectCollisions(rigidPhysicsBodies, rigidColliders, nextPositions);
 
+		int loopCount = 0;
 		if (!this.collidingObjects.isEmpty()) {
 			do {
 				// Apply impulses for collisions
@@ -328,7 +330,8 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 				addStaticColliders.accept(rigidColliders, nextLoopPositions);
 				// Detect collisions
 				detectCollisions(rigidPhysicsBodies, rigidColliders, nextLoopPositions);
-			} while (!this.collidingObjects.isEmpty());
+				loopCount++;
+			} while (!this.collidingObjects.isEmpty() && loopCount < maxCollisionLoops);
 		}
 
 		// Update velocities and positions
