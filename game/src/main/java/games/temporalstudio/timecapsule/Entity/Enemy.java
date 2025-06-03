@@ -14,12 +14,14 @@ import games.temporalstudio.temporalengine.rendering.component.Render;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+import java.util.Set;
+
 public class Enemy extends Entity{
 
 
     public Enemy(String name, Vector4f color, Vector2f[] coords, Scene scene) {
         super(name, new Vector2f(coords[0].x, coords[0].y), new Vector2f(1,1),
-                new float[]{ 0.5f, 10, 0.1f, 20f}, color );
+                new float[]{ 0.1f, 10, 0.1f, 0}, color );
         if(coords.length <= 1){
             throw new IllegalArgumentException("Not enough coordinate points");
         }
@@ -52,8 +54,14 @@ public class Enemy extends Entity{
                         Game.LOGGER.info("Enemy change direction");
                         float XDistance = coords[nextIndex].x - coords[ii].x;
                         float YDistance = coords[nextIndex].y - coords[ii].y;
-                    System.out.println(XDistance + " " + YDistance);
-                        this.getPhysicsBody().applyForce(XDistance*5, YDistance*5);
+                        Set<Vector2f> forces=this.physicsBody.getAppliedForces();
+                        float sumX=0;
+                        float sumY=0;
+                        forces.forEach(force->{sumX +=force.x;
+                        sumY+= force.y;});
+                        this.physicsBody.applyForce(-sumX,-sumY);
+
+                        //this.physicsBody.applyForce(XDistance*5, YDistance*5);
                     //}
                 }
             });
@@ -62,7 +70,9 @@ public class Enemy extends Entity{
             gameCollider.addComponent(render1);
             scene.addGameObject(gameCollider);
 
-            //this.physicsBody.applyForce(10,10);
+            float XDistance = coords[1].x - coords[0].x;
+            float YDistance = coords[1].y - coords[0].y;
+            this.physicsBody.applyForce(XDistance,YDistance);
 
             }
     }

@@ -13,7 +13,6 @@ import games.temporalstudio.timecapsule.levels.*;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import games.temporalstudio.timecapsule.objects.CapsuleReceiver;
-import games.temporalstudio.timecapsule.objects.Player;
 import games.temporalstudio.timecapsule.objects.Seed;
 
 import java.util.Map;

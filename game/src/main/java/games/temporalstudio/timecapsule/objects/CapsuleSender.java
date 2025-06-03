@@ -3,6 +3,7 @@ package games.temporalstudio.timecapsule.objects;
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Triggerable;
+import games.temporalstudio.timecapsule.Entity.Player;
 
 /**
  * Represents a sender object that can send a Pickupable item to a CapsuleReceiver.
