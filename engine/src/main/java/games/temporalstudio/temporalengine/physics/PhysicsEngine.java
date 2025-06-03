@@ -7,6 +7,7 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import org.joml.Vector2f;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The PhysicsEngine class is responsible for managing the physics simulation in the game.
@@ -16,8 +17,23 @@ import java.util.*;
  * @author agueguen-LR
  */
 public class PhysicsEngine implements PhysicsEngineLifeCycle{
+	private static final int maxCollisionLoops = 10; // Maximum number of loops to resolve collisions
 	private Set<Map.Entry<GameObject, GameObject>> collidingObjects;
 	private Map<PhysicsBody, Vector2f> impulses;
+
+	/**
+	 * Adds rigid colliders without PhysicsBody to a positions map.
+	 *
+	 * @param rigidCollidersSet Set of rigid collider GameObjects.
+	 * @param positionsMap Map to add static colliders to.
+	 */
+	private static void addStaticColliders(Set<GameObject> rigidCollidersSet, Map<GameObject, Collider2D> positionsMap) {
+		for (GameObject go : rigidCollidersSet) {
+			if (!go.hasComponent(PhysicsBody.class)) {
+				positionsMap.put(go, go.getComponent(Collider2D.class));
+			}
+		}
+	}
 
 	public PhysicsEngine() {
 		this.collidingObjects = new HashSet<>();
@@ -57,6 +73,10 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	 */
 	private void applyDrag(GameObject gameObject) {
 		PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
+		if (!(gameObject.hasComponent(Collider2D.class))){
+			Game.LOGGER.severe("Cannot apply drag to PhysicsBody without Collider2D: " + gameObject.getName());
+			return; // Cannot apply drag if no Collider2D is present
+		}
 		Collider2D collider = gameObject.getComponent(Collider2D.class);
 		Vector2f velocity = physicsBody.getVelocity();
 
@@ -281,26 +301,41 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	private void computeForScene(Scene scene, float deltaTime) {
 		// Get all colliders
 		Set<GameObject> colliders = scene.getGOsByComponent(Collider2D.class);
-		// Get all physics bodies
-		Set<GameObject> physicsBodies = scene.getGOsByComponent(PhysicsBody.class);
-		// Get all rigid colliders
-		Set<GameObject> rigidColliders = colliders.stream()
-				.filter(gameObject -> gameObject.getComponent(Collider2D.class).isRigid())
-				.collect(HashSet::new, Set::add, Set::addAll);
-		// Get next positions of physics bodies
-		Map<GameObject, Collider2D> nextPositions = predictNextPositions(physicsBodies, deltaTime);
-		// Add rigid colliders that are not physics bodies to next positions
-		rigidColliders.stream().filter(go -> !go.hasComponent(PhysicsBody.class))
-				.forEach(go -> nextPositions.put(go, go.getComponent(Collider2D.class)));
-		// Apply drag to all physics bodies
-		physicsBodies.forEach(this::applyDrag);
 		// Detect intersections
 		detectIntersections(colliders);
-		// Detect collisions
-		detectCollisions(physicsBodies, rigidColliders, nextPositions);
+		// Get all physics bodies
+		Set<GameObject> physicsBodies = scene.getGOsByComponent(PhysicsBody.class);
+		// Apply drag to all physics bodies
+		physicsBodies.forEach(this::applyDrag);
+		// Get all rigid colliders
+		Set<GameObject> rigidColliders = colliders.stream()
+				.filter(go -> go.getComponent(Collider2D.class).isRigid())
+				.collect(Collectors.toCollection(HashSet::new));
+		// Get all rigid physics bodies
+		Set<GameObject> rigidPhysicsBodies = physicsBodies.stream()
+				.filter(go -> go.getComponent(Collider2D.class).isRigid())
+				.collect(Collectors.toCollection(HashSet::new));
 
-		// Apply impulses for collisions
-		applyCollisions(deltaTime);
+		// Get next positions of physics bodies
+		Map<GameObject, Collider2D> nextPositions = predictNextPositions(rigidPhysicsBodies, deltaTime);
+		addStaticColliders(rigidColliders, nextPositions);
+		// Detect collisions
+		detectCollisions(rigidPhysicsBodies, rigidColliders, nextPositions);
+
+		int loopCount = 0;
+		if (!this.collidingObjects.isEmpty()) {
+			do {
+				// Apply impulses for collisions
+				applyCollisions(deltaTime);
+				// Get next positions of physics bodies
+				Map<GameObject, Collider2D> nextLoopPositions = predictNextPositions(rigidPhysicsBodies, deltaTime);
+				addStaticColliders(rigidColliders, nextLoopPositions);
+				// Detect collisions
+				detectCollisions(rigidPhysicsBodies, rigidColliders, nextLoopPositions);
+				loopCount++;
+			} while (!this.collidingObjects.isEmpty() && loopCount < maxCollisionLoops);
+		}
+
 		// Update velocities and positions
 		updateVelocities(physicsBodies, deltaTime);
 		updatePositions(physicsBodies, deltaTime);
