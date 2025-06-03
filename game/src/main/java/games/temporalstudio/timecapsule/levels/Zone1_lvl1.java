@@ -3,8 +3,12 @@ package games.temporalstudio.timecapsule.levels;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.timecapsule.Entity.Enemy;
+import games.temporalstudio.timecapsule.Entity.Medusa;
 import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.objects.*;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import java.util.Set;
 
@@ -23,6 +27,9 @@ public class Zone1_lvl1 implements TimeLevel{
 		ThrowableBottle throwableBottle = new ThrowableBottle("ThrowableBottle", pastPlayer);
 
 		pastTimeObjects = Set.of(
+				new Enemy("dracula",new Vector4f(0,0.5f, 0.75f, 1),
+						new Vector2f[]{new Vector2f(2,2), new Vector2f(5,1),
+								new Vector2f(1,3)}, pastScene),
 				new Wall("Zone1_lvl1_Wall1", 1f, 6.0f),
 				new Wall("Zone1_lvl1_Wall2", 2f, 7.0f),
 				new Wall("Zone1_lvl1_Wall3", 3f, 8.0f),
@@ -38,12 +45,19 @@ public class Zone1_lvl1 implements TimeLevel{
 				),
 				new Pickupable("Bottle", 5.0f, 5.0f, pastPlayer, throwableBottle),
 				throwableBottle,
+				new Medusa("pastMedusa",
+						(int)pastPlayer.getTransform().getPosition().x, (int)pastPlayer.getTransform().getPosition().y,
+						new Vector2f(0.5f, 0.5f),
+						new Vector4f(0.25f,0,0.75f,1), pastPlayer),
 				pastPlayer
 		);
 
 		pastTimeObjects.forEach((timeObject) -> this.pastScene.addGameObject(timeObject.getGameObject()));
 
 		futurTimeObjects = Set.of(
+				new Enemy("dracula",new Vector4f(0,0.5f, 0.75f, 1),
+						new Vector2f[]{new Vector2f(2,2), new Vector2f(5,1),
+								new Vector2f(1,3)}, futurScene),
 				new Wall("Zone1_lvl1_Wall1", 1f, 6.0f),
 				new Wall("Zone1_lvl1_Wall2", 2f, 7.0f),
 				new Wall("Zone1_lvl1_Wall3", 2f, 8.0f),
@@ -53,6 +67,10 @@ public class Zone1_lvl1 implements TimeLevel{
 						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer.getGameObject(),
 						"Zone1_lvl2_Futur", game::changeRightScene
 				),
+				new Medusa("pastMedusa",
+						(int)futurPlayer.getTransform().getPosition().x, (int)futurPlayer.getTransform().getPosition().y,
+						new Vector2f(0.5f, 0.5f),
+						new Vector4f(0.25f,0,0.75f,1), futurPlayer),
 				futurPlayer
 		);
 

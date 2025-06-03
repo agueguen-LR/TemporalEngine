@@ -29,7 +29,6 @@ public abstract class Entity implements TimeObject {
         p.addComponent(transform);
         p.addComponent(physicsBody);
         p.addComponent(render);
-        System.out.println(getTransform());
     }
 
     public Transform getTransform() {return this.transform;}

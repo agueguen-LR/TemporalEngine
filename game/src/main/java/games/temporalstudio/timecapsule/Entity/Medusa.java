@@ -13,10 +13,21 @@ public class Medusa extends Entity{
 
     private Player player;
     private static double MAX_DISTANCE=1.5f;
+    private static double LIMITE_ECART=4;
     private Following following;
 
     public Medusa(String name, int x, int y, Vector2f scale, Vector4f color, Player player) {
-        super(name,new Vector2f(x,y), new Vector2f(1,1), new float[]{1, 10, 0.1f, 20f} ,color);
+        super(name,new Vector2f(x,y), scale, new float[]{1, 10, 0.1f, 100f} ,color);
+        Collider2D collider=new Collider2D((new AABB(transform)));
+        this.player=player;
+        p.addComponent(collider);
+
+        following=new Following(this,player);
+        p.addComponent(following);
+    }
+
+    public Medusa(String name, Vector2f position, Vector2f scale, Vector4f color, Player player) {
+        super(name,position, scale, new float[]{1, 10, 0.1f, 10f} ,color);
         Collider2D collider=new Collider2D((new AABB(transform)));
         this.player=player;
         p.addComponent(collider);
@@ -31,4 +42,5 @@ public class Medusa extends Entity{
     public static double getMaxDistance() {
         return MAX_DISTANCE;
     }
+    public static double getLimiteEcart() {return LIMITE_ECART;}
 }
