@@ -4,6 +4,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
+import games.temporalstudio.temporalengine.component.Follow;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.View;
@@ -44,8 +45,10 @@ public class TimeCapsule extends Game{
 				GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT, GLFW_KEY_ENTER
 		}, new Vector4f(0,0,1,1));
 
+		pastCamera.addComponent(new Follow(pastPlayer.getGameObject()));
+		futureCamera.addComponent(new Follow(futurePlayer.getGameObject()));
 
-        CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver("zone1_pastCapsuleReceiver", 3.0f, 3.0f);
+		CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver("zone1_pastCapsuleReceiver", 3.0f, 3.0f);
 
 		Map<String, Level> levels = Map.of(
 				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, zone1_pastCapsuleReceiver),
