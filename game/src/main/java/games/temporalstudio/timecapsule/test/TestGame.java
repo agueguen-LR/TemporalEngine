@@ -23,7 +23,7 @@ import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
-import games.temporalstudio.temporalengine.rendering.component.TextureRender;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 
 public class TestGame extends Game{
@@ -74,7 +74,7 @@ public class TestGame extends Game{
 		camera.addComponent(new Follow(player));
 
 		rulietta.addComponent(new Transform(new Vector2f(1, -2)));
-		rulietta.addComponent(new TextureRender(
+		rulietta.addComponent(new TileRender(
 			"rulietta", "test", Layer.UI
 		));
 
@@ -133,7 +133,7 @@ public class TestGame extends Game{
 			go.addComponent(new Transform(new Vector2f(col, -row),
 				new Vector2f(1, height)
 			));
-			go.addComponent(new TextureRender("past",
+			go.addComponent(new TileRender("past",
 				tile, Layer.BACKGROUND, new Vector2i(1, height)
 			));
 			past.addGameObject(go);
@@ -159,7 +159,7 @@ public class TestGame extends Game{
 			go.addComponent(new Transform(new Vector2f(col, -row),
 				new Vector2f(1, height)
 			));
-			go.addComponent(new TextureRender("past",
+			go.addComponent(new TileRender("past",
 				tile, Layer.FOREGROUND, new Vector2i(1, height)
 			));
 			past.addGameObject(go);

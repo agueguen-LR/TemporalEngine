@@ -29,6 +29,7 @@ import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.TextureRender;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 import games.temporalstudio.temporalengine.rendering.texture.Texture;
 import games.temporalstudio.temporalengine.rendering.texture.Texture.Tile;
@@ -153,13 +154,14 @@ public class RenderBatch implements RenderLifeCycle{
 			case ColorRender cr -> {
 				colors = cr.getColors();
 			}
-			case TextureRender tr -> {
+			case TileRender tr -> {
 				texIndex = sampler.get(tr.getTexture());
 
 				Tile tile = tr.getTile();
 				if(tile != null)
 					texCoords = tr.getTexture().getCoords(tile);
 			}
+			default -> {}
 		}
 
 		// Vertices data
@@ -301,8 +303,8 @@ public class RenderBatch implements RenderLifeCycle{
 				Render.class
 			).stream()
 				.filter(go -> {
-					Render r = go.getComponent(Render.class);
-					return r.getLayer().equals(layer);
+					return go.getComponent(Render.class)
+						.getLayer().equals(layer);
 				})
 				.peek(go -> {
 					if(go.hasComponent(TextureRender.class)){

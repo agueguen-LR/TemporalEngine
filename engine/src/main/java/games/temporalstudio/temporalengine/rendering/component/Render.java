@@ -8,7 +8,7 @@ public sealed abstract class Render implements Component
 {
 
 	public static final Layer DEFAULT_LAYER = Layer.OBJECT;
-	
+
 	private Layer layer;
 
 	protected Render(Layer layer){
