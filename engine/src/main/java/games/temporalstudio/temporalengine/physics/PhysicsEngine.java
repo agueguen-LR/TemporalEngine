@@ -7,6 +7,8 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import org.joml.Vector2f;
 
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * The PhysicsEngine class is responsible for managing the physics simulation in the game.
@@ -18,6 +20,17 @@ import java.util.*;
 public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	private Set<Map.Entry<GameObject, GameObject>> collidingObjects;
 	private Map<PhysicsBody, Vector2f> impulses;
+
+	// Helper to add rigid colliders without PhysicsBody to a positions map
+	private BiConsumer<Set<GameObject>, Map<GameObject, Collider2D>> addStaticColliders = (
+			rigidCollidersSet, positionsMap
+	) -> {
+		for (GameObject go : rigidCollidersSet) {
+			if (!go.hasComponent(PhysicsBody.class)) {
+				positionsMap.put(go, go.getComponent(Collider2D.class));
+			}
+		}
+	};
 
 	public PhysicsEngine() {
 		this.collidingObjects = new HashSet<>();
@@ -293,22 +306,31 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 		physicsBodies.forEach(this::applyDrag);
 		// Get all rigid colliders
 		Set<GameObject> rigidColliders = colliders.stream()
-				.filter(gameObject -> gameObject.getComponent(Collider2D.class).isRigid())
-				.collect(HashSet::new, Set::add, Set::addAll);
+				.filter(go -> go.getComponent(Collider2D.class).isRigid())
+				.collect(Collectors.toCollection(HashSet::new));
 		// Get all rigid physics bodies
 		Set<GameObject> rigidPhysicsBodies = physicsBodies.stream()
-				.filter(gameObject -> gameObject.getComponent(Collider2D.class).isRigid())
-				.collect(HashSet::new, Set::add, Set::addAll);
+				.filter(go -> go.getComponent(Collider2D.class).isRigid())
+				.collect(Collectors.toCollection(HashSet::new));
+
 		// Get next positions of physics bodies
 		Map<GameObject, Collider2D> nextPositions = predictNextPositions(rigidPhysicsBodies, deltaTime);
-		// Add rigid colliders that are not physics bodies to next positions
-		rigidColliders.stream().filter(go -> !go.hasComponent(PhysicsBody.class))
-				.forEach(go -> nextPositions.put(go, go.getComponent(Collider2D.class)));
+		addStaticColliders.accept(rigidColliders, nextPositions);
 		// Detect collisions
 		detectCollisions(rigidPhysicsBodies, rigidColliders, nextPositions);
 
-		// Apply impulses for collisions
-		applyCollisions(deltaTime);
+		if (!this.collidingObjects.isEmpty()) {
+			do {
+				// Apply impulses for collisions
+				applyCollisions(deltaTime);
+				// Get next positions of physics bodies
+				Map<GameObject, Collider2D> nextLoopPositions = predictNextPositions(rigidPhysicsBodies, deltaTime);
+				addStaticColliders.accept(rigidColliders, nextLoopPositions);
+				// Detect collisions
+				detectCollisions(rigidPhysicsBodies, rigidColliders, nextLoopPositions);
+			} while (!this.collidingObjects.isEmpty());
+		}
+
 		// Update velocities and positions
 		updateVelocities(physicsBodies, deltaTime);
 		updatePositions(physicsBodies, deltaTime);
