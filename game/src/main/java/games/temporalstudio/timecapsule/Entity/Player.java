@@ -59,12 +59,32 @@ public class Player extends Entity {
         inventory.add(object);
     }
 
-    public void removeFromInventory(InventoryObject object) {
+    public boolean removeFromInventory(InventoryObject object) {
         Game.LOGGER.info("Removing object from inventory: " + object.getGameObject().getName());
-        inventory.remove(object);
-        if (selectedObject >= inventory.size()) {
-            selectedObject = 0; // Reset selected object if it exceeds the new inventory size
+        if(inventory.remove(object)){
+            if (selectedObject >= inventory.size()) {
+                selectedObject = 0; // Reset selected object if it exceeds the new inventory size
+            }
+            return true;}
+        return false;
+    }
+
+    public void switchSelectedObject(int direction) {
+        if (inventory.isEmpty()) {
+            Game.LOGGER.warning(this.p.getName() + " tried to switch selected object, but inventory is empty.");
+            return;
         }
+        selectedObject = (selectedObject + direction + inventory.size()) % inventory.size();
+        Game.LOGGER.info(this.p.getName() + "'s selected object changed to: " + inventory.get(selectedObject).getGameObject().getName());
+    }
+
+    public void useSelectedObject() {
+        if (inventory.isEmpty()) {
+            Game.LOGGER.warning(this.p.getName() + " tried to use selected object, but inventory is empty.");
+            return;
+        }
+        InventoryObject selectedObject = inventory.get(this.selectedObject);
+        selectedObject.getTriggerable().trigger(selectedObject.getGameObject());
     }
 
     public void keyControllDefinition(int[] keyCodes, Input input) {

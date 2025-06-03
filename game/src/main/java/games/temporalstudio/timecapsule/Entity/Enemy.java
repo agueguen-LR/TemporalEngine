@@ -20,7 +20,7 @@ import java.util.Vector;
 public class Enemy extends Entity{
 
 
-    public Enemy(Vector4f color, Vector2f[] coords, Scene scene) {
+    public Enemy(Vector4f color, Vector2f player_death_position, Vector2f[] coords, Scene scene) {
         super("dracula", new Vector2f(coords[0].x, coords[0].y), new Vector2f(1,1),
                 new float[]{ 0.1f, 10, 0.1f, 0}, color );
         if(coords.length <= 1){
@@ -31,7 +31,7 @@ public class Enemy extends Entity{
             System.out.println(other.getClass());
                 if (other instanceof GameObject objet) {
                     if (objet.getName() =="player"){
-                    objet.getComponent(Transform.class).setPosition(new Vector2f());
+                    objet.getComponent(Transform.class).setPosition(player_death_position);
                     }
                 }
         });
