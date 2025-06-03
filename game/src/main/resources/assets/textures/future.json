@@ -116,5 +116,21 @@
 	"wall_junction_bottom": {
 		"position": [14, 1],
 		"scale": [1, 4]
+	},
+	"complete_key_futur": {
+		"position": [1, 2],
+		"scale": [1, 1]
+	},
+	"key_futur_fragment1": {
+		"position": [1, 2],
+		"scale": [1, 1]
+	},
+	"key_futur_fragment2": {
+		"position": [2, 2],
+		"scale": [1, 1]
+	},
+	"kiwi": {
+		"position": [3, 2],
+		"scale": [1, 1]
 	}
 }
