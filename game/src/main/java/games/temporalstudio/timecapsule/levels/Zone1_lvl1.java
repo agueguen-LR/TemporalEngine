@@ -32,6 +32,7 @@ public class Zone1_lvl1 implements TimeLevel{
 
 		pastTimeObjects = Set.of(
 				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
+						new Vector2f(),
 						new Vector2f[]{new Vector2f(-2,-4), new Vector2f(2,-2),new Vector2f(0,-5)},
 						pastScene),
 				new Wall(new Vector2f(1, 5), new Vector2f(3, 8)),
@@ -62,6 +63,7 @@ public class Zone1_lvl1 implements TimeLevel{
 
 		futurTimeObjects = Set.of(
 				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
+						new Vector2f(),
 						new Vector2f[]{new Vector2f(-2,-4), new Vector2f(2,-2),new Vector2f(0,-5)},
 						futurScene),
 				new Wall(new Vector2f(1, 5), new Vector2f(5, 8)),
