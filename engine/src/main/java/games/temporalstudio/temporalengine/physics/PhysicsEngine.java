@@ -57,6 +57,10 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	 */
 	private void applyDrag(GameObject gameObject) {
 		PhysicsBody physicsBody = gameObject.getComponent(PhysicsBody.class);
+		if (!(gameObject.hasComponent(Collider2D.class))){
+			Game.LOGGER.severe("Cannot apply drag to PhysicsBody without Collider2D: " + gameObject.getName());
+			return; // Cannot apply drag if no Collider2D is present
+		}
 		Collider2D collider = gameObject.getComponent(Collider2D.class);
 		Vector2f velocity = physicsBody.getVelocity();
 
@@ -281,23 +285,27 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	private void computeForScene(Scene scene, float deltaTime) {
 		// Get all colliders
 		Set<GameObject> colliders = scene.getGOsByComponent(Collider2D.class);
+		// Detect intersections
+		detectIntersections(colliders);
 		// Get all physics bodies
 		Set<GameObject> physicsBodies = scene.getGOsByComponent(PhysicsBody.class);
+		// Apply drag to all physics bodies
+		physicsBodies.forEach(this::applyDrag);
 		// Get all rigid colliders
 		Set<GameObject> rigidColliders = colliders.stream()
 				.filter(gameObject -> gameObject.getComponent(Collider2D.class).isRigid())
 				.collect(HashSet::new, Set::add, Set::addAll);
+		// Get all rigid physics bodies
+		Set<GameObject> rigidPhysicsBodies = physicsBodies.stream()
+				.filter(gameObject -> gameObject.getComponent(Collider2D.class).isRigid())
+				.collect(HashSet::new, Set::add, Set::addAll);
 		// Get next positions of physics bodies
-		Map<GameObject, Collider2D> nextPositions = predictNextPositions(physicsBodies, deltaTime);
+		Map<GameObject, Collider2D> nextPositions = predictNextPositions(rigidPhysicsBodies, deltaTime);
 		// Add rigid colliders that are not physics bodies to next positions
 		rigidColliders.stream().filter(go -> !go.hasComponent(PhysicsBody.class))
 				.forEach(go -> nextPositions.put(go, go.getComponent(Collider2D.class)));
-		// Apply drag to all physics bodies
-		physicsBodies.forEach(this::applyDrag);
-		// Detect intersections
-		detectIntersections(colliders);
 		// Detect collisions
-		detectCollisions(physicsBodies, rigidColliders, nextPositions);
+		detectCollisions(rigidPhysicsBodies, rigidColliders, nextPositions);
 
 		// Apply impulses for collisions
 		applyCollisions(deltaTime);
