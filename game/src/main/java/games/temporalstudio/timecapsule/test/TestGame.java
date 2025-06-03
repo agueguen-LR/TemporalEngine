@@ -191,11 +191,31 @@ public class TestGame extends Game{
 		GameObject slippyPlayer = createSlippyPlayer(new int[]{
 				GLFW_KEY_I, GLFW_KEY_K, GLFW_KEY_J, GLFW_KEY_L,
 				GLFW_KEY_SLASH
-		});
+		}, 5f, 6.5f);
 		GameObject door = createDoor(button, trigger);
 		GameObject rock1 = createBreakableRock(GLFW_KEY_SLASH, future);
 		GameObject ice = createBouncyIce();
-		GameObject spring = createSpring();
+		GameObject spring = createSpring(5, 1);
+
+		// Create bouncy castle lol
+		List<GameObject> bouncyCastle = List.of(
+				createSpring(10, 1),
+				createSpring(9, 1),
+				createSpring(8, 1),
+				createSpring(7, 2),
+				createSpring(7, 3),
+				createSpring(7, 4),
+				createSpring(8, 5),
+				createSpring(9, 5),
+				createSpring(10, 5),
+				createSpring(11, 4),
+				createSpring(11, 3),
+				createSpring(11, 2),
+				createSlippyPlayer(new int[]{
+						GLFW_KEY_T, GLFW_KEY_G, GLFW_KEY_F, GLFW_KEY_H
+				}, 9f, 3f)
+		);
+
 
 		camera.addComponent(new Follow(player));
 
@@ -212,6 +232,7 @@ public class TestGame extends Game{
 		future.addGameObject(createFlyingPlayer(new int[]{
 				GLFW_KEY_KP_8, GLFW_KEY_KP_5, GLFW_KEY_KP_4, GLFW_KEY_KP_6,
 		}));
+		bouncyCastle.forEach(future::addGameObject);
 
 		return future;
 	}
@@ -270,14 +291,14 @@ public class TestGame extends Game{
 		return player;
 	}
 
-	private GameObject createSlippyPlayer(int[] keys){
+	private GameObject createSlippyPlayer(int[] keys, float x, float y){
 		GameObject player = new GameObject("slippyPlayer");
 
 		Render render = new ColorRender(new Vector4f(0.56f, 0.93f, 0.56f, 1));
-		Transform transform = new Transform(new Vector2f(5, 6.5f));
+		Transform transform = new Transform(new Vector2f(x, y));
 		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
 		Collider2D collider2D = new Collider2D(new AABB(transform));
-		collider2D.setRestitution(.5f);
+		collider2D.setRestitution(1f);
 		collider2D.setRigid(true);
 
 		Input input = new Input();
@@ -293,7 +314,6 @@ public class TestGame extends Game{
 		input.addControl(keys[3], (context) -> {
 			physicsBody.applyForce(new Vector2f(10, 0));
 		});
-		input.addControl(keys[4], (context) -> {});
 
 		player.addComponent(transform);
 		player.addComponent(render);
@@ -383,11 +403,11 @@ public class TestGame extends Game{
 		return ice;
 	}
 
-	private GameObject createSpring(){
+	private GameObject createSpring(float x, float y){
 		GameObject spring = new GameObject("spring");
 
 		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1));
-		Transform transform = new Transform(new Vector2f(5, 1));
+		Transform transform = new Transform(new Vector2f(x, y));
 		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRigid(true);
 		collider2D.setRestitution(5f);
