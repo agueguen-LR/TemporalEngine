@@ -26,8 +26,8 @@ public class Player extends Entity {
     private ArrayList<InventoryObject> inventory = new ArrayList<>();
     private int selectedObject = 0;
 
-    public Player(String name, int x, int y, int[] keyCodes, Vector4f color) {
-        super(name, new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f},  color);
+    public Player(int x, int y, int[] keyCodes, Vector4f color) {
+        super("player", new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f},  color);
         if (keyCodes.length !=5){
             throw new IllegalArgumentException("keyCodes.length must be 5");
         }

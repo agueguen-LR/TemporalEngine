@@ -20,19 +20,19 @@ import java.util.Vector;
 public class Enemy extends Entity{
 
 
-    public Enemy(String name, Vector4f color, Vector2f[] coords, Scene scene) {
-        super(name, new Vector2f(coords[0].x, coords[0].y), new Vector2f(1,1),
+    public Enemy(Vector4f color, Vector2f[] coords, Scene scene) {
+        super("dracula", new Vector2f(coords[0].x, coords[0].y), new Vector2f(1,1),
                 new float[]{ 0.1f, 10, 0.1f, 0}, color );
         if(coords.length <= 1){
             throw new IllegalArgumentException("Not enough coordinate points");
         }
         Collider2D collider=new Collider2D((new AABB(transform)));
         collider.setOnIntersects((context, other) -> {
-                if (other instanceof Player player
-                ) {
-                    System.out.println("ludfhemruih");
-                    Game.LOGGER.info("Player killed by dracula!");
-                    player.transform.setPosition(new Vector2f());
+            System.out.println(other.getClass());
+                if (other instanceof GameObject objet) {
+                    if (objet.getName() =="player"){
+                    objet.getComponent(Transform.class).setPosition(new Vector2f());
+                    }
                 }
         });
         p.addComponent(collider);
@@ -51,20 +51,22 @@ public class Enemy extends Entity{
             Collider2D collider2=new Collider2D((new AABB(transform1)));
             collider2.setOnIntersects((context, other) -> {
                 {
-                    if (context instanceof Enemy enemy) {
-                        Game.LOGGER.info("Enemy change direction");
-                        float XDistance = coords[nextIndex].x - coords[ii].x;
-                        float YDistance = coords[nextIndex].y - coords[ii].y;
-                        Vector2f vitesse= enemy.physicsBody.getVelocity();
-                        enemy.physicsBody.applyForce(-vitesse.x,-vitesse.y);
-                        enemy.physicsBody.applyForce(XDistance*2, YDistance*2);
+                    if (other instanceof GameObject objet ) {
+                        if (objet.getName() =="dracula") {
+                            Game.LOGGER.info("Enemy change direction");
+                            float XDistance = coords[nextIndex].x - coords[ii].x;
+                            float YDistance = coords[nextIndex].y - coords[ii].y;
+                            Vector2f vitesse = this.physicsBody.getVelocity();
+                            this.physicsBody.applyForce(-vitesse.x, -vitesse.y);
+                            this.physicsBody.applyForce(XDistance * 2, YDistance * 2);
+                        }
                     }/*
                     Game.LOGGER.info("Enemy change direction");
                     float XDistance = coords[nextIndex].x - coords[ii].x;
                     float YDistance = coords[nextIndex].y - coords[ii].y;
                     Vector2f vitesse= this.physicsBody.getVelocity();
                     this.physicsBody.applyForce(-vitesse.x,-vitesse.y);
-                    this.physicsBody.applyForce(XDistance*2, YDistance*2);*/
+                    this.physicsBody.applyForce(XDistance*1, YDistance*1);*/
                 }
             });
             gameCollider.addComponent(collider2);

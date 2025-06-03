@@ -31,7 +31,7 @@ public class Zone1_lvl1 implements TimeLevel{
 		ThrowableBottle throwableBottle = new ThrowableBottle("ThrowableBottle", pastPlayer);
 
 		pastTimeObjects = Set.of(
-				new Enemy("dracula",new Vector4f(0,0.5f, 0.75f, 1),
+				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
 						new Vector2f[]{new Vector2f(-2,-4), new Vector2f(2,-2),new Vector2f(0,-5)},
 						pastScene),
 				new Wall("Zone1_lvl1_Wall1", 1f, 6.0f),
@@ -65,7 +65,7 @@ public class Zone1_lvl1 implements TimeLevel{
 		futurPlayer.addToInventory(sender);
 
 		futurTimeObjects = Set.of(
-				new Enemy("dracula",new Vector4f(0,0.5f, 0.75f, 1),
+				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
 						new Vector2f[]{new Vector2f(-2,-4), new Vector2f(2,-2),new Vector2f(0,-5)},
 						futurScene),
 				new Wall("Zone1_lvl1_Wall1", 1f, 6.0f),

@@ -37,10 +37,10 @@ public class TimeCapsule extends Game{
 		futureCamera.addComponent(new Transform());
 		futureCamera.addComponent(new View(.1f));
 
-		Player pastPlayer= new Player("pastplayer", 1,1,
+		Player pastPlayer= new Player(1,1,
 				new int[]{GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE},
 				new Vector4f(0,0,1,1));
-		Player futurePlayer = new Player("futurePlayer", 1, 1, new int[]{
+		Player futurePlayer = new Player(1, 1, new int[]{
 				GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT, GLFW_KEY_ENTER
 		}, new Vector4f(0,0,1,1));
 
