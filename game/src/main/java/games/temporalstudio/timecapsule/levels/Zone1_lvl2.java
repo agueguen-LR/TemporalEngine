@@ -3,6 +3,7 @@ package games.temporalstudio.timecapsule.levels;
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
+import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.objects.*;
 
 import java.util.Set;

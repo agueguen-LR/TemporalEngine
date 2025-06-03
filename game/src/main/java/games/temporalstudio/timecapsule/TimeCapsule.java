@@ -7,8 +7,11 @@ import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.View;
+import games.temporalstudio.timecapsule.Entity.Medusa;
+import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.levels.*;
-import games.temporalstudio.timecapsule.objects.Player;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import java.util.Map;
 
@@ -32,12 +35,15 @@ public class TimeCapsule extends Game{
 		futureCamera.addComponent(new Transform());
 		futureCamera.addComponent(new View(.1f));
 
-		Player pastPlayer = new Player("pastPlayer", 1, 1, new int[]{
-				GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_E
-		});
+		Player pastPlayer= new Player("pastplayer", 2,2,
+				new int[]{GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_D, GLFW_KEY_S, GLFW_KEY_SPACE},
+				new Vector4f(0,0,1,1));
 		Player futurePlayer = new Player("futurePlayer", 1, 1, new int[]{
 				GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT, GLFW_KEY_ENTER
-		});
+		}, new Vector4f(0,0,1,1));
+
+		Medusa pastMedusa= new Medusa("pastMedusa", 1,2, new Vector2f(0.5f, 0.5f),
+				new Vector4f(0.25f,0,0.75f,1), pastPlayer);
 
 		Map<String, Level> levels = Map.of(
 				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer),

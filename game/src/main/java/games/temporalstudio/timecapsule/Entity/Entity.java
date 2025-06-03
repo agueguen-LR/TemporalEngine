@@ -1,98 +1,56 @@
 package games.temporalstudio.timecapsule.Entity;
 
-import games.temporalstudio.temporalengine.Game;
-import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.timecapsule.objects.TimeObject;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-public abstract class Entity extends GameObject {
+public abstract class Entity implements TimeObject {
 
+    protected GameObject p;
     protected Transform transform;
-    protected Collider2D collider;
-    protected PhysicsBody physicsBody;
-    protected Render render;
 
-    /*public Entity(String name, Vector2f position, Vector4f color) {
-        super(name);
-        transform = new Transform(position);
-        collider=new Collider2D(transform);
-        collider.setShape(new AABB(transform));
-        physicsBody = new PhysicsBody(1.0f, 1.0f, 0.1f, 1.0f);
-        render=new ColorRender(color);
-        this.addComponent(transform);
-        this.addComponent(physicsBody);
-        this.addComponent(render);
-    }*/
 
-    public Entity(String name, Vector2f scale, Vector2f position, Vector4f color) {
-        super(name);
+    public Entity(String name, Vector2f position, Vector2f scale,float[] physBody, Vector4f color) {
+        p=new GameObject(name);
+        if (physBody.length != 4){
+            throw new IllegalArgumentException("physBody.length must be 4");
+        }
         transform = new Transform(position, scale);
-        collider=new Collider2D((new AABB(transform)));
-        physicsBody = new PhysicsBody(1, 1, 0.1f, 1);
-        render=new ColorRender(color);
-        this.addComponent(transform);
-        this.addComponent(physicsBody);
-        this.addComponent(render);
+        PhysicsBody physicsBody = new PhysicsBody(physBody[0], physBody[1], physBody[2], physBody[3]);
+        Render render=new ColorRender(color);
+
+        p.addComponent(transform);
+        p.addComponent(physicsBody);
+        p.addComponent(render);
+        System.out.println(getTransform());
     }
 
-    /*public Entity(String name, Vector2f scale, Vector2f position,float mass, float maxVelocity, float minVelocity, float drag) {
-        super(name);
-        transform = new Transform(scale, position);
-        collider=new Collider2D(transform);
-        physicsBody = new PhysicsBody(mass, maxVelocity, minVelocity, drag);
-        this.addComponent(transform);
-        this.addComponent(collider);
-        this.addComponent(physicsBody);
-    }*/
+    public Transform getTransform() {return this.transform;}
+    public PhysicsBody getPhysicsBody() {return p.getComponent(PhysicsBody.class);}
+    public Render getRender() {return p.getComponent(Render.class);}
+    public GameObject getGameObject() {return p;}
 
-    public Transform getTransform() {return transform;}
-    public PhysicsBody getPhysicsBody() {return physicsBody;}
-    public void setTransform(Transform transform) {this.transform = transform;}
-    public void setPhysicsBody(PhysicsBody physicsBody) {this.physicsBody = physicsBody;}
+    public void moveUp(float force) {
+        getPhysicsBody().applyForce(new Vector2f(0, force));}
 
-    public void moveUp(){
-        physicsBody.applyForce(new Vector2f(0, 100));}
+    public void moveDown(float force){
+        getPhysicsBody().applyForce(new Vector2f(0, -force));}
 
-    public void moveDown(){
-        physicsBody.applyForce(new Vector2f(0, -150));}
+    public void moveLeft(float force){
+        getPhysicsBody().applyForce(new Vector2f(-force, 0));}
 
-    public void moveLeft(){
-        physicsBody.applyForce(new Vector2f(-150, 0));}
+    public void moveRight (float force){
+        getPhysicsBody().applyForce(new Vector2f(force, 0));}
 
-    public void moveRight (){
-        physicsBody.applyForce(new Vector2f(150, 0));}
-
-    public void jump (){
-        physicsBody.applyForce(new Vector2f(0, 150));
-    }
-
-    public void XmoveCloser(Entity letruc, double distance){
-        double dist=this.transform.getPosition().x - letruc.getTransform().getPosition().x;
-        if (Math.abs(dist) >= distance){
-            if (dist < 0) this.moveRight();
-            else this.moveLeft();
-        }
-    }
-    public void YmoveCloser(Entity letruc, double distance){
-        double dist= this.transform.getPosition().y - letruc.getTransform().getPosition().y;
-        if (Math.abs(dist) >= distance){
-            if (dist < 0) this.moveUp();
-            else moveDown();
-        }
-    }
-
-    public double distance(Entity letruc){
-        double xdist=this.transform.getPosition().x - letruc.getTransform().getPosition().x;
-        double ydist=this.transform.getPosition().y - letruc.getTransform().getPosition().y;
-        return Math.sqrt(xdist*xdist+ydist*ydist);
+    public void jump (float force){
+        getPhysicsBody().applyForce(new Vector2f(0, force));
     }
 
 
