@@ -15,6 +15,7 @@ public abstract class Entity implements TimeObject {
 
     protected GameObject p;
     protected Transform transform;
+    protected PhysicsBody physicsBody;
 
 
     public Entity(String name, Vector2f position, Vector2f scale,float[] physBody, Vector4f color) {
@@ -23,7 +24,7 @@ public abstract class Entity implements TimeObject {
             throw new IllegalArgumentException("physBody.length must be 4");
         }
         transform = new Transform(position, scale);
-        PhysicsBody physicsBody = new PhysicsBody(physBody[0], physBody[1], physBody[2], physBody[3]);
+        physicsBody = new PhysicsBody(physBody[0], physBody[1], physBody[2], physBody[3]);
         Render render=new ColorRender(color);
 
         p.addComponent(transform);
@@ -32,7 +33,7 @@ public abstract class Entity implements TimeObject {
     }
 
     public Transform getTransform() {return this.transform;}
-    public PhysicsBody getPhysicsBody() {return p.getComponent(PhysicsBody.class);}
+    public PhysicsBody getPhysicsBody() {return this.physicsBody;}
     public Render getRender() {return p.getComponent(Render.class);}
     public GameObject getGameObject() {return p;}
 

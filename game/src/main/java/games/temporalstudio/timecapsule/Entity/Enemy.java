@@ -17,11 +17,9 @@ import org.joml.Vector4f;
 public class Enemy extends Entity{
 
 
-    private Collider2D[] loopPoints;
-    private int direction;
-
     public Enemy(String name, Vector4f color, Vector2f[] coords, Scene scene) {
-        super(name, coords[0], new Vector2f(1,1),new float[]{ 0, 10, 0.1f, 20f}, color );
+        super(name, new Vector2f(coords[0].x, coords[0].y), new Vector2f(1,1),
+                new float[]{ 0.5f, 10, 0.1f, 20f}, color );
         if(coords.length <= 1){
             throw new IllegalArgumentException("Not enough coordinate points");
         }
@@ -37,7 +35,7 @@ public class Enemy extends Entity{
         p.addComponent(collider);
 
 
-        direction=0;
+
         for (int i=0;i<coords.length;i++) {
             int ii = i;
             int nextIndex;
@@ -46,17 +44,25 @@ public class Enemy extends Entity{
             }
             GameObject gameCollider=new GameObject("collider");
             Transform transform1=new Transform(coords[i]);
+            Render render1=new ColorRender(new Vector4f(0.25f,0.5f,0.25f, 0.5f));
             Collider2D collider2=new Collider2D((new AABB(transform1)));
             collider2.setOnIntersects((context, other) -> {
                 {
-                    Game.LOGGER.info("Enemy change direction");
-                    float XDistance=coords[nextIndex].x- coords[ii].x;
-                    float YDistance=coords[nextIndex].y- coords[ii].y;
-                    getPhysicsBody().applyForce(XDistance, YDistance);
+                    //if (other instanceof Enemy enemy) {
+                        Game.LOGGER.info("Enemy change direction");
+                        float XDistance = coords[nextIndex].x - coords[ii].x;
+                        float YDistance = coords[nextIndex].y - coords[ii].y;
+                    System.out.println(XDistance + " " + YDistance);
+                        this.getPhysicsBody().applyForce(XDistance*5, YDistance*5);
+                    //}
                 }
             });
             gameCollider.addComponent(collider2);
+            gameCollider.addComponent(transform1);
+            gameCollider.addComponent(render1);
             scene.addGameObject(gameCollider);
+
+            //this.physicsBody.applyForce(10,10);
 
             }
     }

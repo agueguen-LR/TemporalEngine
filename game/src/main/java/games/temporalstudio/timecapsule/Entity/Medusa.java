@@ -16,8 +16,9 @@ public class Medusa extends Entity{
     private static double LIMITE_ECART=4;
     private Following following;
 
-    public Medusa(String name, int x, int y, Vector2f scale, Vector4f color, Player player) {
-        super(name,new Vector2f(x,y), scale, new float[]{1, 10, 0.1f, 100f} ,color);
+    public Medusa(String name, Vector2f scale, Vector4f color, Player player) {
+        super(name,new Vector2f(player.getTransform().getPosition().x-1, player.getTransform().getPosition().y),
+                scale, new float[]{1, 10, 0.1f, 100f} ,color);
         Collider2D collider=new Collider2D((new AABB(transform)));
         this.player=player;
         p.addComponent(collider);
