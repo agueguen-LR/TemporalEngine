@@ -8,20 +8,31 @@ import java.util.List;
 import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.LifeCycleContext;
+import games.temporalstudio.temporalengine.rendering.Layer;
 
-public final class ColorRender implements Render{
+public final class ColorRender extends Render{
 
 	private List<Vector4f> colors = new ArrayList<>();
 
-	public ColorRender(Vector4f color){
+	public ColorRender(Vector4f color, Layer layer){
+		super(layer);
+
 		for(int i = 0; i < 4; i++)
 			this.colors.add(color);
 	}
-	public ColorRender(Collection<Vector4f> colors){
+	public ColorRender(Vector4f color){
+		this(color, Render.DEFAULT_LAYER);
+	}
+	public ColorRender(Collection<Vector4f> colors, Layer layer){
+		super(layer);
+
 		if(colors.size() != 4)
 			throw new IllegalArgumentException("Invalid color count;");
 
 		this.colors.addAll(colors);
+	}
+	public ColorRender(Collection<Vector4f> colors){
+		this(colors, Render.DEFAULT_LAYER);
 	}
 
 	// GETTERS
