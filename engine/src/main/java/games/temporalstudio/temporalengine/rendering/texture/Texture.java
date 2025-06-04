@@ -76,11 +76,16 @@ public class Texture implements AssetPoolObject{
 
 	public Vector2i getSize(){ return new Vector2i(size); }
 	public Tile getTile(String tileName){
-		Entry<String, Tile> entry = tiles.entrySet().stream()
+		return tiles.entrySet().stream()
 			.filter(e -> e.getKey().equals(tileName))
+			.map(Entry::getValue)
 			.findFirst().orElse(null);
-
-		return entry != null ? entry.getValue() : null;
+	}
+	public Tile getTile(int id){
+		return tiles.entrySet().stream()
+			.filter(e -> e.getValue().tiledID() == id)
+			.map(Entry::getValue)
+			.findFirst().orElse(null);
 	}
 	public List<Vector2f> getCoords(Tile tile){
 		Vector2f offset = new Vector2f(
@@ -107,7 +112,7 @@ public class Texture implements AssetPoolObject{
 			);
 		}catch (Exception e){
 			Game.LOGGER.warning(
-				"Failed to load %s texture; Using default texture."
+				"No such %s texture; Using default texture."
 					.formatted(name)
 			);
 
@@ -192,14 +197,16 @@ public class Texture implements AssetPoolObject{
 	}
 
 	// INNER CLASSES
-	public static record Tile(Vector2i position, Vector2i scale){
+	public static record Tile(Vector2i position, Vector2i scale, int tiledID){
 
 		private static final String POSITION_CONFIG_FIELD = "position";
 		private static final String SCALE_CONFIG_FIELD = "scale";
+		private static final String TILEDID_CONFIG_FIELD = "tiledID";
 
 		// FUNCTIONS
 		public static Tile fromConfig(Config config){
 			List<Integer> rawPos, rawScale;
+			int rawTiledID = -1;
 
 			if(!config.contains(POSITION_CONFIG_FIELD)
 				|| !config.contains(SCALE_CONFIG_FIELD)
@@ -208,12 +215,15 @@ public class Texture implements AssetPoolObject{
 					"Missing tile properties in config;"
 				);
 
-			rawPos = config.get("position");
-			rawScale = config.get("scale");
+			rawPos = config.get(POSITION_CONFIG_FIELD);
+			rawScale = config.get(SCALE_CONFIG_FIELD);
+			if(config.contains(TILEDID_CONFIG_FIELD))
+				rawTiledID = config.get(TILEDID_CONFIG_FIELD);
 
 			return new Tile(
 				new Vector2i(rawPos.get(0), rawPos.get(1)),
-				new Vector2i(rawScale.get(0), rawScale.get(1))
+				new Vector2i(rawScale.get(0), rawScale.get(1)),
+				rawTiledID
 			);
 		}
 	}
