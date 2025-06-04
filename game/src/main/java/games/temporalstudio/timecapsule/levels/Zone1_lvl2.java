@@ -38,6 +38,7 @@ public class Zone1_lvl2 implements TimeLevel{
 						new Vector2f(0.5f, 0.5f),
 						new Vector4f(0.25f,0,0.75f,1), pastPlayer),
 				pastPlayer
+
 		);
 
 		this.pastTimeObjects.forEach((timeObject) -> this.pastScene.addGameObject(timeObject.getGameObject()));

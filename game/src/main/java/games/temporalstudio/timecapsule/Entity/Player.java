@@ -1,35 +1,31 @@
 package games.temporalstudio.timecapsule.Entity;
 
 import games.temporalstudio.temporalengine.Game;
-import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
-import games.temporalstudio.temporalengine.physics.PhysicsBody;
-import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
-import games.temporalstudio.temporalengine.rendering.component.ColorRender;
-import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.timecapsule.objects.Chest;
+import games.temporalstudio.timecapsule.objects.CompleteKey;
 import games.temporalstudio.timecapsule.objects.InventoryObject;
+import games.temporalstudio.timecapsule.objects.KeyFragment;
+
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-
-import javax.imageio.plugins.tiff.GeoTIFFTagSet;
 import java.util.ArrayList;
-
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
 public class Player extends Entity {
 
     private ArrayList<InventoryObject> inventory = new ArrayList<>();
     private int selectedObject = 0;
+	public ArrayList<KeyFragment> fragments = new ArrayList<KeyFragment>();
+	private CompleteKey key = null;
 
     public Player(int x, int y, int[] keyCodes, Vector4f color) {
         super("player", new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f},  color);
-        if (keyCodes.length !=5){
-            throw new IllegalArgumentException("keyCodes.length must be 5");
+        if (keyCodes.length != 7){
+            throw new IllegalArgumentException("keyCodes.length must be 7");
         }
         Input input=new Input();
         this.keyControllDefinition(keyCodes, input);
@@ -54,6 +50,11 @@ public class Player extends Entity {
     public Input getInput() {return p.getComponent(Input.class);}
     public GameObject getGameObject(){return p;}
 
+	/**
+	 * Adds an object to the player's inventory.
+	 *
+	 * @param object The InventoryObject to be added.
+	 */
     public void addToInventory(InventoryObject object) {
         Game.LOGGER.info("Adding object to inventory: " + object.getGameObject().getName());
         inventory.add(object);
@@ -69,6 +70,11 @@ public class Player extends Entity {
         return false;
     }
 
+	/**
+	 * Switches the selected object in the inventory.
+	 *
+	 * @param direction 1 to switch to the next object, -1 to switch to the previous object.
+	 */
     public void switchSelectedObject(int direction) {
         if (inventory.isEmpty()) {
             Game.LOGGER.warning(this.p.getName() + " tried to switch selected object, but inventory is empty.");
@@ -78,6 +84,9 @@ public class Player extends Entity {
         Game.LOGGER.info(this.p.getName() + "'s selected object changed to: " + inventory.get(selectedObject).getGameObject().getName());
     }
 
+	/**
+	 * Uses the currently selected object in the inventory.
+	 */
     public void useSelectedObject() {
         if (inventory.isEmpty()) {
             Game.LOGGER.warning(this.p.getName() + " tried to use selected object, but inventory is empty.");
@@ -104,6 +113,33 @@ public class Player extends Entity {
             this.useSelectedObject();
         });
 
+        input.addControl(keyCodes[5],
+			(context) -> switchSelectedObject(1)
+		);
+        input.addControl(keyCodes[6], (context) -> useSelectedObject());
     }
 
+	public void allFragmentKey(){
+		for (InventoryObject object : inventory){
+			if (object instanceof KeyFragment){
+				fragments.add((KeyFragment) object);
+			}
+		}
+	}
+
+	public void buildCompleteKey(Chest chest){
+		for (KeyFragment fragment : fragments){
+            inventory.removeIf(object -> object.equals(fragment));
+		}
+		fragments.clear();
+		
+		if(key == null)
+			Game.LOGGER.severe("Complete key not defined.");
+		else
+			this.addToInventory(key);
+	}
+
+	public void setKey(CompleteKey key){
+		this.key = key;
+	}
 }

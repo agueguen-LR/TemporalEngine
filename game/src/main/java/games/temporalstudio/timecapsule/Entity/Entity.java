@@ -1,10 +1,8 @@
 package games.temporalstudio.timecapsule.Entity;
 
 import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
-import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.timecapsule.objects.TimeObject;

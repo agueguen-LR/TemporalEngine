@@ -1,21 +1,14 @@
 package games.temporalstudio.timecapsule.Entity;
 
-import games.temporalstudio.temporalengine.Game;
-import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
-import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
-
-import java.util.Set;
-import java.util.Vector;
 
 public class Enemy extends Entity{
 
@@ -28,7 +21,6 @@ public class Enemy extends Entity{
         }
         Collider2D collider=new Collider2D((new AABB(transform)));
         collider.setOnIntersects((context, other) -> {
-            System.out.println(other.getClass());
                 if (other instanceof GameObject objet) {
                     if (objet.getName() =="player"){
                     objet.getComponent(Transform.class).setPosition(player_death_position);
@@ -53,7 +45,6 @@ public class Enemy extends Entity{
                 {
                     if (other instanceof GameObject objet ) {
                         if (objet.getName() =="dracula") {
-                            Game.LOGGER.info("Enemy change direction");
                             float XDistance = coords[nextIndex].x - coords[ii].x;
                             float YDistance = coords[nextIndex].y - coords[ii].y;
                             Vector2f vitesse = this.physicsBody.getVelocity();
@@ -61,7 +52,6 @@ public class Enemy extends Entity{
                             this.physicsBody.applyForce(XDistance * 2, YDistance * 2);
                         }
                     }/*
-                    Game.LOGGER.info("Enemy change direction");
                     float XDistance = coords[nextIndex].x - coords[ii].x;
                     float YDistance = coords[nextIndex].y - coords[ii].y;
                     Vector2f vitesse= this.physicsBody.getVelocity();
