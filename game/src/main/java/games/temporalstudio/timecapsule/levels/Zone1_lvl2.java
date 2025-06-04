@@ -3,7 +3,12 @@ package games.temporalstudio.timecapsule.levels;
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
+import games.temporalstudio.timecapsule.Entity.Enemy;
+import games.temporalstudio.timecapsule.Entity.Medusa;
+import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.objects.*;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import java.util.Set;
 
@@ -20,26 +25,35 @@ public class Zone1_lvl2 implements TimeLevel{
 		this.futurScene.addGameObject(futurCamera);
 
 		this.pastTimeObjects = Set.of(
-				new Wall("Zone1_lvl2_Wall2", 2f, 6.0f),
-				new Wall("Zone1_lvl2_Wall3", 3f, 5.0f),
-				new Wall("Zone1_lvl2_Wall4", 4f, 4.0f),
-				new Wall("Zone1_lvl2_Wall5", 5f, 3.0f),
+				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
+						new Vector2f(),
+						new Vector2f[]{new Vector2f(2,6), new Vector2f(5,1),new Vector2f(0,3)},
+						pastScene),
+				new Wall(new Vector2f(1, 5), new Vector2f(6, 6)),
+
 				new Exit(
 						"Zone1_lvl2_Exit", 3.0f, 6.0f, pastPlayer,
 						"Zone2_Past", game::changeLeftScene),
+				new Medusa("pastMedusa",
+						new Vector2f(0.5f, 0.5f),
+						new Vector4f(0.25f,0,0.75f,1), pastPlayer),
 				pastPlayer
 		);
 
 		this.pastTimeObjects.forEach((timeObject) -> this.pastScene.addGameObject(timeObject.getGameObject()));
 
 		this.futurTimeObjects = Set.of(
-				new Wall("Zone1_lvl2_Wall2", 2f, 6.0f),
-				new Wall("Zone1_lvl2_Wall3", 3f, 5.0f),
-				new Wall("Zone1_lvl2_Wall4", 4f, 4.0f),
-				new Wall("Zone1_lvl2_Wall5", 5f, 3.0f),
+				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
+						new Vector2f(),
+						new Vector2f[]{new Vector2f(2,6), new Vector2f(5,1),new Vector2f(0,3)},
+						futurScene),
+				new Wall(new Vector2f(1, 5), new Vector2f(6, 6)),
 				new Exit(
 						"Zone1_lvl2_Exit", 3.0f, 6.0f, futurPlayer,
 						"Zone2_Futur", game::changeRightScene),
+				new Medusa("pastMedusa",
+						new Vector2f(0.5f, 0.5f),
+						new Vector4f(0.25f,0,0.75f,1), futurPlayer),
 				futurPlayer
 		);
 

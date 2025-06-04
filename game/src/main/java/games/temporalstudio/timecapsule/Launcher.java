@@ -15,4 +15,5 @@ public class Launcher{
 		else
 			new TestGame().run(new String[0]);
 	}
+
 }

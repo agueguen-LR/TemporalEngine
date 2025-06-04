@@ -15,12 +15,12 @@ import org.joml.Vector4f;
 
 import java.util.ArrayList;
 
-public class Player implements TimeObject {
+public class PlayerDridri implements TimeObject {
 	private final GameObject gameObject;
 	private ArrayList<InventoryObject> inventory = new ArrayList<>();
 	private int selectedObject = 0;
 
-	public Player(String name, float x, float y, int[] keys) {
+	public PlayerDridri(String name, float x, float y, int[] keys) {
 		this.gameObject = new GameObject(name);
 		Transform transform = new Transform(new Vector2f(x, y));
 		Render render = new ColorRender(new Vector4f(0, 0, 1, 1));

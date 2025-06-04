@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.Game;
@@ -22,8 +21,9 @@ import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
+import games.temporalstudio.temporalengine.rendering.component.MapRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
-import games.temporalstudio.temporalengine.rendering.component.TextureRender;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 
 public class TestGame extends Game{
@@ -60,6 +60,7 @@ public class TestGame extends Game{
 
 		// Game objects
 		GameObject camera = new GameObject("PastCamera");
+		GameObject map = new GameObject("Map");
 
 		GameObject player = createPlayer(new int[]{
 			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
@@ -69,12 +70,15 @@ public class TestGame extends Game{
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
 		// Components
+		map.addComponent(new Transform());
+		map.addComponent(new MapRender("past", "test"));
+
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
 		camera.addComponent(new Follow(player));
 
 		rulietta.addComponent(new Transform(new Vector2f(1, -2)));
-		rulietta.addComponent(new TextureRender(
+		rulietta.addComponent(new TileRender(
 			"rulietta", "test", Layer.UI
 		));
 
@@ -88,85 +92,9 @@ public class TestGame extends Game{
 			Layer.EFFECT
 		));
 
-		// Background>
-		GameObject go;
-		String[] backgroundTiles = new String[]{
-			"full_wall1", "full_wall2", "full_wall1", "full_wall2", "full_wall1", "full_wall2", "full_wall1", "full_wall2",
-			"full_soil", "full_soil", "full_soil", "full_soil", "soil_and_right_river", "full_water", "big_angle_top_left", "little_angle_top_left",
-			"full_soil", "full_soil", "full_soil", "little_angle_botton_right", "big_angle_bottom_right", "full_water", "soil_and_left_river", "full_soil",
-			"full_soil", "full_soil", "full_soil", "soil_and_right_river", "full_water", "big_angle_top_left", "little_angle_top_left", "full_soil",
-			"full_soil", "full_soil", "full_soil", "soil_and_right_river", "full_water", "soil_and_left_river", "full_soil", "full_soil",
-			"", "", "", "", "", "", "", "",
-			"", "", "", "", "", "", "", "",
-		};
-		String[] foregroundTiles = new String[]{
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"", "", "", "", "", "", "", "",
-			"bottom_left_coin_wall", "full_wall2", "full_wall1", "full_wall2", "full_wall1", "full_wall2", "full_wall1", "bottom_right_coin_wall"
-		};
-		int columns = 8, rows = backgroundTiles.length/columns;
-
-		int row, col, height;
-		String tile;
-
-		for(int i = 0; i < rows*columns; i++){
-			row = i/columns;
-			col = i%columns;
-			tile = backgroundTiles[row*columns + col];
-
-			if(tile.isEmpty()) continue;
-
-			height = !tile.contains("wall") ? 1 : switch(tile){
-				case "top_left_coin_wall", "top_right_coin_wall" -> 4;
-				case "left_wall", "right_wall" -> {
-					row -= 1;
-					yield 1;
-				}
-				default -> 3;
-			};
-
-			go = new GameObject("BG%d".formatted(i));
-			go.addComponent(new Transform(new Vector2f(col, -row),
-				new Vector2f(1, height)
-			));
-			go.addComponent(new TextureRender("past",
-				tile, Layer.BACKGROUND, new Vector2i(1, height)
-			));
-			past.addGameObject(go);
-		}
-
-		for(int i = 0; i < rows*columns; i++){
-			row = i/columns;
-			col = i%columns;
-			tile = foregroundTiles[row*columns + col];
-
-			if(tile.isEmpty()) continue;
-
-			height = !tile.contains("wall") ? 1 : switch(tile){
-				case "top_left_coin_wall", "top_right_coin_wall" -> 4;
-				case "left_wall", "right_wall" -> {
-					row -= 1;
-					yield 1;
-				}
-				default -> 3;
-			};
-
-			go = new GameObject("FG%d".formatted(i));
-			go.addComponent(new Transform(new Vector2f(col, -row),
-				new Vector2f(1, height)
-			));
-			go.addComponent(new TextureRender("past",
-				tile, Layer.FOREGROUND, new Vector2i(1, height)
-			));
-			past.addGameObject(go);
-		}
-
 		// Scene
 		past.addGameObject(camera);
+		past.addGameObject(map);
 		past.addGameObject(player);
 		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
@@ -191,11 +119,31 @@ public class TestGame extends Game{
 		GameObject slippyPlayer = createSlippyPlayer(new int[]{
 				GLFW_KEY_I, GLFW_KEY_K, GLFW_KEY_J, GLFW_KEY_L,
 				GLFW_KEY_SLASH
-		});
+		}, 5f, 6.5f);
 		GameObject door = createDoor(button, trigger);
 		GameObject rock1 = createBreakableRock(GLFW_KEY_SLASH, future);
 		GameObject ice = createBouncyIce();
-		GameObject spring = createSpring();
+		GameObject spring = createSpring(5, 1);
+
+		// Create bouncy castle lol
+		List<GameObject> bouncyCastle = List.of(
+				createSpring(10, 1),
+				createSpring(9, 1),
+				createSpring(8, 1),
+				createSpring(7, 2),
+				createSpring(7, 3),
+				createSpring(7, 4),
+				createSpring(8, 5),
+				createSpring(9, 5),
+				createSpring(10, 5),
+				createSpring(11, 4),
+				createSpring(11, 3),
+				createSpring(11, 2),
+				createSlippyPlayer(new int[]{
+						GLFW_KEY_T, GLFW_KEY_G, GLFW_KEY_F, GLFW_KEY_H
+				}, 9f, 3f)
+		);
+
 
 		camera.addComponent(new Follow(player));
 
@@ -212,6 +160,7 @@ public class TestGame extends Game{
 		future.addGameObject(createFlyingPlayer(new int[]{
 				GLFW_KEY_KP_8, GLFW_KEY_KP_5, GLFW_KEY_KP_4, GLFW_KEY_KP_6,
 		}));
+		bouncyCastle.forEach(future::addGameObject);
 
 		return future;
 	}
@@ -248,16 +197,16 @@ public class TestGame extends Game{
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
-			physicsBody.applyForce(new Vector2f(0, 10));
+			physicsBody.applyForce(new Vector2f(0, 20));
 		});
 		input.addControl(keys[1], (context) -> {
-			physicsBody.applyForce(new Vector2f(0, -10));
+			physicsBody.applyForce(new Vector2f(0, -20));
 		});
 		input.addControl(keys[2], (context) -> {
-			physicsBody.applyForce(new Vector2f(-10, 0));
+			physicsBody.applyForce(new Vector2f(-20, 0));
 		});
 		input.addControl(keys[3], (context) -> {
-			physicsBody.applyForce(new Vector2f(10, 0));
+			physicsBody.applyForce(new Vector2f(20, 0));
 		});
 		input.addControl(keys[4], (context) -> {});
 
@@ -270,14 +219,14 @@ public class TestGame extends Game{
 		return player;
 	}
 
-	private GameObject createSlippyPlayer(int[] keys){
+	private GameObject createSlippyPlayer(int[] keys, float x, float y){
 		GameObject player = new GameObject("slippyPlayer");
 
 		Render render = new ColorRender(new Vector4f(0.56f, 0.93f, 0.56f, 1));
-		Transform transform = new Transform(new Vector2f(5, 6.5f));
+		Transform transform = new Transform(new Vector2f(x, y));
 		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
 		Collider2D collider2D = new Collider2D(new AABB(transform));
-		collider2D.setRestitution(.5f);
+		collider2D.setRestitution(1f);
 		collider2D.setRigid(true);
 
 		Input input = new Input();
@@ -293,7 +242,6 @@ public class TestGame extends Game{
 		input.addControl(keys[3], (context) -> {
 			physicsBody.applyForce(new Vector2f(10, 0));
 		});
-		input.addControl(keys[4], (context) -> {});
 
 		player.addComponent(transform);
 		player.addComponent(render);
@@ -383,11 +331,11 @@ public class TestGame extends Game{
 		return ice;
 	}
 
-	private GameObject createSpring(){
+	private GameObject createSpring(float x, float y){
 		GameObject spring = new GameObject("spring");
 
 		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1));
-		Transform transform = new Transform(new Vector2f(5, 1));
+		Transform transform = new Transform(new Vector2f(x, y));
 		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRigid(true);
 		collider2D.setRestitution(5f);

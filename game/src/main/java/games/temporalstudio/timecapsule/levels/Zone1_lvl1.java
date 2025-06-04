@@ -3,7 +3,12 @@ package games.temporalstudio.timecapsule.levels;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.timecapsule.Entity.Enemy;
+import games.temporalstudio.timecapsule.Entity.Medusa;
+import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.objects.*;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import java.util.Set;
 
@@ -26,11 +31,11 @@ public class Zone1_lvl1 implements TimeLevel{
 		ThrowableBottle throwableBottle = new ThrowableBottle("ThrowableBottle", pastPlayer);
 
 		pastTimeObjects = Set.of(
-				new Wall("Zone1_lvl1_Wall1", 1f, 6.0f),
-				new Wall("Zone1_lvl1_Wall2", 2f, 7.0f),
-				new Wall("Zone1_lvl1_Wall3", 3f, 8.0f),
-				new Wall("Zone1_lvl1_Wall4", 4f, 9.0f),
-				new Wall("Zone1_lvl1_Wall5", 5f, 10.0f),
+				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
+						new Vector2f(),
+						new Vector2f[]{new Vector2f(-2,-4), new Vector2f(2,-2),new Vector2f(0,-5)},
+						pastScene),
+				new Wall(new Vector2f(1, 5), new Vector2f(3, 8)),
 				new Exit(
 						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer,
 						"Zone1_pastCapsule", game::changeLeftScene
@@ -41,6 +46,9 @@ public class Zone1_lvl1 implements TimeLevel{
 				),
 				new Pickupable("Bottle", 5.0f, 5.0f, pastPlayer, throwableBottle),
 				throwableBottle,
+				new Medusa("pastMedusa",
+						new Vector2f(0.5f, 0.5f),
+						new Vector4f(0.25f,0,0.75f,1), pastPlayer),
 				pastPlayer
 		);
 
@@ -54,17 +62,20 @@ public class Zone1_lvl1 implements TimeLevel{
 		futurPlayer.addToInventory(sender);
 
 		futurTimeObjects = Set.of(
-				new Wall("Zone1_lvl1_Wall1", 1f, 6.0f),
-				new Wall("Zone1_lvl1_Wall2", 2f, 7.0f),
-				new Wall("Zone1_lvl1_Wall3", 2f, 8.0f),
-				new Wall("Zone1_lvl1_Wall4", 4f, 9.0f),
-				new Wall("Zone1_lvl1_Wall5", 4f, 10.0f),
+				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
+						new Vector2f(),
+						new Vector2f[]{new Vector2f(-2,-4), new Vector2f(2,-2),new Vector2f(0,-5)},
+						futurScene),
+				new Wall(new Vector2f(1, 5), new Vector2f(5, 8)),
 				new Exit(
 						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer,
 						"Zone1_lvl2_Futur", game::changeRightScene
 				),
+				new Medusa("pastMedusa",
+						new Vector2f(0.5f, 0.5f),
+						new Vector4f(0.25f,0,0.75f,1), futurPlayer),
 				futurPlayer,
-				sender
+                sender
 		);
 
 
