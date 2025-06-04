@@ -59,11 +59,21 @@ public class Player extends Entity {
     public GameObject getGameObject(){return p;}
 
 
-    public boolean inventoryContain(InventoryObject inventoryObject){
-        return inventory.stream().anyMatch(obj -> obj.getClass().equals(inventoryObject.getClass()));
+    public boolean inventoryContains(Class<? extends InventoryObject> inventoryObject) {
+        if (inventoryObject == null) {
+            Game.LOGGER.warning("Tried to check inventory for a null object.");
+            return false;
+        }
+        if (inventory.isEmpty()) {
+            Game.LOGGER.info("Inventory is empty.");
+            return false;
+        }
+        return inventory.stream().anyMatch(obj -> inventoryObject.isAssignableFrom(obj.getClass()));
     }
-    public InventoryObject getInventoryObject(InventoryObject inventoryObject){
-        return inventory.stream().filter(obj -> obj.getClass().equals(inventoryObject.getClass())).findFirst().orElse(null);
+    public InventoryObject getInventoryObject(Class<? extends InventoryObject> inventoryObject){
+        return inventory.stream().filter(
+            obj -> inventoryObject.isAssignableFrom(obj.getClass())
+        ).findFirst().orElse(null);
     }
 
     public ArrayList<InventoryObject> getInventory(){return inventory;}
