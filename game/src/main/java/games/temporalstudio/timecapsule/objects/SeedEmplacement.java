@@ -8,6 +8,7 @@ import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.timecapsule.Entity.Player;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -20,7 +21,7 @@ public class SeedEmplacement implements TimeObject{
     public SeedEmplacement(String name, float x, float y, Player player, int keyPlayerUse, Scene pastScene, Scene futurScene) {
         this.gameObject = new GameObject(name);
         Transform transform = new Transform(new Vector2f(x, y));
-        Render render = new ColorRender(new Vector4f(0.8f, 0.2f, 0.2f, 1));
+        Render render = new TileRender("past", "big_seed_emplacement");
 
         Collider2D collider2D = new Collider2D(new AABB(transform));
         collider2D.setOnIntersects((context, other) -> {

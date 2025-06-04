@@ -62,9 +62,9 @@ public class TimeCapsule extends Game{
 
 		CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver("zone1_pastCapsuleReceiver", 3.0f, 3.0f);
 
-		Zone1_lvl1 cave1 = new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, zone1_pastCapsuleReceiver);
-		Zone1_lvl2 cave2 = new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer);
-		Zone1_pastCapsule caveCapsulePast = new Zone1_pastCapsule(pastCamera, this, pastPlayer, zone1_pastCapsuleReceiver, cave1.getFuturScene());
+		Zone1_lvl1 cave1 = new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, pastMedusa, futureMedusa, zone1_pastCapsuleReceiver);
+		Zone1_lvl2 cave2 = new Zone1_lvl2(pastCamera,futureCamera, this, pastPlayer,futurePlayer, pastMedusa, futureMedusa);
+		Zone1_lvl3 caveCapsulePast = new Zone1_lvl3(pastCamera,futureCamera, this, pastPlayer,futurePlayer, pastMedusa, futureMedusa);
 		Zone2 factory = new Zone2(pastCamera, futureCamera);
 		Zone3 boat = new Zone3(pastCamera, futureCamera);
 		Zone4 finale = new Zone4(pastCamera, futureCamera);
