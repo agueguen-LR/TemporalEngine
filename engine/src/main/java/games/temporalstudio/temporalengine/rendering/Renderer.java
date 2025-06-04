@@ -13,11 +13,13 @@ import org.joml.Vector2i;
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.Scene;
+import games.temporalstudio.temporalengine.rendering.batch.MapRenderBatch;
+import games.temporalstudio.temporalengine.rendering.batch.RenderBatch;
 import games.temporalstudio.temporalengine.rendering.shader.Shader;
 
 public class Renderer implements RenderLifeCycle, LifeCycleContext{
 
-	private static final int MAX_BATCH_SIZE = 1000;
+	private static final int MAX_BATCH_SIZE = 1024;
 
 	private List<RenderBatch> mainMenuBatches = new ArrayList<>();
 	private List<RenderBatch> leftSceneBatches = new ArrayList<>();
@@ -33,7 +35,10 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 		sceneBatches.forEach(batches ->
 			batches.addAll(
 				Arrays.stream(Layer.values())
-					.map(l -> new RenderBatch(this, MAX_BATCH_SIZE, l))
+					.map(l -> l.isForMapping()
+						? new MapRenderBatch(this, MAX_BATCH_SIZE, l)
+						: new RenderBatch(this, MAX_BATCH_SIZE, l)
+					)
 					.toList()
 			)
 		);

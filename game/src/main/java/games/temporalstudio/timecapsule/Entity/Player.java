@@ -111,7 +111,7 @@ public class Player extends Entity {
             this.moveRight(50);
         });
         input.addControl(keyCodes[4], (context) -> {
-            this.jump(50);
+            this.useSelectedObject();
         });
 
     }
