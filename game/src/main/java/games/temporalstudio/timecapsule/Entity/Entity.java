@@ -15,7 +15,7 @@ public abstract class Entity implements TimeObject {
     protected GameObject p;
     protected Transform transform;
     protected PhysicsBody physicsBody;
-
+    private SpriteRender render;
 
     public Entity(String name, Vector2f position, Vector2f scale,float[] physBody, Vector4f color, String texture) {
         p=new GameObject(name);
@@ -24,7 +24,7 @@ public abstract class Entity implements TimeObject {
         }
         transform = new Transform(position, scale);
         physicsBody = new PhysicsBody(physBody[0], physBody[1], physBody[2], physBody[3]);
-        SpriteRender render = new SpriteRender(
+         this.render = new SpriteRender(
                 texture, "face_walk"
         );
 
@@ -35,7 +35,7 @@ public abstract class Entity implements TimeObject {
 
     public Transform getTransform() {return this.transform;}
     public PhysicsBody getPhysicsBody() {return this.physicsBody;}
-    public SpriteRender getRender() {return p.getComponent(SpriteRender.class);}
+    public SpriteRender getRender() {return this.render;}
     public GameObject getGameObject() {return p;}
 
     public void moveUp(float force) {
