@@ -13,6 +13,9 @@ import games.temporalstudio.timecapsule.Entity.Player;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SeedEmplacement implements TimeObject{
     private GameObject gameObject;
 
@@ -37,6 +40,12 @@ public class SeedEmplacement implements TimeObject{
                         pastScene.addGameObject(pastTree.getGameObject());
                         Tree futurTree = new Tree(futurScene.getName() + "_tree", x, y);
                         futurScene.addGameObject(futurTree.getGameObject());
+                        ArrayList<CardinalDirections> directionsTest = new ArrayList<CardinalDirections>();
+                        directionsTest.add(CardinalDirections.NORTH);
+                        directionsTest.add(CardinalDirections.NORTH);
+                        directionsTest.add(CardinalDirections.NORTH);
+
+                        new Roots("_roots", x, y, directionsTest, futurScene);
 
                         pastScene.removeGameObject(this.gameObject);
                     }
