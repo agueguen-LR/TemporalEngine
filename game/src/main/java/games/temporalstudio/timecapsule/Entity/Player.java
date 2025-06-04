@@ -36,6 +36,23 @@ public class Player extends Entity {
         Collider2D collider=new Collider2D((new AABB(transform)));
         collider.setRigid(true);
 
+        getRender().setAnimChooser(context -> {
+            Vector2f vel = physicsBody.getVelocity();
+            float angle = vel.angle(new Vector2f(1, 0));
+            String tileName;
+
+            if(angle > Math.PI/4*3 || angle < -Math.PI/4*3)
+                tileName = "left_walk";
+            else if(angle < Math.PI/4*3 && angle > Math.PI/4)
+                tileName = "face_walk";
+            else if(angle > -Math.PI/4*3 && angle < -Math.PI/4)
+                tileName = "back_walk";
+            else
+                tileName = "right_walk";
+
+            return tileName;
+        });
+
         p.addComponent(input);
         p.addComponent(collider);
     }

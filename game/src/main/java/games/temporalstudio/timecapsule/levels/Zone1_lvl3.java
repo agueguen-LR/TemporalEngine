@@ -66,7 +66,7 @@ public class Zone1_lvl3 implements TimeLevel {
 
 		pastTimeObjects = Set.of(
 				new Exit(
-						"Zone1_pastCapsule_Exit", 7.0f, 31.0f, pastPlayer, pastMedusa,
+						"Zone1_pastCapsule_Exit", 7.0f, 32.0f, pastPlayer, pastMedusa,
 						"Zone1_lvl1_Past", game::changeLeftScene, new Vector2f(1.0f, 1.0f)
 				),
 				new Exit(

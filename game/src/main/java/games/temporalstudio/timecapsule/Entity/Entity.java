@@ -28,23 +28,6 @@ public abstract class Entity implements TimeObject {
                 texture, "face_walk"
         );
 
-        render.setAnimChooser(context -> {
-            Vector2f vel = physicsBody.getVelocity();
-            float angle = vel.angle(new Vector2f(1, 0));
-            String tileName;
-
-            if(angle > Math.PI/4*3 || angle < -Math.PI/4*3)
-                tileName = "left_walk";
-            else if(angle < Math.PI/4*3 && angle > Math.PI/4)
-                tileName = "face_walk";
-            else if(angle > -Math.PI/4*3 && angle < -Math.PI/4)
-                tileName = "back_walk";
-            else
-                tileName = "right_walk";
-
-            return tileName;
-        });
-
         p.addComponent(transform);
         p.addComponent(physicsBody);
         p.addComponent(render);
@@ -52,7 +35,7 @@ public abstract class Entity implements TimeObject {
 
     public Transform getTransform() {return this.transform;}
     public PhysicsBody getPhysicsBody() {return this.physicsBody;}
-    public Render getRender() {return p.getComponent(Render.class);}
+    public SpriteRender getRender() {return p.getComponent(SpriteRender.class);}
     public GameObject getGameObject() {return p;}
 
     public void moveUp(float force) {
