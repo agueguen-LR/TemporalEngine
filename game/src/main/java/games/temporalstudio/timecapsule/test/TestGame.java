@@ -10,6 +10,7 @@ import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
+import games.temporalstudio.temporalengine.component.Follow;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.component.Trigger;
@@ -18,9 +19,11 @@ import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
+import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
+import games.temporalstudio.temporalengine.rendering.component.MapRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
-import games.temporalstudio.temporalengine.rendering.component.TextureRender;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 
 public class TestGame extends Game{
@@ -57,6 +60,7 @@ public class TestGame extends Game{
 
 		// Game objects
 		GameObject camera = new GameObject("PastCamera");
+		GameObject map = new GameObject("Map");
 
 		GameObject player = createPlayer(new int[]{
 			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
@@ -65,62 +69,35 @@ public class TestGame extends Game{
 		GameObject rulietta = new GameObject("Rulietta");
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
-		GameObject ground = new GameObject("Ground");
-		GameObject ground1 = new GameObject("Ground1");
-		GameObject ground2 = new GameObject("Ground2");
-		GameObject ground3 = new GameObject("Ground3");
-		GameObject ground4 = new GameObject("Ground4");
-
 		// Components
+		map.addComponent(new Transform());
+		map.addComponent(new MapRender("past", "test"));
+
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
+		camera.addComponent(new Follow(player));
 
-		rulietta.addComponent(new Transform(new Vector2f(1, 2)));
-		rulietta.addComponent(new TextureRender(
-			"rulietta", "test"
+		rulietta.addComponent(new Transform(new Vector2f(1, -2)));
+		rulietta.addComponent(new TileRender(
+			"rulietta", "test", Layer.UI
 		));
 
 		Vector4f lowPurple = new Vector4f(64f/255, 0, 1, 1);
 		Vector4f highPurple = new Vector4f(192f/255, 0, 1, 1);
 		compulsiveMerger.addComponent(new Transform(
-			new Vector2f(1, 3), new Vector2f(.5f, .5f)
+			new Vector2f(1.25f, -2.75f), new Vector2f(.5f, .5f)
 		));
-		compulsiveMerger.addComponent(new ColorRender(List.of(
-			lowPurple, lowPurple, lowPurple, highPurple
-		)));
-
-		ground.addComponent(new Transform(new Vector2f(3, 3)));
-		ground.addComponent(new TextureRender(
-			"future", "soil_and_left_river"
-		));
-		ground1.addComponent(new Transform(new Vector2f(4, 3)));
-		ground1.addComponent(new TextureRender(
-			"future", "full_soil"
-		));
-		ground2.addComponent(new Transform(new Vector2f(5, 3)));
-		ground2.addComponent(new TextureRender(
-			"future", "soil_and_right_river"
-		));
-		ground3.addComponent(new Transform(new Vector2f(6, 3)));
-		ground3.addComponent(new TextureRender(
-			"future", "full_water"
-		));
-		ground4.addComponent(new Transform(new Vector2f(6, 2)));
-		ground4.addComponent(new TextureRender(
-			"future", "soil_and_top_river"
+		compulsiveMerger.addComponent(new ColorRender(
+			List.of(lowPurple, lowPurple, lowPurple, highPurple),
+			Layer.EFFECT
 		));
 
 		// Scene
 		past.addGameObject(camera);
+		past.addGameObject(map);
 		past.addGameObject(player);
 		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
-
-		past.addGameObject(ground);
-		past.addGameObject(ground1);
-		past.addGameObject(ground2);
-		past.addGameObject(ground3);
-		past.addGameObject(ground4);
 
 		return past;
 	}
@@ -142,11 +119,33 @@ public class TestGame extends Game{
 		GameObject slippyPlayer = createSlippyPlayer(new int[]{
 				GLFW_KEY_I, GLFW_KEY_K, GLFW_KEY_J, GLFW_KEY_L,
 				GLFW_KEY_SLASH
-		});
+		}, 5f, 6.5f);
 		GameObject door = createDoor(button, trigger);
 		GameObject rock1 = createBreakableRock(GLFW_KEY_SLASH, future);
 		GameObject ice = createBouncyIce();
-		GameObject spring = createSpring();
+		GameObject spring = createSpring(5, 1);
+
+		// Create bouncy castle lol
+		List<GameObject> bouncyCastle = List.of(
+				createSpring(10, 1),
+				createSpring(9, 1),
+				createSpring(8, 1),
+				createSpring(7, 2),
+				createSpring(7, 3),
+				createSpring(7, 4),
+				createSpring(8, 5),
+				createSpring(9, 5),
+				createSpring(10, 5),
+				createSpring(11, 4),
+				createSpring(11, 3),
+				createSpring(11, 2),
+				createSlippyPlayer(new int[]{
+						GLFW_KEY_T, GLFW_KEY_G, GLFW_KEY_F, GLFW_KEY_H
+				}, 9f, 3f)
+		);
+
+
+		camera.addComponent(new Follow(player));
 
 		future.addGameObject(camera);
 		future.addGameObject(player);
@@ -156,6 +155,12 @@ public class TestGame extends Game{
 		future.addGameObject(rock1);
 		future.addGameObject(ice);
 		future.addGameObject(spring);
+		future.addGameObject(createWall("leftWall", 1, 7, 1, 1));
+		future.addGameObject(createWall("rightWall", 2, 8, 1, 1));
+		future.addGameObject(createFlyingPlayer(new int[]{
+				GLFW_KEY_KP_8, GLFW_KEY_KP_5, GLFW_KEY_KP_4, GLFW_KEY_KP_6,
+		}));
+		bouncyCastle.forEach(future::addGameObject);
 
 		return future;
 	}
@@ -192,16 +197,16 @@ public class TestGame extends Game{
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
-			physicsBody.applyForce(new Vector2f(0, 10));
+			physicsBody.applyForce(new Vector2f(0, 20));
 		});
 		input.addControl(keys[1], (context) -> {
-			physicsBody.applyForce(new Vector2f(0, -10));
+			physicsBody.applyForce(new Vector2f(0, -20));
 		});
 		input.addControl(keys[2], (context) -> {
-			physicsBody.applyForce(new Vector2f(-10, 0));
+			physicsBody.applyForce(new Vector2f(-20, 0));
 		});
 		input.addControl(keys[3], (context) -> {
-			physicsBody.applyForce(new Vector2f(10, 0));
+			physicsBody.applyForce(new Vector2f(20, 0));
 		});
 		input.addControl(keys[4], (context) -> {});
 
@@ -214,14 +219,14 @@ public class TestGame extends Game{
 		return player;
 	}
 
-	private GameObject createSlippyPlayer(int[] keys){
+	private GameObject createSlippyPlayer(int[] keys, float x, float y){
 		GameObject player = new GameObject("slippyPlayer");
 
 		Render render = new ColorRender(new Vector4f(0.56f, 0.93f, 0.56f, 1));
-		Transform transform = new Transform(new Vector2f(5, 6.5f));
+		Transform transform = new Transform(new Vector2f(x, y));
 		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
 		Collider2D collider2D = new Collider2D(new AABB(transform));
-		collider2D.setRestitution(.5f);
+		collider2D.setRestitution(1f);
 		collider2D.setRigid(true);
 
 		Input input = new Input();
@@ -237,7 +242,6 @@ public class TestGame extends Game{
 		input.addControl(keys[3], (context) -> {
 			physicsBody.applyForce(new Vector2f(10, 0));
 		});
-		input.addControl(keys[4], (context) -> {});
 
 		player.addComponent(transform);
 		player.addComponent(render);
@@ -327,11 +331,11 @@ public class TestGame extends Game{
 		return ice;
 	}
 
-	private GameObject createSpring(){
+	private GameObject createSpring(float x, float y){
 		GameObject spring = new GameObject("spring");
 
 		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1));
-		Transform transform = new Transform(new Vector2f(5, 1));
+		Transform transform = new Transform(new Vector2f(x, y));
 		Collider2D collider2D = new Collider2D(new AABB(transform));
 		collider2D.setRigid(true);
 		collider2D.setRestitution(5f);
@@ -341,5 +345,49 @@ public class TestGame extends Game{
 		spring.addComponent(collider2D);
 
 		return spring;
+	}
+
+	private GameObject createWall(String name, float x, float y, float width, float height){
+		GameObject wall = new GameObject(name);
+		Transform transform = new Transform(new Vector2f(x, y), new Vector2f(width, height));
+		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1));
+		Collider2D collider2D = new Collider2D(new AABB(transform));
+		collider2D.setRigid(true);
+
+		wall.addComponent(transform);
+		wall.addComponent(render);
+		wall.addComponent(collider2D);
+		return wall;
+	}
+
+	private GameObject createFlyingPlayer(int[] keys){
+		GameObject player = new GameObject("flyingPlayer");
+
+		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 1, 1));
+		Transform transform = new Transform(new Vector2f(3, 3));
+		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
+		Collider2D collider2D = new Collider2D(new AABB(transform));
+
+		Input input = new Input();
+		input.addControl(keys[0], (context) -> {
+			physicsBody.applyForce(new Vector2f(0, 10));
+		});
+		input.addControl(keys[1], (context) -> {
+			physicsBody.applyForce(new Vector2f(0, -10));
+		});
+		input.addControl(keys[2], (context) -> {
+			physicsBody.applyForce(new Vector2f(-10, 0));
+		});
+		input.addControl(keys[3], (context) -> {
+			physicsBody.applyForce(new Vector2f(10, 0));
+		});
+
+		player.addComponent(transform);
+		player.addComponent(render);
+		player.addComponent(physicsBody);
+		player.addComponent(input);
+		player.addComponent(collider2D);
+
+		return player;
 	}
 }

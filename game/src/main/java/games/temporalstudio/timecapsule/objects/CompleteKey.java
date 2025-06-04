@@ -7,6 +7,8 @@ import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.timecapsule.Entity.Player;
+
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 

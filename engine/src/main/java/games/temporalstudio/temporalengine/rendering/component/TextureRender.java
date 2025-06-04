@@ -1,27 +1,28 @@
 package games.temporalstudio.temporalengine.rendering.component;
 
 import games.temporalstudio.temporalengine.LifeCycleContext;
+import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.texture.Texture;
-import games.temporalstudio.temporalengine.rendering.texture.Texture.Tile;
 
-public final class TextureRender implements Render{
+public sealed abstract class TextureRender extends Render
+	permits TileRender, MapRender
+{
 
 	private String textureName;
-	private String tileName;
 
-	public TextureRender(String textureName, String tileName){
+	public TextureRender(String textureName, Layer layer){
+		super(layer);
+
 		this.textureName = textureName;
-		this.tileName = tileName;
 	}
-
 	// GETTERS
 	public Texture getTexture(){ return Texture.get(textureName); }
-	public Tile getTile(){ return getTexture().getTile(tileName); }
 
 	// LIFECYCLE FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){
-		getTexture().load();
+		if(!getTexture().wasLoaded())
+			getTexture().load();
 	}
 	@Override
 	public void start(LifeCycleContext context){}

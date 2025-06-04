@@ -1,16 +1,15 @@
 package games.temporalstudio.timecapsule.objects;
 
 import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.timecapsule.Entity.Player;
+
 import org.joml.Vector2f;
 import org.joml.Vector4f;
-
-import java.sql.SQLOutput;
 
 public class Chest implements TimeObject{
     private GameObject chest;

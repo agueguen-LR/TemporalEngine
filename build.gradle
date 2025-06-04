@@ -59,6 +59,7 @@ project(":engine"){
 		implementation "com.electronwill.night-config:toml:3.8.2"
 		implementation "com.electronwill.night-config:json:3.8.2"
 		api "org.joml:joml:${jomlVersion}"
+		implementation 'org.tiledreader:TiledReader:1.1.0'
 
 		runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
 		runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"

@@ -14,36 +14,48 @@ public class View implements Component{
 
 	private static final float Z_NEAR = 0;
 	private static final float Z_FAR = 100;
+	private static final float DEFAULT_DISTANCE = 20f;
 	private static final Vector3f CAMERA_FRONT = new Vector3f(0, 0, -1);
 	private static final Vector3f CAMERA_UP = new Vector3f(0, 1, 0);
 
 	private final float zNear;
 	private final float zFar;
 	private float zoom;
+	private float distance;
 	private final Vector2f scale = new Vector2f();
-	private final Matrix4f view = new Matrix4f();
+	private final Vector2f eyePos = new Vector2f();
 
 	public View(float zNear, float zFar, float zoom){
 		this.zNear = zNear;
 		this.zFar = zFar;
 		this.zoom = zoom;
+		this.distance = DEFAULT_DISTANCE;
 	}
 	public View(float zoom){
 		this(Z_NEAR, Z_FAR, zoom);
 	}
 
 	// GETTERS
-	public Matrix4f getProjection(){
-		return getProjection(1, 1);
-	}
 	public Matrix4f getProjection(int width, int height){
-		Vector2f sc = scale.mul(new Vector2f(((float) width)/height, 1));
+		Vector2f sc = new Vector2f(scale).mul(((float) width)/height, 1);
+
 		return new Matrix4f().ortho(
 			0, sc.x(), 0, sc.y(),
 			zNear, zFar
 		);
 	}
-	public Matrix4f getView(){ return new Matrix4f(view); }
+	public Matrix4f getView(int width, int height){
+		Vector2f pos = new Vector2f(eyePos)
+			.add(new Vector2f(.5f))
+			.sub(.5f/zoom, .5f/zoom)
+			.mul(((float) width)/height, 1);
+
+		return new Matrix4f().lookAt(
+			new Vector3f(pos, distance),
+			new Vector3f(pos, 0).add(CAMERA_FRONT),
+			CAMERA_UP
+		);
+	}
 
 	// LIFECYCLE FUNCTIONS
 	@Override
@@ -65,12 +77,7 @@ public class View implements Component{
 
 		// Matrices
 		scale.set(transform.getScale()).div(zoom);
-
-		view.identity().lookAt(
-			new Vector3f(transform.getPosition(), 0),
-			CAMERA_FRONT.add(new Vector3f(transform.getPosition(), 0)),
-			CAMERA_UP
-		);
+		eyePos.set(transform.getPosition());
 	}
 	@Override
 	public void destroy(LifeCycleContext context){}

@@ -12,6 +12,7 @@ public class Trigger implements Component {
 	private boolean triggered = false;
 	private boolean coolingDown = false;
 	private float cooldown;
+	private float workingCooldown;
 
 	private Supplier<Boolean> triggerCondition;
 
@@ -70,14 +71,15 @@ public class Trigger implements Component {
 	@Override
 	public void update(LifeCycleContext context, float delta) {
 		if (coolingDown){
-			if (cooldown < 0){
+			if (workingCooldown < 0){
 				coolingDown = false;
 			}
-			cooldown -= delta;
+			workingCooldown -= delta;
 		} if (triggered) {
 			trigger(context);
 			triggered = false;
 			coolingDown = true;
+			workingCooldown = cooldown;
 		} else if (triggerCondition.get()) {
 			triggered = true;
 		}
