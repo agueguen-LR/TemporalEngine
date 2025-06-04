@@ -83,6 +83,26 @@ public class Player extends Entity {
 	 *
 	 * @param object The InventoryObject to be added.
 	 */
+
+    public boolean inventoryContains(Class<? extends InventoryObject> inventoryObject) {
+        if (inventoryObject == null) {
+            Game.LOGGER.warning("Tried to check inventory for a null object.");
+            return false;
+        }
+        if (inventory.isEmpty()) {
+            Game.LOGGER.info("Inventory is empty.");
+            return false;
+        }
+        return inventory.stream().anyMatch(obj -> inventoryObject.isAssignableFrom(obj.getClass()));
+    }
+    public InventoryObject getInventoryObject(Class<? extends InventoryObject> inventoryObject){
+        return inventory.stream().filter(
+            obj -> inventoryObject.isAssignableFrom(obj.getClass())
+        ).findFirst().orElse(null);
+    }
+
+    public ArrayList<InventoryObject> getInventory(){return inventory;}
+
     public void addToInventory(InventoryObject object) {
         Game.LOGGER.info("Adding object to inventory: " + object.getGameObject().getName());
         inventory.add(object);
