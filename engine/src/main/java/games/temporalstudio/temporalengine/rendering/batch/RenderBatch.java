@@ -175,7 +175,7 @@ public class RenderBatch implements RenderLifeCycle{
 
 				Tile tile = tr.getTile();
 				if(tile != null)
-					texCoords = tr.getTexture().getCoords(tile);
+					texCoords = tr.getTexture().getCoords(tile, tr.getState());
 			}
 			default -> {}
 		}

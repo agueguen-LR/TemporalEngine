@@ -23,6 +23,7 @@ import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.MapRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.SpriteRender;
 import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 
@@ -71,7 +72,9 @@ public class TestGame extends Game{
 
 		// Components
 		map.addComponent(new Transform());
-		map.addComponent(new MapRender("past", "test"));
+		map.addComponent(new MapRender(
+			"past", "zone1_lvl3"
+		));
 
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
@@ -85,7 +88,7 @@ public class TestGame extends Game{
 		Vector4f lowPurple = new Vector4f(64f/255, 0, 1, 1);
 		Vector4f highPurple = new Vector4f(192f/255, 0, 1, 1);
 		compulsiveMerger.addComponent(new Transform(
-			new Vector2f(1.25f, -2.75f), new Vector2f(.5f, .5f)
+			new Vector2f(1.25f, -2.75f)
 		));
 		compulsiveMerger.addComponent(new ColorRender(
 			List.of(lowPurple, lowPurple, lowPurple, highPurple),
@@ -96,8 +99,8 @@ public class TestGame extends Game{
 		past.addGameObject(camera);
 		past.addGameObject(map);
 		past.addGameObject(player);
-		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
+		past.addGameObject(compulsiveMerger);
 
 		return past;
 	}
@@ -187,8 +190,12 @@ public class TestGame extends Game{
 	private GameObject createPlayer(int[] keys){
 		GameObject player = new GameObject("player");
 
-		Render render = new ColorRender(new Vector4f(0, 0, 1, 1));
-		Transform transform = new Transform(new Vector2f(1, 4.25f));
+		SpriteRender render = new SpriteRender(
+			"jeanne", "face_walk"
+		);
+		Transform transform = new Transform(
+			new Vector2f(1, 4.25f), new Vector2f(1, 2)
+		);
 		PhysicsBody physicsBody = new PhysicsBody(
 				1, 10, .1f, 20f);
 		Collider2D collider2D = new Collider2D(new AABB(transform));
@@ -210,6 +217,23 @@ public class TestGame extends Game{
 		});
 		input.addControl(keys[4], (context) -> {});
 
+		render.setAnimChooser(context -> {
+			Vector2f vel = physicsBody.getVelocity();
+			float angle = vel.angle(new Vector2f(1, 0));
+			String tileName;
+
+			if(angle > Math.PI/4*3 || angle < -Math.PI/4*3)
+				tileName = "left_walk";
+			else if(angle < Math.PI/4*3 && angle > Math.PI/4)
+				tileName = "face_walk";
+			else if(angle > -Math.PI/4*3 && angle < -Math.PI/4)
+				tileName = "back_walk";
+			else
+				tileName = "right_walk";
+
+			return tileName;
+		});
+
 		player.addComponent(transform);
 		player.addComponent(render);
 		player.addComponent(physicsBody);
@@ -222,7 +246,7 @@ public class TestGame extends Game{
 	private GameObject createSlippyPlayer(int[] keys, float x, float y){
 		GameObject player = new GameObject("slippyPlayer");
 
-		Render render = new ColorRender(new Vector4f(0.56f, 0.93f, 0.56f, 1));
+		Render render = new SpriteRender("meduse", "back_walk");
 		Transform transform = new Transform(new Vector2f(x, y));
 		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
 		Collider2D collider2D = new Collider2D(new AABB(transform));
@@ -287,7 +311,7 @@ public class TestGame extends Game{
 		GameObject rock = new GameObject("rock");
 
 		Render render = new ColorRender(
-				new Vector4f(.5f, .25f, .1f, 1)
+			new Vector4f(.5f, .25f, .1f, 1)
 		);
 		Transform transform = new Transform(new Vector2f(1, 5.5f));
 		Collider2D collider2D = new Collider2D(new AABB(transform));
@@ -363,8 +387,8 @@ public class TestGame extends Game{
 	private GameObject createFlyingPlayer(int[] keys){
 		GameObject player = new GameObject("flyingPlayer");
 
-		Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 1, 1));
-		Transform transform = new Transform(new Vector2f(3, 3));
+		Render render = new SpriteRender("bat", "fly", Layer.EFFECT);
+		Transform transform = new Transform(new Vector2f(1, 7));
 		PhysicsBody physicsBody = new PhysicsBody(1, 1000, .1f, 0f);
 		Collider2D collider2D = new Collider2D(new AABB(transform));
 
