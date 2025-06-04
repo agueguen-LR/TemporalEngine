@@ -75,8 +75,10 @@ public class Zone1_lvl1 implements TimeLevel{
 						new Vector2f(0.5f, 0.5f),
 						new Vector4f(0.25f,0,0.75f,1), futurPlayer),
 				futurPlayer,
-                sender
-		);
+                sender,
+				new Wall(new Vector2f(6, 1), new Vector2f(7, 4))
+
+				);
 
 
 		futurTimeObjects.forEach((timeObject) -> this.futurScene.addGameObject(timeObject.getGameObject()));

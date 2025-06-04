@@ -30,7 +30,7 @@ public class Zone1_pastCapsule implements SingleLevel{
 				pastPlayer,
 				zone1_pastCapsuleReceiver,
 
-
+				new Wall(new Vector2f(6, 1), new Vector2f(7, 4)),
 				new SeedEmplacement("seedEmplacement", 6, 0, pastPlayer, GLFW_KEY_SPACE, this.scene, zone1Futur)
 		);
 
