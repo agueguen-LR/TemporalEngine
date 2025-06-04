@@ -52,13 +52,20 @@ public class TimeCapsule extends Game{
 
 		CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver("zone1_pastCapsuleReceiver", 3.0f, 3.0f);
 
+		Zone1_lvl1 cave1 = new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, zone1_pastCapsuleReceiver);
+		Zone1_lvl2 cave2 = new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer);
+		Zone1_pastCapsule caveCapsulePast = new Zone1_pastCapsule(pastCamera, this, pastPlayer, zone1_pastCapsuleReceiver, cave1.getFuturScene());
+		Zone2 factory = new Zone2(pastCamera, futureCamera);
+		Zone3 boat = new Zone3(pastCamera, futureCamera);
+		Zone4 finale = new Zone4(pastCamera, futureCamera);
+
 		Map<String, Level> levels = Map.of(
-				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, zone1_pastCapsuleReceiver),
-				"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
-				"caveCapsulePast", new Zone1_pastCapsule(pastCamera, this, pastPlayer, zone1_pastCapsuleReceiver),
-				"factory", new Zone2(pastCamera, futureCamera),
-				"boat", new Zone3(pastCamera, futureCamera),
-				"finale", new Zone4(pastCamera, futureCamera)
+			"cave1", cave1,
+			"cave2", cave2,
+			"caveCapsulePast", caveCapsulePast,
+			"factory", factory,
+			"boat", boat,
+			"finale", finale
 		);
 
 		zone1_pastCapsuleReceiver.setScene(((SingleLevel)levels.get("caveCapsulePast")).getScene());
