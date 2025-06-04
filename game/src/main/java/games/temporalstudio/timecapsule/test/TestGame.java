@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import games.temporalstudio.temporalengine.Game;
@@ -22,6 +21,7 @@ import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
+import games.temporalstudio.temporalengine.rendering.component.MapRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
@@ -60,6 +60,7 @@ public class TestGame extends Game{
 
 		// Game objects
 		GameObject camera = new GameObject("PastCamera");
+		GameObject map = new GameObject("Map");
 
 		GameObject player = createPlayer(new int[]{
 			GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D,
@@ -69,6 +70,9 @@ public class TestGame extends Game{
 		GameObject compulsiveMerger = new GameObject("Adrien");
 
 		// Components
+		map.addComponent(new Transform());
+		map.addComponent(new MapRender("past", "test"));
+
 		camera.addComponent(new Transform());
 		camera.addComponent(new View(.1f));
 		camera.addComponent(new Follow(player));
@@ -88,85 +92,9 @@ public class TestGame extends Game{
 			Layer.EFFECT
 		));
 
-		// Background>
-		GameObject go;
-		String[] backgroundTiles = new String[]{
-			"full_wall1", "full_wall2", "full_wall1", "full_wall2", "full_wall1", "full_wall2", "full_wall1", "full_wall2",
-			"full_soil", "full_soil", "full_soil", "full_soil", "soil_and_right_river", "full_water", "big_angle_top_left", "little_angle_top_left",
-			"full_soil", "full_soil", "full_soil", "little_angle_botton_right", "big_angle_bottom_right", "full_water", "soil_and_left_river", "full_soil",
-			"full_soil", "full_soil", "full_soil", "soil_and_right_river", "full_water", "big_angle_top_left", "little_angle_top_left", "full_soil",
-			"full_soil", "full_soil", "full_soil", "soil_and_right_river", "full_water", "soil_and_left_river", "full_soil", "full_soil",
-			"", "", "", "", "", "", "", "",
-			"", "", "", "", "", "", "", "",
-		};
-		String[] foregroundTiles = new String[]{
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"left_wall", "", "", "", "", "", "", "right_wall",
-			"", "", "", "", "", "", "", "",
-			"bottom_left_coin_wall", "full_wall2", "full_wall1", "full_wall2", "full_wall1", "full_wall2", "full_wall1", "bottom_right_coin_wall"
-		};
-		int columns = 8, rows = backgroundTiles.length/columns;
-
-		int row, col, height;
-		String tile;
-
-		for(int i = 0; i < rows*columns; i++){
-			row = i/columns;
-			col = i%columns;
-			tile = backgroundTiles[row*columns + col];
-
-			if(tile.isEmpty()) continue;
-
-			height = !tile.contains("wall") ? 1 : switch(tile){
-				case "top_left_coin_wall", "top_right_coin_wall" -> 4;
-				case "left_wall", "right_wall" -> {
-					row -= 1;
-					yield 1;
-				}
-				default -> 3;
-			};
-
-			go = new GameObject("BG%d".formatted(i));
-			go.addComponent(new Transform(new Vector2f(col, -row),
-				new Vector2f(1, height)
-			));
-			go.addComponent(new TileRender("past",
-				tile, Layer.BACKGROUND, new Vector2i(1, height)
-			));
-			past.addGameObject(go);
-		}
-
-		for(int i = 0; i < rows*columns; i++){
-			row = i/columns;
-			col = i%columns;
-			tile = foregroundTiles[row*columns + col];
-
-			if(tile.isEmpty()) continue;
-
-			height = !tile.contains("wall") ? 1 : switch(tile){
-				case "top_left_coin_wall", "top_right_coin_wall" -> 4;
-				case "left_wall", "right_wall" -> {
-					row -= 1;
-					yield 1;
-				}
-				default -> 3;
-			};
-
-			go = new GameObject("FG%d".formatted(i));
-			go.addComponent(new Transform(new Vector2f(col, -row),
-				new Vector2f(1, height)
-			));
-			go.addComponent(new TileRender("past",
-				tile, Layer.FOREGROUND, new Vector2i(1, height)
-			));
-			past.addGameObject(go);
-		}
-
 		// Scene
 		past.addGameObject(camera);
+		past.addGameObject(map);
 		past.addGameObject(player);
 		past.addGameObject(compulsiveMerger);
 		past.addGameObject(rulietta);
@@ -269,16 +197,16 @@ public class TestGame extends Game{
 
 		Input input = new Input();
 		input.addControl(keys[0], (context) -> {
-			physicsBody.applyForce(new Vector2f(0, 10));
+			physicsBody.applyForce(new Vector2f(0, 20));
 		});
 		input.addControl(keys[1], (context) -> {
-			physicsBody.applyForce(new Vector2f(0, -10));
+			physicsBody.applyForce(new Vector2f(0, -20));
 		});
 		input.addControl(keys[2], (context) -> {
-			physicsBody.applyForce(new Vector2f(-10, 0));
+			physicsBody.applyForce(new Vector2f(-20, 0));
 		});
 		input.addControl(keys[3], (context) -> {
-			physicsBody.applyForce(new Vector2f(10, 0));
+			physicsBody.applyForce(new Vector2f(20, 0));
 		});
 		input.addControl(keys[4], (context) -> {});
 
