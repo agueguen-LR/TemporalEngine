@@ -1,9 +1,12 @@
 package games.temporalstudio.timecapsule.Entity;
 
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
+import games.temporalstudio.temporalengine.physics.PhysicsBody;
+import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.timecapsule.objects.Chest;
 import games.temporalstudio.timecapsule.objects.CompleteKey;
@@ -13,7 +16,12 @@ import games.temporalstudio.timecapsule.objects.KeyFragment;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+
+import javax.imageio.plugins.tiff.GeoTIFFTagSet;
 import java.util.ArrayList;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
 public class Player extends Entity {
 
@@ -49,6 +57,16 @@ public class Player extends Entity {
 
     public Input getInput() {return p.getComponent(Input.class);}
     public GameObject getGameObject(){return p;}
+
+
+    public boolean inventoryContain(InventoryObject inventoryObject){
+        return inventory.stream().anyMatch(obj -> obj.getClass().equals(inventoryObject.getClass()));
+    }
+    public InventoryObject getInventoryObject(InventoryObject inventoryObject){
+        return inventory.stream().filter(obj -> obj.getClass().equals(inventoryObject.getClass())).findFirst().orElse(null);
+    }
+
+    public ArrayList<InventoryObject> getInventory(){return inventory;}
 
 	/**
 	 * Adds an object to the player's inventory.
@@ -132,7 +150,7 @@ public class Player extends Entity {
             inventory.removeIf(object -> object.equals(fragment));
 		}
 		fragments.clear();
-		
+
 		if(key == null)
 			Game.LOGGER.severe("Complete key not defined.");
 		else
