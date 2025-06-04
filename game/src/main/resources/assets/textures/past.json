@@ -83,11 +83,13 @@
 	},
 	"end_right": {
 		"position": [2, 1],
-		"scale": [1, 3]
+		"scale": [1, 3],
+		"tiledID": 47
 	},
 	"end_left": {
 		"position": [3, 1],
-		"scale": [1, 3]
+		"scale": [1, 3],
+		"tiledID": 48
 	},
 	"back_wall": {
 		"position": [4, 1],
@@ -157,7 +159,8 @@
 		"position": [14, 1],
 		"scale": [1, 4]
 	},
-	"complete_key_paste": {
+
+	"complete_key_past": {
 		"position": [1, 2],
 		"scale": [1, 1]
 	},
