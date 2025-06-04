@@ -29,8 +29,14 @@ public class CompleteKey implements InventoryObject{
         this.triggerable = new Triggerable((thisKeyFragment) -> {
             Transform chestTrans = chest.getGameObject().getComponent(Transform.class);
             Transform playerTrans = player.getGameObject().getComponent(Transform.class);
-            System.out.println(playerTrans.getPosition().distance(chestTrans.getPosition()));
-            if(playerTrans.getPosition().distance(chestTrans.getPosition()) <= MAX_ACTIVATION_DISTANCE) {
+
+			Vector2f chestRadius = chestTrans.getScale().div(2, new Vector2f());
+			Vector2f playerRadius = playerTrans.getScale().div(2, new Vector2f());
+
+			Vector2f chestCenter = chestTrans.getPosition().add(chestRadius, new Vector2f());
+			Vector2f playerCenter = playerTrans.getPosition().add(playerRadius, new Vector2f());
+
+            if(chestCenter.distance(playerCenter) <= MAX_ACTIVATION_DISTANCE + chestRadius.length() + playerRadius.length()) {
                 chest.open();
                 player.removeFromInventory(this);
             }

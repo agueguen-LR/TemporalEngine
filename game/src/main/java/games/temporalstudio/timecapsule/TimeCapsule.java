@@ -12,6 +12,8 @@ import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.levels.*;
 import org.joml.Vector4f;
 import games.temporalstudio.timecapsule.objects.CapsuleReceiver;
+import games.temporalstudio.timecapsule.objects.Chest;
+import games.temporalstudio.timecapsule.objects.CompleteKey;
 
 import java.util.Map;
 

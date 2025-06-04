@@ -20,6 +20,7 @@ public class Player extends Entity {
     private ArrayList<InventoryObject> inventory = new ArrayList<>();
     private int selectedObject = 0;
 	public ArrayList<KeyFragment> fragments = new ArrayList<KeyFragment>();
+	private CompleteKey key = null;
 
     public Player(int x, int y, int[] keyCodes, Vector4f color) {
         super("player", new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f},  color);
@@ -131,7 +132,14 @@ public class Player extends Entity {
             inventory.removeIf(object -> object.equals(fragment));
 		}
 		fragments.clear();
-		this.addToInventory(new CompleteKey("Key", 100.0f, 100.0f, this.getGameObject(), this, chest));
+		
+		if(key == null)
+			Game.LOGGER.severe("Complete key not defined.");
+		else
+			this.addToInventory(key);
 	}
 
+	public void setKey(CompleteKey key){
+		this.key = key;
+	}
 }
