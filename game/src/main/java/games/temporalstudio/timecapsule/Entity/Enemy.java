@@ -28,7 +28,7 @@ public class Enemy extends Entity{
                 }
         });
         p.addComponent(collider);
-
+        getRender().setTileName("fly");
 
 
         for (int i=0;i<coords.length;i++) {
