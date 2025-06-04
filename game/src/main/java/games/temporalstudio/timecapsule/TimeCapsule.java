@@ -37,16 +37,15 @@ public class TimeCapsule extends Game{
 		futureCamera.addComponent(new View(.1f));
 
 		Player pastPlayer= new Player(1,1,
-				new int[]{GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE},
-				new Vector4f(0,0,1,1));
+			new int[]{GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE, GLFW_KEY_Q, GLFW_KEY_E},
+			new Vector4f(0,0,1,1)
+		);
 		pastCamera.addComponent(new Follow(pastPlayer.getGameObject()));
 
-		Player futurePlayer = new Player(1, 1, new int[]{
-				GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT, GLFW_KEY_ENTER
-		}, new Vector4f(0,0,1,1));
-		futureCamera.addComponent(new Follow(futurePlayer.getGameObject()));
-
-		pastCamera.addComponent(new Follow(pastPlayer.getGameObject()));
+		Player futurePlayer = new Player(1, 1,
+			new int[]{GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT, GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_EQUAL, GLFW_KEY_RIGHT_SHIFT},
+			new Vector4f(0,0,1,1)
+		);
 		futureCamera.addComponent(new Follow(futurePlayer.getGameObject()));
 
 		CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver("zone1_pastCapsuleReceiver", 3.0f, 3.0f);

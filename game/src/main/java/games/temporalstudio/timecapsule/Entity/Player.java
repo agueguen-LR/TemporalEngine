@@ -23,8 +23,8 @@ public class Player extends Entity {
 
     public Player(int x, int y, int[] keyCodes, Vector4f color) {
         super("player", new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f},  color);
-        if (keyCodes.length !=5){
-            throw new IllegalArgumentException("keyCodes.length must be 5");
+        if (keyCodes.length != 7){
+            throw new IllegalArgumentException("keyCodes.length must be 7");
         }
         Input input=new Input();
         this.keyControllDefinition(keyCodes, input);
@@ -112,6 +112,10 @@ public class Player extends Entity {
             this.jump(50);
         });
 
+        input.addControl(keyCodes[5],
+			(context) -> switchSelectedObject(1)
+		);
+        input.addControl(keyCodes[6], (context) -> useSelectedObject());
     }
 
 	public void allFragmentKey(){
@@ -128,7 +132,6 @@ public class Player extends Entity {
 		}
 		fragments.clear();
 		this.addToInventory(new CompleteKey("Key", 100.0f, 100.0f, this.getGameObject(), this, chest));
-		Game.LOGGER.info("Cle reconstitue !!");
 	}
 
 }
