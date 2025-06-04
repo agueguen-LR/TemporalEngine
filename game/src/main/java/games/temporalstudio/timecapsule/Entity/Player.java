@@ -128,7 +128,7 @@ public class Player extends Entity {
 		}
 		fragments.clear();
 		this.addToInventory(new CompleteKey("Key", 100.0f, 100.0f, this.getGameObject(), this, chest));
-		System.out.println("Cle reconstitue !!");
+		Game.LOGGER.info("Cle reconstitue !!");
 	}
 
 }

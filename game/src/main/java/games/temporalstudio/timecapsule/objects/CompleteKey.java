@@ -1,5 +1,6 @@
 package games.temporalstudio.timecapsule.objects;
 
+import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.physics.Collider2D;
@@ -43,7 +44,7 @@ public class CompleteKey implements InventoryObject{
             }
             if (collector == collectableBy) { // Check if the colliding object is the collectableBy object
 // Logic for when the key collides with the player
-                System.out.println("Fragment key collected by player!");
+                Game.LOGGER.info("Fragment key collected by player!");
                 this.completeKey.removeComponent(collider);
                 this.completeKey.removeComponent(render);
                 this.completeKey.removeComponent(transform);

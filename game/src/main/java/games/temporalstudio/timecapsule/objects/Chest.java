@@ -1,5 +1,6 @@
 package games.temporalstudio.timecapsule.objects;
 
+import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.Transform;
@@ -31,7 +32,7 @@ public class Chest implements TimeObject{
     }
 
     public void open(){
-        System.out.println("Le coffre est enfin ouvert");
+        Game.LOGGER.info("Le coffre est enfin ouvert");
     }
 
     public GameObject getGameObject(){

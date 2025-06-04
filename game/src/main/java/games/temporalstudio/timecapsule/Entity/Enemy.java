@@ -1,6 +1,5 @@
 package games.temporalstudio.timecapsule.Entity;
 
-import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Collider2D;
@@ -22,7 +21,6 @@ public class Enemy extends Entity{
         }
         Collider2D collider=new Collider2D((new AABB(transform)));
         collider.setOnIntersects((context, other) -> {
-            System.out.println(other.getClass());
                 if (other instanceof GameObject objet) {
                     if (objet.getName() =="player"){
                     objet.getComponent(Transform.class).setPosition(player_death_position);
