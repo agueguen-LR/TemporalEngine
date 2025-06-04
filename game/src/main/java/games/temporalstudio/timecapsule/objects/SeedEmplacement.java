@@ -1,6 +1,5 @@
 package games.temporalstudio.timecapsule.objects;
 
-import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
@@ -14,7 +13,6 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SeedEmplacement implements TimeObject{
     private GameObject gameObject;
@@ -37,13 +35,12 @@ public class SeedEmplacement implements TimeObject{
 
                         player.removeFromInventory(player.getInventoryObject(Seed.class));
                         Tree pastTree = new Tree(pastScene.getName() + "_tree", x, y);
-                        pastScene.addGameObject(pastTree.getGameObject());
+                        //pastScene.addGameObject(pastTree.getGameObject());
                         Tree futurTree = new Tree(futurScene.getName() + "_tree", x, y);
                         futurScene.addGameObject(futurTree.getGameObject());
                         ArrayList<CardinalDirections> directionsTest = new ArrayList<CardinalDirections>();
                         directionsTest.add(CardinalDirections.NORTH);
-                        directionsTest.add(CardinalDirections.NORTH);
-                        directionsTest.add(CardinalDirections.NORTH);
+
 
                         new Roots("_roots", x, y, directionsTest, futurScene);
 

@@ -5,10 +5,9 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
-import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 class Root implements TimeObject {
     private GameObject gameObject;
@@ -18,10 +17,11 @@ class Root implements TimeObject {
     Root(String name, float oX, float oY, Scene futurScene) {
 
         gameObject = new GameObject(name);
-        Transform transform = new Transform(new Vector2f(oX, oY));
+        Transform transform = new Transform(new Vector2f(oX, oY),new Vector2f(1,3));
 
 
-        Render render = new ColorRender(new Vector4f(0.8f, 0.2f, 0.2f, 1));
+        Render render = new TileRender("past","small_root_bridge");
+        //Render render = new ColorRender(new Vector4f(0.8f, 0.2f, 0.2f, 1));
         Collider2D newColider2d = new Collider2D(new AABB(transform));
         newColider2d.setOnIntersects((objRoot, other) -> {
             if (other instanceof GameObject otherGameObject) {
