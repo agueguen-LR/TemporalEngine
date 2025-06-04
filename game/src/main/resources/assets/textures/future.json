@@ -69,6 +69,10 @@
 		"scale": [1, 1],
 		"tiledID": 13
 	},
+	"little_seed_emplacement": {
+		"position": [14, 0],
+		"scale": [1,1]
+	},
 
 
 	"full_wall1": {
@@ -156,24 +160,20 @@
 		"scale": [2, 3]
 	},
 
-	"complete_key_past": {
-		"position": [1, 2],
+	"key": {
+		"position": [0, 4],
 		"scale": [1, 1]
 	},
-	"key_paste_fragment1": {
-		"position": [2, 2],
+	"key_fragment1": {
+		"position": [0, 4],
 		"scale": [1, 1]
 	},
-	"key_paste_fragment2": {
-		"position": [3, 2],
-		"scale": [1, 1]
-	},
-	"seed": {
-		"position": [4, 2],
+	"key_fragment2": {
+		"position": [1, 4],
 		"scale": [1, 1]
 	},
 	"kiwi": {
-		"position": [5, 2],
+		"position": [2, 4],
 		"scale": [1, 1]
 	},
 	"small_root_bridge": {
@@ -184,8 +184,24 @@
 		"position": [1, 5],
 		"scale": [1, 4]
 	},
+	"bottle": {
+		"position": [2, 5],
+		"scale": [1, 4]
+	},
 	"tree": {
 		"position": [5, 4],
 		"scale": [3, 6]
+	},
+	"chest": {
+		"position": [8, 5],
+		"scale": [2, 2]
+	},
+	"edgar": {
+		"position": [8, 7],
+		"scale": [2, 1]
+	},
+	"big_seed_emplacement": {
+		"position": [10, 5],
+		"scale": [2, 2]
 	}
 }
