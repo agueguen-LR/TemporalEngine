@@ -54,6 +54,16 @@ public class Player extends Entity {
     public Input getInput() {return p.getComponent(Input.class);}
     public GameObject getGameObject(){return p;}
 
+
+    public boolean inventoryContain(InventoryObject inventoryObject){
+        return inventory.stream().anyMatch(obj -> obj.getClass().equals(inventoryObject.getClass()));
+    }
+    public InventoryObject getInventoryObject(InventoryObject inventoryObject){
+        return inventory.stream().filter(obj -> obj.getClass().equals(inventoryObject.getClass())).findFirst().orElse(null);
+    }
+
+    public ArrayList<InventoryObject> getInventory(){return inventory;}
+
     public void addToInventory(InventoryObject object) {
         Game.LOGGER.info("Adding object to inventory: " + object.getGameObject().getName());
         inventory.add(object);
