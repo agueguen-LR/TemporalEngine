@@ -18,7 +18,7 @@ public class Zone1_lvl2 implements TimeLevel{
 	private Scene futurScene;
 	private Set<TimeObject> futurTimeObjects;
 
-	public Zone1_lvl2(GameObject pastCamera, GameObject futurCamera, Game game, Player pastPlayer, Player futurPlayer){
+	public Zone1_lvl2(GameObject pastCamera, GameObject futurCamera, Game game, Player pastPlayer, Player futurPlayer, Medusa pastMedusa, Medusa futureMedusa){
 		this.pastScene = new Scene("Zone1_lvl2_Past");
 		this.pastScene.addGameObject(pastCamera);
 		this.futurScene = new Scene("Zone1_lvl2_Futur");
@@ -32,8 +32,8 @@ public class Zone1_lvl2 implements TimeLevel{
 				new Wall(new Vector2f(1, 5), new Vector2f(6, 6)),
 
 				new Exit(
-						"Zone1_lvl2_Exit", 3.0f, 6.0f, pastPlayer,
-						"Zone2_Past", game::changeLeftScene),
+						"Zone1_lvl2_Exit", 3.0f, 6.0f, pastPlayer,pastMedusa ,
+						"Zone2_Past", game::changeLeftScene, new Vector2f(1.0f, 1.0f)),
 				new Medusa("pastMedusa",
 						new Vector2f(0.5f, 0.5f),
 						new Vector4f(0.25f,0,0.75f,1), pastPlayer),
@@ -50,8 +50,8 @@ public class Zone1_lvl2 implements TimeLevel{
 						futurScene),
 				new Wall(new Vector2f(1, 5), new Vector2f(6, 6)),
 				new Exit(
-						"Zone1_lvl2_Exit", 3.0f, 6.0f, futurPlayer,
-						"Zone2_Futur", game::changeRightScene),
+						"Zone1_lvl2_Exit", 3.0f, 6.0f, futurPlayer, futureMedusa,
+						"Zone2_Futur", game::changeRightScene, new Vector2f(1.0f, 1.0f)),
 				new Medusa("pastMedusa",
 						new Vector2f(0.5f, 0.5f),
 						new Vector4f(0.25f,0,0.75f,1), futurPlayer),

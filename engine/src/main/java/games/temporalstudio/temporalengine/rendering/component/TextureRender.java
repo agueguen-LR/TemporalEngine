@@ -15,6 +15,7 @@ public sealed abstract class TextureRender extends Render
 
 		this.textureName = textureName;
 	}
+
 	// GETTERS
 	public Texture getTexture(){ return Texture.get(textureName); }
 

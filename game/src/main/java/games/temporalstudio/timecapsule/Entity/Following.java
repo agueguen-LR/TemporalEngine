@@ -6,7 +6,7 @@ import games.temporalstudio.temporalengine.component.Component;
 public class Following implements Component{
 
     private Medusa medusa;
-    private Player player;
+    private Player player;;
 
     public Following(Medusa medusa, Player player) {
         this.medusa = medusa;
@@ -14,7 +14,8 @@ public class Following implements Component{
     }
 
     public void XmoveCloser(Player letruc, Medusa medusa, double distance){
-        double dist=medusa.getTransform().getPosition().x - letruc.getTransform().getPosition().x;
+        float centrex = letruc.getTransform().getPosition().x() + 0.5f;
+        double dist=medusa.getTransform().getPosition().x - centrex;
         if (Math.abs(dist) >= distance){
             if (dist < 0) medusa.moveRight(60);
             else medusa.moveLeft(60);
@@ -22,7 +23,8 @@ public class Following implements Component{
     }
 
     public void YmoveCloser(Player letruc,Medusa medusa, double distance){
-        double dist= medusa.getTransform().getPosition().y - letruc.getTransform().getPosition().y;
+        float centrey = letruc.getTransform().getPosition().y() + 1f;
+        double dist= medusa.getTransform().getPosition().y - centrey;
         if (Math.abs(dist) >= distance){
             if (dist < 0) medusa.moveUp(60);
             else medusa.moveDown(60);
