@@ -8,8 +8,10 @@ import games.temporalstudio.temporalengine.component.Follow;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.rendering.component.View;
+import games.temporalstudio.timecapsule.Entity.Medusa;
 import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.levels.*;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 import games.temporalstudio.timecapsule.objects.CapsuleReceiver;
 import games.temporalstudio.timecapsule.objects.Chest;
@@ -20,7 +22,7 @@ import java.util.Map;
 public class TimeCapsule extends Game{
 
 	private static final String IDENTIFIER = "timecapsule";
-	public static final boolean DEBUG_SHOW_WALL_COLLISIONS = true;
+	public static final boolean DEBUG_SHOW_WALL_COLLISIONS = false;
 
 	public TimeCapsule(){
 		super(null, "icon.png");
@@ -50,18 +52,26 @@ public class TimeCapsule extends Game{
 		);
 		futureCamera.addComponent(new Follow(futurePlayer.getGameObject()));
 
+		Medusa pastMedusa = new Medusa("pastMedusa",
+				new Vector2f(0.5f, 0.5f),
+				new Vector4f(0.25f,0,0.75f,1), pastPlayer);
+
+		Medusa futureMedusa = new Medusa("futureMedusa",
+				new Vector2f(0.5f, 0.5f),
+				new Vector4f(0.25f,0,0.75f,1), futurePlayer);
+
 		CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver("zone1_pastCapsuleReceiver", 3.0f, 3.0f);
 
 		Map<String, Level> levels = Map.of(
-				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, zone1_pastCapsuleReceiver),
-				"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
-				"caveCapsulePast", new Zone1_pastCapsule(pastCamera, this, pastPlayer, zone1_pastCapsuleReceiver),
+				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, pastMedusa, futureMedusa, zone1_pastCapsuleReceiver),
+				"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer, pastMedusa, futureMedusa),
+				"cave3", new Zone1_lvl3(pastCamera, futureCamera, this, pastPlayer,futurePlayer, pastMedusa, futureMedusa),
 				"factory", new Zone2(pastCamera, futureCamera),
 				"boat", new Zone3(pastCamera, futureCamera),
 				"finale", new Zone4(pastCamera, futureCamera)
 		);
 
-		zone1_pastCapsuleReceiver.setScene(((SingleLevel)levels.get("caveCapsulePast")).getScene());
+		System.out.println(levels);
 
 		setFirstLeftScene(createPastScenes(levels));
 		setFirstRightScene(createFutureScenes(levels));
@@ -75,13 +85,13 @@ public class TimeCapsule extends Game{
 
 		Scene cave1 = ((TimeLevel)levels.get("cave1")).getPastScene();
 		Scene cave2 = ((TimeLevel)levels.get("cave2")).getPastScene();
-		Scene caveCapsulePast = ((SingleLevel)levels.get("caveCapsulePast")).getScene();
+		Scene cave3 = ((TimeLevel)levels.get("cave3")).getPastScene();
 		Scene factory = ((TimeLevel)levels.get("factory")).getPastScene();
 		Scene boat = ((TimeLevel)levels.get("boat")).getPastScene();
 		Scene finale = ((TimeLevel)levels.get("finale")).getPastScene();
 
 		cave1.addChild(cave2);
-		cave1.addChild(caveCapsulePast);
+		cave1.addChild(cave3);
 		cave2.addChild(factory);
 		factory.addChild(boat);
 		boat.addChild(finale);
@@ -93,11 +103,13 @@ public class TimeCapsule extends Game{
 
 		Scene cave1 = ((TimeLevel)levels.get("cave1")).getFuturScene();
 		Scene cave2 = ((TimeLevel)levels.get("cave2")).getFuturScene();
+		Scene cave3 = ((TimeLevel)levels.get("cave3")).getFuturScene();
 		Scene factory = ((TimeLevel)levels.get("factory")).getFuturScene();
 		Scene boat = ((TimeLevel)levels.get("boat")).getFuturScene();
 		Scene finale = ((TimeLevel)levels.get("finale")).getFuturScene();
 
 		cave1.addChild(cave2);
+		cave1.addChild(cave3);
 		cave2.addChild(factory);
 		factory.addChild(boat);
 		boat.addChild(finale);

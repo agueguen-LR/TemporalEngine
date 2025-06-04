@@ -7,6 +7,7 @@ import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.timecapsule.Entity.Player;
 
 import org.joml.Vector2f;
@@ -16,12 +17,12 @@ public class KeyFragment extends Key implements InventoryObject{
     private final GameObject keyfragment;
     private Triggerable triggerable;
 
-    public KeyFragment(String name, float x, float y, GameObject collectableBy, Player player, Chest chest){
+    public KeyFragment(String name, float x, float y, GameObject collectableBy, Player player, Chest chest, int numFragment){
         this.keyfragment = new GameObject(name); // Create a new GameObject for the fragment
         Transform transform = new Transform(new Vector2f(x, y)); // Set the position of the fragment
         AABB shape = new AABB(transform); // Create a component shape for the fragment
         Collider2D collider = new Collider2D(shape); // Create a collider for the fragment
-        Render render = new ColorRender(new Vector4f(0, 1, 0, 1)); // Create a render component for the fragment
+        Render render = new TileRender("past", "key_fragment" + numFragment); // Create a render component for the fragment
         this.triggerable = new Triggerable((thisKeyFragment) -> {
             player.removeFromInventory(this);
         });

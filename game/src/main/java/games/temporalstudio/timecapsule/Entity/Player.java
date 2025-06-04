@@ -98,16 +98,16 @@ public class Player extends Entity {
 
     public void keyControllDefinition(int[] keyCodes, Input input) {
         input.addControl(keyCodes[0], (context) -> {
-            this.moveUp(50);
+            this.moveUp(50); //50
         });
         input.addControl(keyCodes[1], (context) -> {
-            this.moveLeft(50);
+            this.moveLeft(50); //50
         });
         input.addControl(keyCodes[2], (context) -> {
-            this.moveDown(50);
+            this.moveDown(50); //50
         });
         input.addControl(keyCodes[3], (context) -> {
-            this.moveRight(50);
+            this.moveRight(50); //50
         });
         input.addControl(keyCodes[4], (context) -> {
             this.useSelectedObject();

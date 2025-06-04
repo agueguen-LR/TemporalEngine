@@ -20,7 +20,7 @@ public class Zone1_lvl1 implements TimeLevel{
 
 	public Zone1_lvl1(
 			GameObject pastCamera, GameObject futurCamera,
-			Game game, Player pastPlayer, Player futurPlayer,
+			Game game, Player pastPlayer, Player futurPlayer, Medusa pastMedusa, Medusa futurMedusa,
 			CapsuleReceiver zone1_pastCapsuleReceiver
 	) {
 		this.pastScene = new Scene("Zone1_lvl1_Past");
@@ -37,12 +37,12 @@ public class Zone1_lvl1 implements TimeLevel{
 						pastScene),
 				new Wall(new Vector2f(1, 5), new Vector2f(3, 8)),
 				new Exit(
-						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer,
-						"Zone1_pastCapsule", game::changeLeftScene
+						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer,pastMedusa ,
+						"Zone1_pastCapsule", game::changeLeftScene, new Vector2f(7.0f, 28.0f)
 				),
 				new Exit(
-						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer,
-						"Zone1_lvl2_Past", game::changeLeftScene
+						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer, pastMedusa,
+						"Zone1_lvl2_Past", game::changeLeftScene, new Vector2f(1.0f, 1.0f)
 				),
 				new Pickupable("Bottle", 5.0f, 5.0f, pastPlayer, throwableBottle),
 				throwableBottle,
@@ -68,8 +68,8 @@ public class Zone1_lvl1 implements TimeLevel{
 						futurScene),
 				new Wall(new Vector2f(1, 5), new Vector2f(5, 8)),
 				new Exit(
-						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer,
-						"Zone1_lvl2_Futur", game::changeRightScene
+						"Zone1_lvl1_Exit", 3.0f, 4.0f, futurPlayer,futurMedusa ,
+						"Zone1_lvl2_Futur", game::changeRightScene, new Vector2f(1.0f, 1.0f)
 				),
 				new Medusa("pastMedusa",
 						new Vector2f(0.5f, 0.5f),

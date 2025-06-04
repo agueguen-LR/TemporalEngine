@@ -4,6 +4,7 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
+import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.timecapsule.TimeCapsule;
@@ -24,7 +25,7 @@ public class Wall implements TimeObject{
 		this.gameObject = new GameObject("Wall" + minPosition + maxPosition);
 		Transform transform = new Transform(minPosition, new Vector2f(maxPosition).sub(minPosition));
 		if (TimeCapsule.DEBUG_SHOW_WALL_COLLISIONS) {
-			Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1));
+			Render render = new ColorRender(new Vector4f(0.5f, 0.5f, 0.5f, 1), Layer.EFFECT);
 			this.gameObject.addComponent(render);
 		}
 
