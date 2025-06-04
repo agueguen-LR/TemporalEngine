@@ -5,7 +5,7 @@ import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.texture.Texture;
 
 public sealed abstract class TextureRender extends Render
-	permits TileRender
+	permits TileRender, MapRender
 {
 
 	private String textureName;
