@@ -30,6 +30,6 @@ public final class TileRender extends TextureRender{
 	public Tile getTile(){
 		Tile t = getTexture().getTile(tileName);
 		return viewportScale != null ?
-			new Tile(t.position(), viewportScale) : t;
+			new Tile(t.position(), viewportScale, t.tiledID()) : t;
 	}
 }
