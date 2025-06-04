@@ -10,11 +10,15 @@ import org.joml.Vector2f;
 import java.util.ArrayList;
 import java.util.Set;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 public class Zone1_pastCapsule implements SingleLevel{
 	private Scene scene;
 	private Set<TimeObject> timeObjects;
 
-	public Zone1_pastCapsule(GameObject pastCamera, Game game, Player pastPlayer, CapsuleReceiver zone1_pastCapsuleReceiver) {
+	public Zone1_pastCapsule(
+			GameObject pastCamera, Game game, Player pastPlayer, CapsuleReceiver zone1_pastCapsuleReceiver, Scene zone1Futur
+	) {
 		this.scene = new Scene("Zone1_pastCapsule");
 		this.scene.addGameObject(pastCamera);
 
