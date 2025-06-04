@@ -24,6 +24,7 @@ import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.json.JsonParser;
 
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.utils.AssetPool;
 import games.temporalstudio.temporalengine.utils.AssetPoolObject;
 import games.temporalstudio.temporalengine.utils.NIOUtils;
@@ -35,7 +36,7 @@ public class Texture implements AssetPoolObject{
 
 	private static final String TEXTURES_FOLDER = "assets/textures";
 	private static final String IMAGE_FILE_FORMAT = "%s.png";
-	private static final String TILESET_FILE_FORMAT = "%s.json";
+	private static final String METADATA_FILE_FORMAT = "%s.json";
 	private static final String DEFAULT_TEXTURE_NAME = "default";
 
 	private String name;
@@ -45,7 +46,7 @@ public class Texture implements AssetPoolObject{
 	private int id;
 	private boolean loaded = false;
 
-	private Texture(String name){
+	protected Texture(String name){
 		this.name = name;
 		this.id = glGenTextures();
 
@@ -70,8 +71,8 @@ public class Texture implements AssetPoolObject{
     private static Path getImagePath(String name){
         return Path.of(TEXTURES_FOLDER, IMAGE_FILE_FORMAT.formatted(name));
     }
-    private static Path getTilesetPath(String name){
-        return Path.of(TEXTURES_FOLDER, TILESET_FILE_FORMAT.formatted(name));
+    private static Path getMetadataPath(String name){
+        return Path.of(TEXTURES_FOLDER, METADATA_FILE_FORMAT.formatted(name));
     }
 
 	public Vector2i getSize(){ return new Vector2i(size); }
@@ -87,12 +88,12 @@ public class Texture implements AssetPoolObject{
 			.map(Entry::getValue)
 			.findFirst().orElse(null);
 	}
-	public List<Vector2f> getCoords(Tile tile){
+	public List<Vector2f> getCoords(Tile tile, int state){
 		Vector2f offset = new Vector2f(
 			1f/(size.x()/TILE_SIZE), 1f/(size.y()/TILE_SIZE)
 		);
 
-		Vector2f positionf = new Vector2f(tile.position());
+		Vector2f positionf = new Vector2f(tile.position(state));
 		Vector2f scalef = new Vector2f(tile.scale());
 
 		return List.of(
@@ -101,6 +102,9 @@ public class Texture implements AssetPoolObject{
 			new Vector2f(1, 1).mul(scalef).add(positionf).mul(offset),
 			new Vector2f(0, 1).mul(scalef).add(positionf).mul(offset)
 		);
+	}
+	public List<Vector2f> getCoords(Tile tile){
+		return getCoords(tile, TileRender.DEFAULT_STATE);
 	}
 	public boolean wasLoaded(){ return loaded; }
 
@@ -155,10 +159,10 @@ public class Texture implements AssetPoolObject{
 
 		stbi_image_free(pixels);
 	}
-	private void loadTileset(){
+	protected void loadMetadata(){
 		Optional<InputStream> opIs = Optional.ofNullable(
 			ClassLoader.getSystemResourceAsStream(
-				Texture.getTilesetPath(name).toString()
+				Texture.getMetadataPath(name).toString()
 			)
 		);
         if(opIs.isEmpty()) return;
@@ -166,15 +170,17 @@ public class Texture implements AssetPoolObject{
 		try(InputStream is = opIs.get()){
 			Config c = new JsonParser().parse(is, Charsets.UTF_8);
 
-			c.entrySet().forEach(entry -> {
-				if(!(entry.getValue() instanceof Config tc))
-					throw new IllegalArgumentException(
-						"Tileset entry %s isn't an object;"
-							.formatted(entry.getKey())
-					);
+			c.entrySet().stream()
+				.map(e -> {
+					if(!(e.getValue() instanceof Config tc))
+						throw new IllegalArgumentException(
+							"Tileset entry %s isn't an object;"
+								.formatted(e.getKey())
+						);
 
-				tiles.put(entry.getKey(), Tile.fromConfig(tc));
-			});
+					return Map.entry(e.getKey(), Tile.fromConfig(tc));
+				})
+				.forEach(e -> tiles.put(e.getKey(), e.getValue()));
 		}catch(IOException e){
 			throw new UncheckedIOException(
 				"Failed to load and parse tileset;", e
@@ -183,7 +189,7 @@ public class Texture implements AssetPoolObject{
 	}
 	public void load(){
 		loadImage();
-		loadTileset();
+		loadMetadata();
 
 		loaded = true;
     }
@@ -197,31 +203,57 @@ public class Texture implements AssetPoolObject{
 	}
 
 	// INNER CLASSES
-	public static record Tile(Vector2i position, Vector2i scale, int tiledID){
+	public static record Tile(
+		List<Vector2i> positions,
+		Vector2i scale,
+		int tiledID
+	){
 
 		private static final String POSITION_CONFIG_FIELD = "position";
+		private static final String POSITIONS_CONFIG_FIELD = "positions";
 		private static final String SCALE_CONFIG_FIELD = "scale";
 		private static final String TILEDID_CONFIG_FIELD = "tiledID";
 
+		// GETTERS
+		public Vector2i position(int state){
+			return positions.get(state);
+		}
+
 		// FUNCTIONS
 		public static Tile fromConfig(Config config){
-			List<Integer> rawPos, rawScale;
+			List<Integer> rawPosition;
+			List<List<Integer>> rawPositions;
+			List<Integer> rawScale;
 			int rawTiledID = -1;
 
-			if(!config.contains(POSITION_CONFIG_FIELD)
+			if(
+				(
+					!config.contains(POSITION_CONFIG_FIELD)
+					&& !config.contains(POSITIONS_CONFIG_FIELD)
+				)
 				|| !config.contains(SCALE_CONFIG_FIELD)
 			)
 				throw new IllegalArgumentException(
 					"Missing tile properties in config;"
 				);
 
-			rawPos = config.get(POSITION_CONFIG_FIELD);
+			if(config.contains(POSITION_CONFIG_FIELD)){
+				rawPosition = config.get(POSITION_CONFIG_FIELD);
+				rawPositions = List.of(rawPosition);
+			}else
+				rawPositions = config.get(POSITIONS_CONFIG_FIELD);
+
 			rawScale = config.get(SCALE_CONFIG_FIELD);
+
 			if(config.contains(TILEDID_CONFIG_FIELD))
 				rawTiledID = config.get(TILEDID_CONFIG_FIELD);
 
 			return new Tile(
-				new Vector2i(rawPos.get(0), rawPos.get(1)),
+				rawPositions.stream()
+					.map(pos -> new Vector2i(
+						pos.get(0), pos.get(1)
+					))
+					.toList(),
 				new Vector2i(rawScale.get(0), rawScale.get(1)),
 				rawTiledID
 			);
