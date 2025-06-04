@@ -93,7 +93,9 @@ public class TileMap implements AssetPoolObject{
 		// GETTERS
 		@Override
 		public String getCanonicalPath(String path){
-			return path.startsWith(MAPS_FOLDER) ? path
+			Path p = Path.of(path);
+
+			return p.startsWith(MAPS_FOLDER) ? path
 				: Path.of(MAPS_FOLDER, path).toString();
 		}
 		@Override
