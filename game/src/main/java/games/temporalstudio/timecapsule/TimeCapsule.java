@@ -55,7 +55,7 @@ public class TimeCapsule extends Game{
 		Map<String, Level> levels = Map.of(
 				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, zone1_pastCapsuleReceiver),
 				"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer),
-				"caveCapsulePast", new Zone1_pastCapsule(pastCamera, this, pastPlayer, zone1_pastCapsuleReceiver),
+				"caveCapsulePast", new Zone1_lvl3(pastCamera, this, pastPlayer, zone1_pastCapsuleReceiver),
 				"factory", new Zone2(pastCamera, futureCamera),
 				"boat", new Zone3(pastCamera, futureCamera),
 				"finale", new Zone4(pastCamera, futureCamera)

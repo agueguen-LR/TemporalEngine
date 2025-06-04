@@ -3,6 +3,7 @@ package games.temporalstudio.timecapsule.levels;
 import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.temporalengine.rendering.component.MapRender;
 import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.objects.*;
 import org.joml.Vector2f;
@@ -10,22 +11,23 @@ import org.joml.Vector2f;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class Zone1_pastCapsule implements SingleLevel{
+public class Zone1_lvl3 implements SingleLevel{
 	private Scene scene;
 	private Set<TimeObject> timeObjects;
 
-	public Zone1_pastCapsule(GameObject pastCamera, Game game, Player pastPlayer, CapsuleReceiver zone1_pastCapsuleReceiver) {
+	public Zone1_lvl3(GameObject pastCamera, Game game, Player pastPlayer, CapsuleReceiver zone1_pastCapsuleReceiver) {
 		this.scene = new Scene("Zone1_pastCapsule");
 		this.scene.addGameObject(pastCamera);
 
+		GameObject map = new GameObject("map");
+		map.addComponent(new MapRender("past", "zone1_lvl3"));
+		scene.addGameObject(map);
 
 		Chest coffre = new Chest("coffre", 1.0f, 2.0f, pastPlayer);
 		CompleteKey key = new CompleteKey("Key", 100.0f, 100.0f, pastPlayer.getGameObject(), pastPlayer, coffre);
-
 		pastPlayer.setKey(key);
 
 		timeObjects = Set.of(
-				new Wall(new Vector2f(1, 5), new Vector2f(3, 8)),
 				new Exit(
 						"Zone1_pastCapsule_Exit", 1.0f, 1.0f, pastPlayer,
 						"Zone1_lvl1_Past", game::changeLeftScene
