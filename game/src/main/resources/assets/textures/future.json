@@ -143,21 +143,17 @@
 		"scale": [1, 3],
 		"tiledID": 55
 	},
-	"wall_junction_right": {
+	"left_door": {
 		"position": [11, 1],
-		"scale": [1, 3]
-	},
-	"wall_junction_left": {
-		"position": [12, 1],
-		"scale": [1, 3]
-	},
-	"wall_junction_top": {
-		"position": [13, 1],
-		"scale": [1, 3]
-	},
-	"wall_junction_bottom": {
-		"position": [14, 1],
 		"scale": [1, 4]
+	},
+	"right_door": {
+		"position": [12, 1],
+		"scale": [1, 4]
+	},
+	"face_door": {
+		"position": [13, 1],
+		"scale": [2, 3]
 	},
 
 	"complete_key_past": {
