@@ -46,6 +46,7 @@ public non-sealed class TileRender extends TextureRender{
 	}
 
 	// GETTERS
+	public String getTileName(){ return tileName; }
 	public Tile getTile(){
 		Tile t = getTexture().getTile(tileName);
 		return viewportScale != null ?

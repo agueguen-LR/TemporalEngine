@@ -190,8 +190,8 @@ public class TestGame extends Game{
 	private GameObject createPlayer(int[] keys){
 		GameObject player = new GameObject("player");
 
-		Render render = new SpriteRender(
-			"merlin", "face_walk"
+		SpriteRender render = new SpriteRender(
+			"jeanne", "face_walk"
 		);
 		Transform transform = new Transform(
 			new Vector2f(1, 4.25f), new Vector2f(1, 2)
@@ -216,6 +216,23 @@ public class TestGame extends Game{
 			physicsBody.applyForce(new Vector2f(20, 0));
 		});
 		input.addControl(keys[4], (context) -> {});
+
+		render.setAnimChooser(context -> {
+			Vector2f vel = physicsBody.getVelocity();
+			float angle = vel.angle(new Vector2f(1, 0));
+			String tileName;
+
+			if(angle > Math.PI/4*3 || angle < -Math.PI/4*3)
+				tileName = "left_walk";
+			else if(angle < Math.PI/4*3 && angle > Math.PI/4)
+				tileName = "face_walk";
+			else if(angle > -Math.PI/4*3 && angle < -Math.PI/4)
+				tileName = "back_walk";
+			else
+				tileName = "right_walk";
+
+			return tileName;
+		});
 
 		player.addComponent(transform);
 		player.addComponent(render);
