@@ -7,7 +7,7 @@ import games.temporalstudio.temporalengine.rendering.Layer;
 
 public class SpriteRender extends TileRender{
 
-	public static final float ANIMATION_DURATION = 1.25f;
+	public static final float ANIMATION_DURATION = 0.8f;
 
 	private float animatingTime = 0;
 
