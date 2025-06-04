@@ -12,27 +12,31 @@ import games.temporalstudio.timecapsule.Entity.Player;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
+
 public class Chest implements TimeObject{
     private GameObject chest;
-    private InventoryObject inventory;
+    private ArrayList<InventoryObject> inventory;
     private boolean open;
+    private Player player;
 
     public Chest(String name, float x, float y, Player player){
         open = false;
-        this.chest = new GameObject(name); // Create a new GameObject for the key
-        Transform transform = new Transform(new Vector2f(x, y)); // Set the position of the key
-        AABB shape = new AABB(transform); // Create a component shape for the key
-        Collider2D collider = new Collider2D(shape); // Create a collider for the key
-        Render render = new ColorRender(new Vector4f(1, 1, 1, 1)); // Create a render component for the key
+        this.player = player;
+        this.chest = new GameObject(name); // Create a new GameObject for the chest
+        Transform transform = new Transform(new Vector2f(x, y)); // Set the position of the chest
+        AABB shape = new AABB(transform); // Create a component shape for the chest
+        Collider2D collider = new Collider2D(shape); // Create a collider for the chest
+        Render render = new ColorRender(new Vector4f(1, 1, 1, 1)); // Create a render component for the chest
         collider.setRigid(true);
 
-        this.chest.addComponent(transform); // Add the Transform component to the key
-        this.chest.addComponent(collider); // Add the Collider2D component to the key
-        this.chest.addComponent(render); // Add the Render component to the key
+        this.chest.addComponent(transform); // Add the Transform component to the chest
+        this.chest.addComponent(collider); // Add the Collider2D component to the chest
+        this.chest.addComponent(render); // Add the Render component to the chest
     }
 
     public void open(){
-        Game.LOGGER.info("Le coffre est enfin ouvert");
+        Game.LOGGER.info("Le coffre est enfin ouvert !! ");
     }
 
     public GameObject getGameObject(){

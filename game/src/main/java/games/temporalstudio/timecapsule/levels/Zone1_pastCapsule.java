@@ -7,6 +7,7 @@ import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.objects.*;
 import org.joml.Vector2f;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class Zone1_pastCapsule implements SingleLevel{
@@ -16,6 +17,7 @@ public class Zone1_pastCapsule implements SingleLevel{
 	public Zone1_pastCapsule(GameObject pastCamera, Game game, Player pastPlayer, CapsuleReceiver zone1_pastCapsuleReceiver) {
 		this.scene = new Scene("Zone1_pastCapsule");
 		this.scene.addGameObject(pastCamera);
+
 
 		Chest coffre = new Chest("coffre", 1.0f, 2.0f, pastPlayer);
 		CompleteKey key = new CompleteKey("Key", 100.0f, 100.0f, pastPlayer.getGameObject(), pastPlayer, coffre);
