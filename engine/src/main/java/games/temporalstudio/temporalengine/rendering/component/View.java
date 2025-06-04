@@ -47,8 +47,7 @@ public class View implements Component{
 	public Matrix4f getView(int width, int height){
 		Vector2f pos = new Vector2f(eyePos)
 			.add(new Vector2f(.5f))
-			.sub(.5f/zoom, .5f/zoom)
-			.mul(((float) width)/height, 1);
+			.sub(.5f/zoom*((float) width)/height, .5f/zoom);
 
 		return new Matrix4f().lookAt(
 			new Vector3f(pos, distance),
