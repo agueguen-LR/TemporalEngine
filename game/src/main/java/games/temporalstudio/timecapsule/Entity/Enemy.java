@@ -47,7 +47,6 @@ public class Enemy extends Entity{
                 {
                     if (other instanceof GameObject objet ) {
                         if (objet.getName() =="dracula") {
-                            Game.LOGGER.info("Enemy change direction");
                             float XDistance = coords[nextIndex].x - coords[ii].x;
                             float YDistance = coords[nextIndex].y - coords[ii].y;
                             Vector2f vitesse = this.physicsBody.getVelocity();
@@ -55,7 +54,6 @@ public class Enemy extends Entity{
                             this.physicsBody.applyForce(XDistance * 2, YDistance * 2);
                         }
                     }/*
-                    Game.LOGGER.info("Enemy change direction");
                     float XDistance = coords[nextIndex].x - coords[ii].x;
                     float YDistance = coords[nextIndex].y - coords[ii].y;
                     Vector2f vitesse= this.physicsBody.getVelocity();
