@@ -7,6 +7,9 @@ import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.Follow;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
+import games.temporalstudio.temporalengine.rendering.Layer;
+import games.temporalstudio.temporalengine.rendering.component.SpriteRender;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 import games.temporalstudio.timecapsule.Entity.Medusa;
 import games.temporalstudio.timecapsule.Entity.Player;
@@ -42,13 +45,15 @@ public class TimeCapsule extends Game{
 
 		Player pastPlayer= new Player(1,1,
 			new int[]{GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE, GLFW_KEY_Q, GLFW_KEY_E},
-			new Vector4f(0,0,1,1)
+			new Vector4f(0,0,1,1), "jeanne"
 		);
+
+
 		pastCamera.addComponent(new Follow(pastPlayer.getGameObject()));
 
 		Player futurePlayer = new Player(1, 1,
 			new int[]{GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT, GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_EQUAL, GLFW_KEY_RIGHT_SHIFT},
-			new Vector4f(0,0,1,1)
+			new Vector4f(0,0,1,1), "merlin"
 		);
 		futureCamera.addComponent(new Follow(futurePlayer.getGameObject()));
 
@@ -70,8 +75,6 @@ public class TimeCapsule extends Game{
 				"boat", new Zone3(pastCamera, futureCamera),
 				"finale", new Zone4(pastCamera, futureCamera)
 		);
-
-		System.out.println(levels);
 
 		setFirstLeftScene(createPastScenes(levels));
 		setFirstRightScene(createFutureScenes(levels));

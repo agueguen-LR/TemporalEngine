@@ -16,7 +16,7 @@ public class Medusa extends Entity{
 
     public Medusa(String name, Vector2f scale, Vector4f color, Player player) {
         super(name,new Vector2f(player.getTransform().getPosition().x-1, player.getTransform().getPosition().y),
-                scale, new float[]{1, 10, 0.1f, 100f} ,color);
+                scale, new float[]{1, 10, 0.1f, 100f} ,color, "meduse");
         Collider2D collider=new Collider2D((new AABB(transform)));
         this.player=player;
         p.addComponent(collider);
@@ -26,7 +26,7 @@ public class Medusa extends Entity{
     }
 
     public Medusa(String name, Vector2f position, Vector2f scale, Vector4f color, Player player) {
-        super(name,position, scale, new float[]{1, 10, 0.1f, 10f} ,color);
+        super(name,position, scale, new float[]{1, 10, 0.1f, 10f} ,color, "meduse");
         Collider2D collider=new Collider2D((new AABB(transform)));
         this.player=player;
         p.addComponent(collider);
