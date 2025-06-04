@@ -15,7 +15,7 @@ public class Enemy extends Entity{
 
     public Enemy(Vector4f color, Vector2f player_death_position, Vector2f[] coords, Scene scene) {
         super("dracula", new Vector2f(coords[0].x, coords[0].y), new Vector2f(1,1),
-                new float[]{ 0.1f, 10, 0.1f, 0}, color );
+                new float[]{ 0.1f, 10, 0.1f, 0}, color , "bat");
         if(coords.length == 1){
             throw new IllegalArgumentException("Not enough coordinate points");
         }
@@ -28,7 +28,7 @@ public class Enemy extends Entity{
                 }
         });
         p.addComponent(collider);
-
+        getRender().setTileName("fly");
 
 
         for (int i=0;i<coords.length;i++) {

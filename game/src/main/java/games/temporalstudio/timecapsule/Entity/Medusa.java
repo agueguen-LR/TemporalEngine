@@ -16,20 +16,27 @@ public class Medusa extends Entity{
 
     public Medusa(String name, Vector2f scale, Vector4f color, Player player) {
         super(name,new Vector2f(player.getTransform().getPosition().x-1, player.getTransform().getPosition().y),
-                scale, new float[]{1, 10, 0.1f, 100f} ,color);
+                scale, new float[]{1, 10, 0.1f, 100f} ,color, "meduse");
         Collider2D collider=new Collider2D((new AABB(transform)));
         this.player=player;
         p.addComponent(collider);
 
-        following=new Following(this,player);
-        p.addComponent(following);
-    }
+        getRender().setAnimChooser(context -> {
+            Vector2f vel = physicsBody.getVelocity();
+            float angle = vel.angle(new Vector2f(1, 0));
+            String tileName;
 
-    public Medusa(String name, Vector2f position, Vector2f scale, Vector4f color, Player player) {
-        super(name,position, scale, new float[]{1, 10, 0.1f, 10f} ,color);
-        Collider2D collider=new Collider2D((new AABB(transform)));
-        this.player=player;
-        p.addComponent(collider);
+            if(angle > Math.PI/4*3 || angle < -Math.PI/4*3)
+                tileName = "left_walk";
+            else if(angle < Math.PI/4*3 && angle > Math.PI/4)
+                tileName = "face_walk";
+            else if(angle > -Math.PI/4*3 && angle < -Math.PI/4)
+                tileName = "back_walk";
+            else
+                tileName = "right_walk";
+
+            return tileName;
+        });
 
         following=new Following(this,player);
         p.addComponent(following);
