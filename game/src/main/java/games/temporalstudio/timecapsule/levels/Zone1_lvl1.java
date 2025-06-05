@@ -101,9 +101,9 @@ public class Zone1_lvl1 implements TimeLevel{
 			new Exit(
 				"exit_zone1_lvl1_lvl3", 8, 30,
 				pastPlayer, pastMedusa,
-				"zone1_lvl3",
+				"zone1_lvl3_past",
 				game::changeLeftScene,
-				new Vector2f(1, 1)
+				new Vector2f(7, 28)
 			),
 			new Exit(
 				"exit_zone1_lvl1_lvl2", 31, 16,
@@ -148,9 +148,9 @@ public class Zone1_lvl1 implements TimeLevel{
 			new Exit(
 				"exit_zone1_lvl1_lvl3", 8, 30,
 				futurPlayer, futurMedusa,
-				"zone1_lvl3",
+				"zone1_lvl3_futur",
 				game::changeRightScene,
-				new Vector2f(1.0f, 1.0f)
+				new Vector2f(7, 28)
 			),
 			new Medusa("pastMedusa",
 				new Vector2f(0.5f, 0.5f),

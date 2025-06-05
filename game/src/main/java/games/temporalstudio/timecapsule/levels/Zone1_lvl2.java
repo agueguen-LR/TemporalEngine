@@ -20,7 +20,7 @@ public class Zone1_lvl2 implements TimeLevel{
 		Player pastPlayer, Medusa pastMedusa,
 		CapsuleReceiver zone1_pastCapsuleReceiver
 	){
-		this.pastScene = new Scene("zone1_lvl2_past");
+		this.pastScene = new Scene("zone1_lvl2");
 
 		// Game Objects
 		GameObject map = new GameObject("map_zone1_lvl2_past");
@@ -52,7 +52,7 @@ public class Zone1_lvl2 implements TimeLevel{
 
 		// Adds game objects
 		this.pastScene.addGameObject(pastCamera);
-		this.pastScene.addGameObject(map);
+		//this.pastScene.addGameObject(map);
 		this.pastTimeObjects.forEach((timeObject) -> this.pastScene.addGameObject(timeObject.getGameObject()));
 	}
 

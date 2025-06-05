@@ -7,11 +7,10 @@ import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
-import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.timecapsule.Entity.Player;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 public class ThrowableBottle implements InventoryObject {
 	private final GameObject gameObject;
@@ -27,7 +26,7 @@ public class ThrowableBottle implements InventoryObject {
 			Game.LOGGER.info("Throwing bottle: " + bottleObject.getName());
 			player.removeFromInventory(this);
 			Transform transform = new Transform(new Vector2f(player.getGameObject().getComponent(Transform.class).getPosition()));
-			Render render = new ColorRender(new Vector4f(0, 1, 0, 1));
+			Render render = new TileRender("future", "bottle");
 			Collider2D collider = new Collider2D(new AABB(transform));
 			PhysicsBody physicsBody = new PhysicsBody(1, 50, .1f, 2f);
 			bottleObject.addComponent(transform);

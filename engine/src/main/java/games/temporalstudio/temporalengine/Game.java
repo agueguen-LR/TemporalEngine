@@ -157,10 +157,10 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 			this.leftScene = parentScene;
 		}
 
-		renderer.refresh();
-
 		this.leftScene.init(this);
 		this.leftScene.start(this);
+
+		renderer.refresh();
 	}
 
 	public void changeRightScene(String name){
@@ -179,10 +179,10 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 			this.rightScene = parentScene;
 		}
 
-		renderer.refresh();
-
 		this.rightScene.init(this);
 		this.rightScene.start(this);
+
+		renderer.refresh();
 	}
 
 	protected void setMainMenu(Scene mainMenu) {
