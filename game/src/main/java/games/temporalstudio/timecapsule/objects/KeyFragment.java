@@ -5,13 +5,11 @@ import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
-import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.timecapsule.Entity.Player;
 
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 public class KeyFragment extends Key implements InventoryObject{
     private final GameObject keyfragment;

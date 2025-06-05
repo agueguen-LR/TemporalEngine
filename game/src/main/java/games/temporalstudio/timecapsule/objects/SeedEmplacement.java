@@ -6,12 +6,11 @@ import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
-import games.temporalstudio.temporalengine.rendering.component.ColorRender;
 import games.temporalstudio.temporalengine.rendering.component.Render;
 import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.timecapsule.Entity.Player;
+
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.util.ArrayList;
 
@@ -37,7 +36,6 @@ public class SeedEmplacement implements TimeObject{
 
 
                         player.removeFromInventory(player.getInventoryObject(Seed.class));
-                        Tree pastTree = new Tree(pastScene.getName() + "_tree", x, y);
                         //pastScene.addGameObject(pastTree.getGameObject());
                         Tree futurTree = new Tree(futurScene.getName() + "_tree", x, y);
                         futurScene.addGameObject(futurTree.getGameObject());

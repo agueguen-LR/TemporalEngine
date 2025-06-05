@@ -54,7 +54,7 @@ public class Triggerable implements Component {
 	 * @param context The context in which the trigger occurs (should be a GameObject).
 	 */
 	public void trigger(LifeCycleContext context) {
-		if (!(context instanceof GameObject object)) {
+		if (!(context instanceof GameObject)) {
 			Game.LOGGER.warning("Trigger can only be used with GameObject context.");
 			return;
 		}
@@ -78,7 +78,7 @@ public class Triggerable implements Component {
 				this.triggered = false; // Reset triggered state after cooldown
 			}
 		} else if (triggered) {
-			if (!(context instanceof GameObject object)) {
+			if (!(context instanceof GameObject)) {
 				Game.LOGGER.severe("Triggerable can only be used with GameObject context.");
 				return;
 			}

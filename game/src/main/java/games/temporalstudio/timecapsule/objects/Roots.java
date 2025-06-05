@@ -1,13 +1,12 @@
 package games.temporalstudio.timecapsule.objects;
 
 import games.temporalstudio.temporalengine.Scene;
-import games.temporalstudio.temporalengine.component.GameObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Roots {
-    private GameObject gameObject;
+
     private ArrayList<Root> roots;
 //boolean north 0 , boolean south 1 , boolean west 2, boolean east 3
     public Roots(String name, float oX, float oY, List<CardinalDirections> directions, Scene futurScene) {

@@ -2,7 +2,6 @@ package games.temporalstudio.timecapsule.objects;
 
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.component.Trigger;
 import games.temporalstudio.temporalengine.component.Triggerable;
 import games.temporalstudio.timecapsule.Entity.Player;
 

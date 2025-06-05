@@ -39,9 +39,9 @@ public class Following implements Component{
 
     @Override
     public void update(LifeCycleContext context, float delta) {
-        if (distance(player, medusa) >= medusa.getMaxDistance()) {
-            XmoveCloser(player,medusa, medusa.getMaxDistance());
-            YmoveCloser(player, medusa,medusa.getMaxDistance());
+        if (distance(player, medusa) >= Medusa.getMaxDistance()) {
+            XmoveCloser(player,medusa, Medusa.getMaxDistance());
+            YmoveCloser(player, medusa, Medusa.getMaxDistance());
         }
     }
 
