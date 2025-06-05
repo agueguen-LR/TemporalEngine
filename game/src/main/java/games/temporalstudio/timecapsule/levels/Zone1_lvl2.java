@@ -35,11 +35,11 @@ public class Zone1_lvl2 implements TimeLevel{
 			new Wall(new Vector2f(0, 23), new Vector2f(32, 23)), // Top wall
 
 			new Exit(
-				"exit_zone1_lvl1", 4.0f, 1.0f,
+				"exit_zone1_lvl1", 5.0f, 28.0f,
 				pastPlayer, pastMedusa,
 				"zone1_lvl1_past",
 				game::changeLeftScene,
-				new Vector2f(7.0f, 28.0f)
+				new Vector2f(29, 16)
 			),
 
 			new Medusa("pastMedusa",
@@ -52,7 +52,7 @@ public class Zone1_lvl2 implements TimeLevel{
 
 		// Adds game objects
 		this.pastScene.addGameObject(pastCamera);
-		//this.pastScene.addGameObject(map);
+		this.pastScene.addGameObject(map);
 		this.pastTimeObjects.forEach((timeObject) -> this.pastScene.addGameObject(timeObject.getGameObject()));
 	}
 
