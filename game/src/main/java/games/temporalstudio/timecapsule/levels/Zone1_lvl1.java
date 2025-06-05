@@ -122,14 +122,14 @@ public class Zone1_lvl1 implements TimeLevel{
 			),
 			pastPlayer,
 			new SeedEmplacement("seedEmplacement_zone1_lvl1",
-				0.0f,0.0f,
+				6.5f, 18,
 				pastPlayer, pastScene, futurScene
 			)
 		);
 
 		CapsuleSender sender = new CapsuleSender(
 			"capsuleSender", futurPlayer,
-			new Pickupable("seedPickup", 3, 3,
+			new Pickupable("seedPickup", 7.0f, 26.0f,
 				pastPlayer,
 				new Seed("seed", pastPlayer)
 			),

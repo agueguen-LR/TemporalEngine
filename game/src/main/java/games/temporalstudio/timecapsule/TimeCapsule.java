@@ -65,7 +65,7 @@ public class TimeCapsule extends Game{
 		);
 
 		CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver(
-			"zone1_pastCapsuleReceiver", 3.0f, 3.0f
+			"zone1_pastCapsuleReceiver", 7.0f, 26.0f
 		);
 
 		Map<String, Level> levels = Map.of(

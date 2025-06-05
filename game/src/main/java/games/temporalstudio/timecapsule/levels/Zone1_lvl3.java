@@ -149,7 +149,7 @@ public class Zone1_lvl3 implements TimeLevel {
 			this.pastScene.addGameObject(timeObject.getGameObject())
 		);
 		
-		this.futurScene.addGameObject(createMap("futur"));
+		this.futurScene.addGameObject(createMap("future"));
 		this.futurScene.addGameObject(futurCamera);
 		this.futurTimeObjects.forEach(timeObject ->
 			this.futurScene.addGameObject(timeObject.getGameObject())
