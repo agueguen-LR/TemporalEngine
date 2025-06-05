@@ -18,11 +18,12 @@ public class Zone1_lvl2 implements TimeLevel{
 	private Scene futurScene;
 	private Set<TimeObject> futurTimeObjects;
 
-	public Zone1_lvl2(GameObject pastCamera, GameObject futurCamera, Game game, Player pastPlayer, Player futurPlayer, Medusa pastMedusa, Medusa futureMedusa){
+	public Zone1_lvl2(GameObject pastCamera, GameObject futurCamera, Game game, Player pastPlayer, Player futurPlayer, Medusa pastMedusa, Medusa futureMedusa, CapsuleReceiver zone1_pastCapsuleReceiver) {
 		this.pastScene = new Scene("Zone1_lvl2_Past");
 		this.pastScene.addGameObject(pastCamera);
 		this.futurScene = new Scene("Zone1_lvl2_Futur");
 		this.futurScene.addGameObject(futurCamera);
+
 
 		this.pastTimeObjects = Set.of(
 				new Enemy(new Vector4f(0,0.5f, 0.75f, 1),
@@ -37,7 +38,8 @@ public class Zone1_lvl2 implements TimeLevel{
 				new Medusa("pastMedusa",
 						new Vector2f(0.5f, 0.5f),
 						new Vector4f(0.25f,0,0.75f,1), pastPlayer),
-				pastPlayer
+				pastPlayer,
+				zone1_pastCapsuleReceiver
 
 		);
 
@@ -55,7 +57,8 @@ public class Zone1_lvl2 implements TimeLevel{
 				new Medusa("pastMedusa",
 						new Vector2f(0.5f, 0.5f),
 						new Vector4f(0.25f,0,0.75f,1), futurPlayer),
-				futurPlayer
+				futurPlayer,
+				new Seed("The seedTM",futurPlayer)
 		);
 
 		this.futurTimeObjects.forEach((timeObject) -> this.futurScene.addGameObject(timeObject.getGameObject()));

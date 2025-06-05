@@ -48,6 +48,7 @@ public class CapsuleReceiver implements TimeObject {
 				Game.LOGGER.severe("CapsuleReceiver scene is not set.");
 				return;
 			}
+			System.out.println("Ici");
 			// Remove the receiver's render component (visual feedback)
 			this.gameObject.removeComponent(render);
 			// Add the received item to the scene

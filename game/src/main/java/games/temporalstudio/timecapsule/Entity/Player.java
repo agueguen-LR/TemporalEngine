@@ -64,10 +64,6 @@ public class Player extends Entity {
             Game.LOGGER.warning("Tried to check inventory for a null object.");
             return false;
         }
-        if (inventory.isEmpty()) {
-            Game.LOGGER.info("Inventory is empty.");
-            return false;
-        }
         return inventory.stream().anyMatch(obj -> inventoryObject.isAssignableFrom(obj.getClass()));
     }
     public InventoryObject getInventoryObject(Class<? extends InventoryObject> inventoryObject){

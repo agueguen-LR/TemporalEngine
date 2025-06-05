@@ -15,10 +15,12 @@ import org.joml.Vector4f;
 
 import java.util.ArrayList;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
+
 public class SeedEmplacement implements TimeObject{
     private GameObject gameObject;
 
-    public SeedEmplacement(String name, float x, float y, Player player, int keyPlayerUse, Scene pastScene, Scene futurScene) {
+    public SeedEmplacement(String name, float x, float y, Player player, Scene pastScene, Scene futurScene) {
         this.gameObject = new GameObject(name);
         Transform transform = new Transform(new Vector2f(x, y));
         Render render = new TileRender("past", "big_seed_emplacement");
@@ -28,7 +30,7 @@ public class SeedEmplacement implements TimeObject{
             if (other instanceof GameObject && other == player.getGameObject()) {
                 //Checking if the player have a seed
                 if (player.inventoryContains(Seed.class)){
-                    if (player.getGameObject().getComponent(Input.class).isControlPressed(keyPlayerUse)){
+                    if (player.getGameObject().getComponent(Input.class).isControlPressed(GLFW_KEY_E)){
                         gameObject.removeComponent(render);
                         gameObject.removeComponent(collider2D);
                         gameObject.removeComponent(transform);
