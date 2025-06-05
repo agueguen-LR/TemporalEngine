@@ -39,7 +39,7 @@ public class Zone1_lvl1 implements TimeLevel{
 				new Wall(new Vector2f(1, 5), new Vector2f(3, 8)),
 				new Exit(
 						"Zone1_lvl1_CapsuleExit", 4.0f, 1.0f, pastPlayer,pastMedusa ,
-						"Zone1_pastCapsule", game::changeLeftScene, new Vector2f(7.0f, 28.0f)
+						"Zone1_pastCapsule", game::changeLeftScene, new Vector2f(7.0f, 29.0f)
 				),
 				new Exit(
 						"Zone1_lvl1_Exit", 3.0f, 3.0f, pastPlayer, pastMedusa,

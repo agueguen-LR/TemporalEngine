@@ -8,6 +8,9 @@ import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
+import games.temporalstudio.temporalengine.rendering.Layer;
+import games.temporalstudio.temporalengine.rendering.component.SpriteRender;
+import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.timecapsule.objects.Chest;
 import games.temporalstudio.timecapsule.objects.CompleteKey;
 import games.temporalstudio.timecapsule.objects.InventoryObject;
@@ -30,15 +33,33 @@ public class Player extends Entity {
 	public ArrayList<KeyFragment> fragments = new ArrayList<KeyFragment>();
 	private CompleteKey key = null;
 
-    public Player(int x, int y, int[] keyCodes, Vector4f color) {
-        super("player", new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f},  color);
+    public Player(int x, int y, int[] keyCodes, Vector4f color, String texture) {
+        super("player", new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f},  color, texture);
         if (keyCodes.length != 7){
             throw new IllegalArgumentException("keyCodes.length must be 7");
         }
+
         Input input=new Input();
         this.keyControllDefinition(keyCodes, input);
         Collider2D collider=new Collider2D((new AABB(transform)));
         collider.setRigid(true);
+
+        getRender().setAnimChooser(context -> {
+            Vector2f vel = physicsBody.getVelocity();
+            float angle = vel.angle(new Vector2f(1, 0));
+            String tileName;
+
+            if(angle > Math.PI/4*3 || angle < -Math.PI/4*3)
+                tileName = "left_walk";
+            else if(angle < Math.PI/4*3 && angle > Math.PI/4)
+                tileName = "face_walk";
+            else if(angle > -Math.PI/4*3 && angle < -Math.PI/4)
+                tileName = "back_walk";
+            else
+                tileName = "right_walk";
+
+            return tileName;
+        });
 
         p.addComponent(input);
         p.addComponent(collider);
