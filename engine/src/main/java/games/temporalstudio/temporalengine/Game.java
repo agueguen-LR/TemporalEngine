@@ -156,6 +156,9 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 		} else {
 			this.leftScene = parentScene;
 		}
+
+		renderer.refresh();
+
 		this.leftScene.init(this);
 		this.leftScene.start(this);
 	}
@@ -175,6 +178,9 @@ public abstract class Game extends App implements LifeCycleContext, LifeCycle{
 		} else {
 			this.rightScene = parentScene;
 		}
+
+		renderer.refresh();
+
 		this.rightScene.init(this);
 		this.rightScene.start(this);
 	}
