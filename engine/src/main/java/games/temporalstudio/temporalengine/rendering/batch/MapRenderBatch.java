@@ -41,6 +41,7 @@ public class MapRenderBatch extends RenderBatch{
 	// SETTERS
 	public void refresh(){
 		wasUpdated = false;
+		resetVBO();
 	}
 	@Override
 	protected boolean updateVerticesAt(int index,

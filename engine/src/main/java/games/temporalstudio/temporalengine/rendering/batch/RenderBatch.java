@@ -185,6 +185,9 @@ public class RenderBatch implements RenderLifeCycle{
 		// TODO: Implement update check.
 		return true;
 	}
+	protected void resetVBO(){
+		vertices.clear();
+	}
 
 	// FUNCTIONS
 	protected static final Render getRenderFromRenderable(
