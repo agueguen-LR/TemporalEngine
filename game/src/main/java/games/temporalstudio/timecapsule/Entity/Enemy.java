@@ -10,86 +10,59 @@ import org.joml.Vector2f;
 public class Enemy extends Entity{
 
 
-    public Enemy(Vector2f player_death_position, Vector2f[] coords, Scene scene) {
-        super("dracula", new Vector2f(coords[0].x, coords[0].y), new Vector2f(1,1),
-                new float[]{ 0.1f, 10, 0.1f, 0}, "bat");
-        if(coords.length == 1){
-            throw new IllegalArgumentException("Not enough coordinate points");
-        }
-        Collider2D collider=new Collider2D((new AABB(transform)));
+    public Enemy(Scene scene, Vector2f[] coords,
+		Vector2f player_death_position
+	){
+        super("dracula",
+			new Vector2f(coords[0].x, coords[0].y),
+			new Vector2f(1,1),
+            new float[]{ 0.1f, 10, 0.1f, 0},
+			"bat"
+		);
+
+        if(coords.length == 1)
+            throw new IllegalArgumentException(
+				"Not enough coordinate points"
+			);
+
+		getRender().setTileName("fly");
+
+        Collider2D collider = new Collider2D(new AABB(getTransform()));
         collider.setOnIntersects((context, other) -> {
-                if (other instanceof GameObject objet) {
-                    if (objet.getName() .equals("player")){
-                    objet.getComponent(Transform.class).setPosition(new Vector2f(player_death_position));
-                    }
-                }
-        });
-        p.addComponent(collider);
-        getRender().setTileName("fly");
+			if (!(other instanceof GameObject objet)) return;
 
+			if(objet.getName().equals("player")){
+				objet.getComponent(Transform.class)
+					.setPosition(new Vector2f(player_death_position));
+			}
+		});
+        getGameObject().addComponent(collider);
 
-        for (int i=0;i<coords.length;i++) {
-            int ii = i;
-            int nextIndex;
-            if(i+1 >= coords.length){nextIndex=0;} else {
-                nextIndex = i + 1;
-            }
-            GameObject gameCollider=new GameObject("collider");
-            Transform transform1=new Transform(coords[i]);
-            Collider2D collider2=new Collider2D((new AABB(transform1)));
-            collider2.setOnIntersects((context, other) -> {
-                {
-                    if (other instanceof GameObject objet ) {
-                        if (objet.getName() =="dracula") {
-                            float XDistance = coords[nextIndex].x - coords[ii].x;
-                            float YDistance = coords[nextIndex].y - coords[ii].y;
-                            Vector2f vitesse = this.physicsBody.getVelocity();
-                            this.physicsBody.applyForce(-vitesse.x, -vitesse.y);
-                            this.physicsBody.applyForce(XDistance * 2, YDistance * 2);
-                        }
-                    }/*
-                    float XDistance = coords[nextIndex].x - coords[ii].x;
-                    float YDistance = coords[nextIndex].y - coords[ii].y;
-                    Vector2f vitesse= this.physicsBody.getVelocity();
-                    this.physicsBody.applyForce(-vitesse.x,-vitesse.y);
-                    this.physicsBody.applyForce(XDistance*1, YDistance*1);*/
-                }
-            });
-            gameCollider.addComponent(collider2);
-            gameCollider.addComponent(transform1);
-            scene.addGameObject(gameCollider);
+        for(int i = 0; i < coords.length; i++){
+			final int finalI = i;
+            int nextIdx = i + 1 >= coords.length ? 0 : i + 1;
 
-            // float XDistance = coords[1].x - coords[0].x;
-            // float YDistance = coords[1].y - coords[0].y;
-            //this.physicsBody.applyForce(XDistance,YDistance);
-            }
+            GameObject anchor = new GameObject("enemyAnchor");
+            Transform anchorTrans = new Transform(coords[i]);
+            Collider2D anchorCol = new Collider2D((new AABB(getTransform())));
+            anchorCol.setOnIntersects((context, other) -> {
+				if(other instanceof GameObject objet){
+					if(objet.getName() =="dracula"){
+						float XDistance = coords[nextIdx].x - coords[finalI].x;
+						float YDistance = coords[nextIdx].y - coords[finalI].y;
+						Vector2f vitesse = this.getPhysicsBody().getVelocity();
+						this.getPhysicsBody().applyForce(
+							-vitesse.x, -vitesse.y
+						);
+						this.getPhysicsBody().applyForce(
+							XDistance * 2, YDistance * 2
+						);
+					}
+				}
+			});
+            anchor.addComponent(anchorCol);
+            anchor.addComponent(anchorTrans);
+            scene.addGameObject(anchor);
+        }
     }
-
-
-
-    /*public Vector2f[] getLoopPoints() {return this.loopPoints;}
-    public void setLoopPoints(Vector2f[] loopPoints) {this.loopPoints = loopPoints;}
-*/
-    /*public void finalMovement(){
-        if ((int)getTransform().getPosition().x == (int)this.loopPoints[direction].x
-                && (int)getTransform().getPosition().y == (int)this.loopPoints[direction].y) {
-            direction++;
-            if (loopPoints.length <= direction) direction = 0;
-            }
-
-        if (haveToGoUp()) this.moveUp();
-        else this.moveDown();
-        if (haveToGoRight()) this.moveRight();
-        else this.moveLeft();
-
-    }
-
-    private boolean haveToGoUp() {
-        return getTransform().getPosition().y < this.loopPoints[direction].y;
-    }
-    private boolean haveToGoRight() {
-        return getTransform().getPosition().x < this.loopPoints[direction].x;
-    }
-*/
 }
-

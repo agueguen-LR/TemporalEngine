@@ -130,9 +130,9 @@ public class Zone1_lvl3 implements TimeLevel {
 		this.futurTimeObjects.addAll(
 			enemies.stream()
 				.map(positions -> new Enemy(
-					new Vector2f(),
+					futurScene,
 					positions.toArray(new Vector2f[positions.size()]),
-					futurScene
+					new Vector2f()
 				))
 				.toList()
 		);
