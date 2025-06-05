@@ -26,6 +26,8 @@ public class TimeCapsule extends Game{
 
 		getLogger().info("Hello! There is nothing here for now...");
 
+		setTitle(getI18n().getSentence("game.title", getVersion()));
+
 		MainMenu mainMenu = new MainMenu();
 		setMainMenu(mainMenu.getScene());
 
