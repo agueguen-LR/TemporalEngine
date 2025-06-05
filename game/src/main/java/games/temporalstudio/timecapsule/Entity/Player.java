@@ -1,9 +1,12 @@
 package games.temporalstudio.timecapsule.Entity;
 
 import games.temporalstudio.temporalengine.Game;
+import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
+import games.temporalstudio.temporalengine.physics.PhysicsBody;
+import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.Layer;
 import games.temporalstudio.temporalengine.rendering.component.SpriteRender;
@@ -16,7 +19,12 @@ import games.temporalstudio.timecapsule.objects.KeyFragment;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+
+import javax.imageio.plugins.tiff.GeoTIFFTagSet;
 import java.util.ArrayList;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
 public class Player extends Entity {
 
@@ -71,11 +79,22 @@ public class Player extends Entity {
     public Input getInput() {return p.getComponent(Input.class);}
     public GameObject getGameObject(){return p;}
 
-	/**
-	 * Adds an object to the player's inventory.
-	 *
-	 * @param object The InventoryObject to be added.
-	 */
+
+    public boolean inventoryContains(Class<? extends InventoryObject> inventoryObject) {
+        if (inventoryObject == null) {
+            Game.LOGGER.warning("Tried to check inventory for a null object.");
+            return false;
+        }
+        return inventory.stream().anyMatch(obj -> inventoryObject.isAssignableFrom(obj.getClass()));
+    }
+    public InventoryObject getInventoryObject(Class<? extends InventoryObject> inventoryObject){
+        return inventory.stream().filter(
+            obj -> inventoryObject.isAssignableFrom(obj.getClass())
+        ).findFirst().orElse(null);
+    }
+
+    public ArrayList<InventoryObject> getInventory(){return inventory;}
+
     public void addToInventory(InventoryObject object) {
         Game.LOGGER.info("Adding object to inventory: " + object.getGameObject().getName());
         inventory.add(object);
@@ -153,7 +172,7 @@ public class Player extends Entity {
             inventory.removeIf(object -> object.equals(fragment));
 		}
 		fragments.clear();
-		
+
 		if(key == null)
 			Game.LOGGER.severe("Complete key not defined.");
 		else
