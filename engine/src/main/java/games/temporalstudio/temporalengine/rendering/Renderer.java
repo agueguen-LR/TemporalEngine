@@ -53,6 +53,15 @@ public class Renderer implements RenderLifeCycle, LifeCycleContext{
 		else return game.getMainMenu();
 	}
 
+	// SETTERS
+	public void refresh(){
+		sceneBatches.stream()
+			.flatMap(List::stream)
+			.filter(MapRenderBatch.class::isInstance)
+			.map(MapRenderBatch.class::cast)
+			.forEach(MapRenderBatch::refresh);
+	}
+
 	// LIFECYCLE FUNCTIONS
 	@Override
 	public void init(LifeCycleContext context){

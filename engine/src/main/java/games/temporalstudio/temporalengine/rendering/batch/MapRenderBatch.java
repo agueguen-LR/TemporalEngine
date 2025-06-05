@@ -39,6 +39,9 @@ public class MapRenderBatch extends RenderBatch{
 	}
 
 	// SETTERS
+	public void refresh(){
+		wasUpdated = false;
+	}
 	@Override
 	protected boolean updateVerticesAt(int index,
 		GameObject renderable, Map<Texture, Integer> sampler
