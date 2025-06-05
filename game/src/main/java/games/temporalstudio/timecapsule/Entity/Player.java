@@ -1,30 +1,18 @@
 package games.temporalstudio.timecapsule.Entity;
 
 import games.temporalstudio.temporalengine.Game;
-import games.temporalstudio.temporalengine.LifeCycleContext;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.component.Input;
 import games.temporalstudio.temporalengine.physics.Collider2D;
-import games.temporalstudio.temporalengine.physics.PhysicsBody;
-import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
-import games.temporalstudio.temporalengine.rendering.Layer;
-import games.temporalstudio.temporalengine.rendering.component.SpriteRender;
-import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.timecapsule.objects.Chest;
 import games.temporalstudio.timecapsule.objects.CompleteKey;
 import games.temporalstudio.timecapsule.objects.InventoryObject;
 import games.temporalstudio.timecapsule.objects.KeyFragment;
 
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
-
-import javax.imageio.plugins.tiff.GeoTIFFTagSet;
 import java.util.ArrayList;
-
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
 public class Player extends Entity {
 
@@ -33,8 +21,8 @@ public class Player extends Entity {
 	public ArrayList<KeyFragment> fragments = new ArrayList<KeyFragment>();
 	private CompleteKey key = null;
 
-    public Player(int x, int y, int[] keyCodes, Vector4f color, String texture) {
-        super("player", new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f},  color, texture);
+    public Player(int x, int y, int[] keyCodes, String texture) {
+        super("player", new Vector2f(x,y), new Vector2f(1,2), new float[]{1,10,0.1f,20f}, texture);
         if (keyCodes.length != 7){
             throw new IllegalArgumentException("keyCodes.length must be 7");
         }

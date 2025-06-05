@@ -7,18 +7,12 @@ import games.temporalstudio.temporalengine.Scene;
 import games.temporalstudio.temporalengine.component.Follow;
 import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Transform;
-import games.temporalstudio.temporalengine.rendering.Layer;
-import games.temporalstudio.temporalengine.rendering.component.SpriteRender;
-import games.temporalstudio.temporalengine.rendering.component.TileRender;
 import games.temporalstudio.temporalengine.rendering.component.View;
 import games.temporalstudio.timecapsule.Entity.Medusa;
 import games.temporalstudio.timecapsule.Entity.Player;
 import games.temporalstudio.timecapsule.levels.*;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 import games.temporalstudio.timecapsule.objects.CapsuleReceiver;
-import games.temporalstudio.timecapsule.objects.Chest;
-import games.temporalstudio.timecapsule.objects.CompleteKey;
 
 import java.util.Map;
 
@@ -44,36 +38,48 @@ public class TimeCapsule extends Game{
 		futureCamera.addComponent(new View(.1f));
 
 		Player pastPlayer= new Player(1,1,
-			new int[]{GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_SPACE, GLFW_KEY_Q, GLFW_KEY_E},
-			new Vector4f(0,0,1,1), "jeanne"
+			new int[]{
+				GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D,
+				GLFW_KEY_SPACE, GLFW_KEY_Q, GLFW_KEY_E
+			},
+			"jeanne"
 		);
 
 
 		pastCamera.addComponent(new Follow(pastPlayer.getGameObject()));
 
 		Player futurePlayer = new Player(1, 1,
-			new int[]{GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT, GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_EQUAL, GLFW_KEY_RIGHT_SHIFT},
-			new Vector4f(0,0,1,1), "merlin"
+			new int[]{
+				GLFW_KEY_UP, GLFW_KEY_LEFT, GLFW_KEY_DOWN, GLFW_KEY_RIGHT,
+				GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_EQUAL, GLFW_KEY_RIGHT_SHIFT
+			},
+			"merlin"
 		);
 		futureCamera.addComponent(new Follow(futurePlayer.getGameObject()));
 
 		Medusa pastMedusa = new Medusa("pastMedusa",
-				new Vector2f(0.5f, 0.5f),
-				new Vector4f(0.25f,0,0.75f,1), pastPlayer);
+			new Vector2f(0.5f, 0.5f),
+			pastPlayer
+		);
 
 		Medusa futureMedusa = new Medusa("futureMedusa",
-				new Vector2f(0.5f, 0.5f),
-				new Vector4f(0.25f,0,0.75f,1), futurePlayer);
+			new Vector2f(0.5f, 0.5f),
+			futurePlayer
+		);
 
 		CapsuleReceiver zone1_pastCapsuleReceiver = new CapsuleReceiver("zone1_pastCapsuleReceiver", 3.0f, 3.0f);
 
 		Map<String, Level> levels = Map.of(
-				"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, pastMedusa, futureMedusa, zone1_pastCapsuleReceiver),
-				"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer, pastMedusa, futureMedusa,zone1_pastCapsuleReceiver),
-				"cave3", new Zone1_lvl3(pastCamera, futureCamera, this, pastPlayer,futurePlayer, pastMedusa, futureMedusa),
-				"factory", new Zone2(pastCamera, futureCamera),
-				"boat", new Zone3(pastCamera, futureCamera),
-				"finale", new Zone4(pastCamera, futureCamera)
+			"cave1", new Zone1_lvl1(pastCamera, futureCamera, this, pastPlayer, futurePlayer, pastMedusa, futureMedusa, zone1_pastCapsuleReceiver),
+			"cave2", new Zone1_lvl2(pastCamera, futureCamera, this, pastPlayer, futurePlayer, pastMedusa, futureMedusa,zone1_pastCapsuleReceiver),
+			"cave3", new Zone1_lvl3(this,
+				pastCamera, futureCamera,
+				pastPlayer, futurePlayer,
+				pastMedusa, futureMedusa
+			),
+			"factory", new Zone2(pastCamera, futureCamera),
+			"boat", new Zone3(pastCamera, futureCamera),
+			"finale", new Zone4(pastCamera, futureCamera)
 		);
 
 		zone1_pastCapsuleReceiver.setScene(((TimeLevel)levels.get("cave2")).getPastScene());

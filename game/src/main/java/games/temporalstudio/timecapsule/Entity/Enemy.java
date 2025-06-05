@@ -5,17 +5,14 @@ import games.temporalstudio.temporalengine.component.GameObject;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
-import games.temporalstudio.temporalengine.rendering.component.ColorRender;
-import games.temporalstudio.temporalengine.rendering.component.Render;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 public class Enemy extends Entity{
 
 
-    public Enemy(Vector4f color, Vector2f player_death_position, Vector2f[] coords, Scene scene) {
+    public Enemy(Vector2f player_death_position, Vector2f[] coords, Scene scene) {
         super("dracula", new Vector2f(coords[0].x, coords[0].y), new Vector2f(1,1),
-                new float[]{ 0.1f, 10, 0.1f, 0}, color , "bat");
+                new float[]{ 0.1f, 10, 0.1f, 0}, "bat");
         if(coords.length == 1){
             throw new IllegalArgumentException("Not enough coordinate points");
         }
@@ -39,7 +36,6 @@ public class Enemy extends Entity{
             }
             GameObject gameCollider=new GameObject("collider");
             Transform transform1=new Transform(coords[i]);
-            Render render1=new ColorRender(new Vector4f(0.25f,0.5f,0.25f, 0.5f));
             Collider2D collider2=new Collider2D((new AABB(transform1)));
             collider2.setOnIntersects((context, other) -> {
                 {
@@ -61,13 +57,11 @@ public class Enemy extends Entity{
             });
             gameCollider.addComponent(collider2);
             gameCollider.addComponent(transform1);
-            gameCollider.addComponent(render1);
             scene.addGameObject(gameCollider);
 
-            float XDistance = coords[1].x - coords[0].x;
-            float YDistance = coords[1].y - coords[0].y;
+            // float XDistance = coords[1].x - coords[0].x;
+            // float YDistance = coords[1].y - coords[0].y;
             //this.physicsBody.applyForce(XDistance,YDistance);
-
             }
     }
 
