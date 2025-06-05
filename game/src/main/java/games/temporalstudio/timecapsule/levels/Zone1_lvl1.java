@@ -31,7 +31,12 @@ public class Zone1_lvl1 implements TimeLevel{
 		// Game objets
 		GameObject pastMap = new GameObject("map_zone1_lvl1_past");
 		pastMap.addComponent(new Transform());
-		pastMap.addComponent(new MapRender("past", "zone1_lvl1_past"));
+		pastMap.addComponent(new MapRender(
+			"past", "zone1_lvl1_past"
+		));
+
+		pastPlayer.getTransform().setPosition(new Vector2f(16, 5));
+		futurPlayer.getTransform().setPosition(new Vector2f(16, 5));
 
 		commons = Set.of(
 			new Wall(new Vector2f(0, 3), new Vector2f(32, 3)), // Bottom wall
@@ -63,7 +68,6 @@ public class Zone1_lvl1 implements TimeLevel{
 			new Wall(new Vector2f(15.5f, 26.8f), new Vector2f(15.6f, 13.8f)),
 
 			// Approx collisions
-
 			new Wall(new Vector2f(16.8f, 15.8f), new Vector2f(16.8f, 26.8f)),
 
 			new Wall(new Vector2f(16.8f, 15.8f), new Vector2f(18.8f, 15.8f)),
