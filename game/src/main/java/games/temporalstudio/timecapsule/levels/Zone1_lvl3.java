@@ -88,14 +88,14 @@ public class Zone1_lvl3 implements TimeLevel {
 			new Exit(
 				"zone1_lvl3_exit", 7, 32,
 				pastPlayer, pastMedusa,
-				"Zone1_lvl1_Past",
+				"zone1_lvl1_past",
 				game::changeLeftScene,
 				new Vector2f(16, 5)
 			),
 			new Exit(
 				"zone1_lvl3_exit2", 30, 7,
 				pastPlayer, pastMedusa,
-				"Zone1_lvl1_Past",
+				"zone1_lvl1_past",
 				(name)  -> Game.LOGGER.info("Jeu terminé !!"),
 				new Vector2f(7, 28)
 			),
@@ -113,15 +113,15 @@ public class Zone1_lvl3 implements TimeLevel {
 		this.futurTimeObjects = new HashSet<>();
 		this.futurTimeObjects.addAll(Set.of(
 			new Exit(
-				"zone1_lvl3_futur", 7, 31,
+				"exit_zone1_lvl3_futur", 7, 31,
 				futurPlayer, futureMedusa,
-				"Zone1_lvl1_Futur", game::changeLeftScene,
+				"zone1_lvl1_futur", game::changeLeftScene,
 				new Vector2f(16, 5)
 			),
 			new Exit(
-				"zone1_lvl3_futur", 30, 7,
+				"exit_zone1_lvl3_futur", 30, 7,
 				futurPlayer,futureMedusa,
-				"Zone1_lvl1_Futur",
+				"zone1_lvl1_futur",
 				(name) -> Game.LOGGER.info("Jeu terminé !!"),
 				new Vector2f(7, 28)
 			),
