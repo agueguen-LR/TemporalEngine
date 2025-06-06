@@ -301,12 +301,17 @@ public class PhysicsEngine implements PhysicsEngineLifeCycle{
 	private void computeForScene(Scene scene, float deltaTime) {
 		// Get all colliders
 		Set<GameObject> colliders = scene.getGOsByComponent(Collider2D.class);
-		// Detect intersections
-		detectIntersections(colliders);
 		// Get all physics bodies
 		Set<GameObject> physicsBodies = scene.getGOsByComponent(PhysicsBody.class);
+
+		// Detect intersections between non-physics colliders
+		detectIntersections(colliders.stream()
+				.filter(go -> !physicsBodies.contains(go))
+				.collect(Collectors.toSet()));
+
 		// Apply drag to all physics bodies
 		physicsBodies.forEach(this::applyDrag);
+
 		// Get all rigid colliders
 		Set<GameObject> rigidColliders = colliders.stream()
 				.filter(go -> go.getComponent(Collider2D.class).isRigid())
