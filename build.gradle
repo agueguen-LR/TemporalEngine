@@ -37,7 +37,7 @@ subprojects{
 	}
 }
 
-project(":engine"){
+project(":TemporalEngine"){
 	apply plugin: "java-library"
 
 	version = "1.0.0-b.1"
@@ -70,18 +70,18 @@ project(":engine"){
 	}
 }
 
-project(":game"){
+project(":TimeCapsule"){
 	apply plugin: "application"
 
-	def appName = "timecapsule"
-	version = "0.0.0"
+	def appName = "Time Capsule"
+	version = "1.0.0"
 
 	base{
 		archivesName = appName
 	}
 
 	dependencies{
-		implementation project(':engine')
+		implementation project(':TemporalEngine')
 	}
 
 	application{
