@@ -37,7 +37,7 @@ subprojects{
 	}
 }
 
-project(":engine"){
+project(":TemporalEngine"){
 	apply plugin: "java-library"
 
 	version = "1.0.0-b.1"
@@ -70,18 +70,18 @@ project(":engine"){
 	}
 }
 
-project(":game"){
+project(":TimeCapsule"){
 	apply plugin: "application"
 
-	def appName = "timecapsule"
-	version = "0.0.0"
+	def appName = "Time Capsule"
+	version = "1.0.0"
 
 	base{
 		archivesName = appName
 	}
 
 	dependencies{
-		implementation project(':engine')
+		implementation project(':TemporalEngine')
 	}
 
 	application{
@@ -89,13 +89,30 @@ project(":game"){
 		mainClass = "games.temporalstudio.timecapsule.Launcher"
 	}
 
-	task runEngine(type: JavaExec){
-		group = "application"
-		description = "Runs engine test part this project as a JVM application."
+	distributions{
+		main{
+			distributionBaseName = appName
+		}
+	}
+}
 
-		mainClass = application.mainClass
-    	classpath = sourceSets.main.runtimeClasspath
-		args = ["engine"]
+project(":EngineTests"){
+	apply plugin: "application"
+
+	def appName = "Engine Tests"
+	version = "1.0.0"
+
+	base{
+		archivesName = appName
+	}
+
+	dependencies{
+		implementation project(':TemporalEngine')
+	}
+
+	application{
+		applicationName = appName
+		mainClass = "games.temporalstudio.enginetests.Launcher"
 	}
 
 	distributions{

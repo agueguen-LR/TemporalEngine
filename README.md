@@ -1,14 +1,16 @@
-# Time Capsule [![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-orange.svg)](COPYING.LESSER)
-_Soon ..._
+# Temporal Engine [![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-orange.svg)](COPYING.LESSER)
 
-> Version: **v1.0.0-b.1**
+This fork of [Time Capsule](https://github.com/Xibitol/TimeCapsule) aims to bring further development
+to the game engine aspect of the project. The main focus will be on the Physics Engine,
+which was my part of the project, but I may also dabble in modifications to the Rendering,
+originally developed by [Xibitol](https://github.com/Xibitol).
 
-## Documentations
-### Technician installation guide
-_Soon ..._
+These extensions are being developed after the end of the group project,
+which started on Monday 26th May 2025 and ended on Thursday 5th June 2025.
 
-### Developer preparation guide
-_Soon ..._
+This fork is currently only being worked on by [Adrien Gueguen](https://github.com/agueguen-LR).
+
+> Version: **v1.0.0**
 
 ## License
 Time Capsule (Temporal Engine, Game and Artworks)  
@@ -38,7 +40,7 @@ https://www.gnu.org/licenses/.
 
 > [Litszro](https://github.com/Litszro) (Game Designer, Level Designer, Artist)
 
-### Temporal Engine
+### Temporal Engine
 > [Xibitol](https://github.com/Xibitol) (Lead Tech/Dev, Developer)
 
 > [Adrien Gueguen](https://github.com/agueguen-LR) (Senior Developer)
