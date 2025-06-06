@@ -1,33 +1,23 @@
-package games.temporalstudio.timecapsule.test;
-
-import static org.lwjgl.glfw.GLFW.*;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.joml.Vector2f;
-import org.joml.Vector4f;
+package games.temporalstudio.enginetests;
 
 import games.temporalstudio.temporalengine.Game;
 import games.temporalstudio.temporalengine.Scene;
-import games.temporalstudio.temporalengine.component.Follow;
-import games.temporalstudio.temporalengine.component.GameObject;
-import games.temporalstudio.temporalengine.component.Input;
-import games.temporalstudio.temporalengine.component.Trigger;
-import games.temporalstudio.temporalengine.component.Triggerable;
+import games.temporalstudio.temporalengine.component.*;
 import games.temporalstudio.temporalengine.physics.Collider2D;
 import games.temporalstudio.temporalengine.physics.PhysicsBody;
 import games.temporalstudio.temporalengine.physics.Transform;
 import games.temporalstudio.temporalengine.physics.shapes.AABB;
 import games.temporalstudio.temporalengine.rendering.Layer;
-import games.temporalstudio.temporalengine.rendering.component.ColorRender;
-import games.temporalstudio.temporalengine.rendering.component.MapRender;
-import games.temporalstudio.temporalengine.rendering.component.Render;
-import games.temporalstudio.temporalengine.rendering.component.SpriteRender;
-import games.temporalstudio.temporalengine.rendering.component.TileRender;
-import games.temporalstudio.temporalengine.rendering.component.View;
+import games.temporalstudio.temporalengine.rendering.component.*;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 
-public class TestGame extends Game{
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.lwjgl.glfw.GLFW.*;
+
+public class TestGame extends Game {
 
 	private static final String IDENTIFIER = "temporalengine";
 
